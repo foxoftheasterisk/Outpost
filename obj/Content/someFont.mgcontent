@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SourceFile>E:/extra programming/C# Projects/Outpost 0.2/Content/someFont.spritefont</SourceFile>
+  <SourceTime>2011-09-13T23:58:43.0331925-07:00</SourceTime>
+  <DestFile>E:/extra programming/C# Projects/Outpost 0.2/bin/Content/someFont.xnb</DestFile>
+  <DestTime>2015-08-29T17:08:46.0291106-07:00</DestTime>
+  <Importer>FontDescriptionImporter</Importer>
+  <ImporterTime>2015-04-29T10:14:44-07:00</ImporterTime>
+  <Processor>FontDescriptionProcessor</Processor>
+  <ProcessorTime>2015-04-29T10:14:44-07:00</ProcessorTime>
+  <Parameters>
+    <Key>TextureFormat</Key>
+    <Value>Compressed</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>

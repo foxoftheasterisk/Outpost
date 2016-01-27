@@ -1,0 +1,8 @@
+_G = namespace("vanilla", this)
+
+--basic materials: dirt, air, water, void, that sort
+runFile("basics.mat", this)
+
+--basic map generation functions
+runFile("mapgen.lua", this)
+
