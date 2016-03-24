@@ -512,7 +512,7 @@ namespace Outpost
             }
             catch (InvalidOperationException)
             {
-                keys = new KeyboardState();//bad idea??
+                keys = new KeyboardState();//probably a very bad idea
             }
 
             if(keys.IsKeyDown(Keys.Enter))

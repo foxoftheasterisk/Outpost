@@ -6,6 +6,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using OutpostLibrary.Content;
+using OutpostLibrary;
 using Microsoft.Xna.Framework.Input;
 
 namespace VoxtureEditor
@@ -21,6 +22,8 @@ namespace VoxtureEditor
 
         int currentVoxture;
         int currentColor;
+
+        const float spread = 0.2f;
 
         public VoxtureEditor(GraphicsDevice g)
         {
@@ -39,18 +42,84 @@ namespace VoxtureEditor
 
             initializeGraphics();
 
+            //TODO: maybe temp?
+            cd = new System.Windows.Forms.ColorDialog();
+            cd.AllowFullOpen = true;
+
             //TODO: TEMP
-            voxes[0].makeVertices(0.2f, new OutpostLibrary.IntVector3(-1,-1,-1));
+            voxes[0].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
             colors.Add(new Tuple<string, OutpostColor>("tmp", new OutpostColor(1, 24, 128, 255)));
             voxes.Add(new EditingVoxture("TEMP", colors[1].Item2, graphics));
             voxes[1].makeVertices(0.0f, false);
         }
 
+        bool m1Down;
         bool m2Down;
         Vector2 lastMousePos;
 
+        System.Windows.Forms.ColorDialog cd;
+        System.Windows.Forms.DialogResult dr;
+        bool wasInForm = false;
+        bool unhandledForm = false;
+
         public bool Update(bool useInput)
         {
+            //TODO: create visible buttons for functions
+            //Also, make this into safe, central input.  When that's a thing.
+            KeyboardState keys;
+            try
+            {
+                keys = Keyboard.GetState();
+            }
+            catch (InvalidOperationException)
+            {
+                keys = new KeyboardState();//probably a very bad idea
+            }
+
+            if(keys.IsKeyDown(Keys.C) && !wasInForm)
+            {
+                cd.Color = colors[currentColor].Item2.color.toSystemColor();
+                wasInForm = true;
+                unhandledForm = true;
+
+                //color creation
+                //TODO: Create a dialog that includes specular?  (or, just throw a second one on, but that's less good.)
+                dr = cd.ShowDialog();
+            }
+            else if(!keys.IsKeyDown(Keys.C))
+            {
+                wasInForm = false;
+            }
+
+            if (unhandledForm && dr == System.Windows.Forms.DialogResult.OK)
+            {
+                unhandledForm = false;
+                Color createdColor = cd.Color.toXnaColor();
+                bool colorAlreadyExists = false;
+
+                for (int i = 0; i < colors.Count; i++)
+                {
+
+                    Color comp = colors[i].Item2.color;
+                    if (comp == createdColor)
+                    {
+                        colorAlreadyExists = true;
+                        currentColor = i;
+                    }
+                }
+
+                if (!colorAlreadyExists)
+                {
+                    //dafuq there isn't a basic text input dialog box???
+                    //i guess just make up names for now...
+
+                    string colorname = voxes[currentVoxture].name.Substring(0, 3) + colors.Count;
+                    currentColor = colors.Count;
+                    colors.Add(new Tuple<string, OutpostColor>(colorname, new OutpostColor(createdColor)));
+                }
+            }
+
+            //rotation stuff
             if (currentVoxture - 1 >= 0)
             {
                 voxes[currentVoxture - 1].rotate(Matrix.CreateRotationY(0.005f));
@@ -85,7 +154,251 @@ namespace VoxtureEditor
                 m2Down = false;
             }
 
+            //selection stuff
+            //leaving it here instead of in the non-rotate section, cause i don't want the selection persisting like it did
+            //there's an alternate solution but it's more complexicated.
+            int leftSelectCutoff = graphics.Viewport.Width / 4;
+            int rightSelectCutoff = graphics.Viewport.Width - (graphics.Viewport.Width / 4);
+
+            if (mouse.X < leftSelectCutoff)
+            {
+                //select left
+                if(currentVoxture - 1 >= 0)
+                {
+                    voxes[currentVoxture - 1].makeSelection(true);
+                }
+                if (mouse.LeftButton == ButtonState.Pressed && !m1Down)
+                {
+                    voxes[currentVoxture].makeVertices(0, false);
+                    voxes[currentVoxture].resetRotation();
+                    currentVoxture--;
+                    voxes[currentVoxture].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
+                    voxes[currentVoxture].resetRotation();
+                }
+            }
+            else if (lastMousePos.X < leftSelectCutoff)
+            {
+                //deselect left
+                if (currentVoxture - 1 >= 0)
+                {
+                    voxes[currentVoxture - 1].makeSelection(false);
+                }
+            }
+
+            if (mouse.X > rightSelectCutoff)
+            {
+                //select right
+                if (currentVoxture + 1 < voxes.Count)
+                {
+                    voxes[currentVoxture + 1].makeSelection(true);
+                }
+
+                //!m1down so that it doesn't just breeze through the whole stack of voxtures
+                if(mouse.LeftButton == ButtonState.Pressed && !m1Down)
+                {
+                    voxes[currentVoxture].makeVertices(0, false);
+                    voxes[currentVoxture].resetRotation();
+                    currentVoxture++;
+                    voxes[currentVoxture].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
+                    voxes[currentVoxture].resetRotation();
+                }
+            }
+            else if (lastMousePos.X > rightSelectCutoff)
+            {
+                //deselect right
+                if (currentVoxture + 1 < voxes.Count)
+                {
+                    voxes[currentVoxture + 1].makeSelection(false);
+                }
+            }
+
+            if (mouse.X >= leftSelectCutoff && lastMousePos.X <= rightSelectCutoff)
+            {
+                //check for selection in the editing one
+
+                #region initialization
+                //start with finding a ray
+                Viewport viewp = graphics.Viewport;
+                Vector3 front = viewp.Unproject(new Vector3(mouse.X, mouse.Y, 0), projection, view, voxes[currentVoxture].rotation);
+                Vector3 dir = viewp.Unproject(new Vector3(mouse.X, mouse.Y, 1), projection, view, voxes[currentVoxture].rotation) - front;
+                dir.Normalize();
+
+                
+                float voxSize = EditingVoxture.voxelSize;
+                int voxPerEdge = OutpostLibrary.Navigation.Sizes.VoxelsPerEdge;
+                //TODO-ish: If we ever get variable amounts of spread, it'll need to be able to read the current spread amount
+
+                float midpoint = (voxSize * voxPerEdge + spread * (voxPerEdge - 1)) * 0.5f;
+
+                float minEdge = -midpoint;
+                float maxEdge = midpoint;
+
+                Vector3 currentPos = front;
+
+                //using the edge is safe despite possibly starting inside the block on one or more coordinates
+                //it will resolve to a negative distance, and back itself up.
+
+                int highestVox = OutpostLibrary.Navigation.Sizes.VoxelsPerEdge - 1;
+
+                int xDir = 0, yDir = 0, zDir = 0;
+                float xDist, yDist, zDist;
+                int xVoxPos = 0, yVoxPos = 0, zVoxPos = 0;
+
+                if (dir.X > 0)
+                {
+                    xDir = 1;
+                    xDist = (minEdge - currentPos.X) / dir.X;
+                    xVoxPos = 0;
+                }
+                else if (dir.X < 0)
+                {
+                    xDir = -1;
+                    xDist = (maxEdge - currentPos.X) / dir.X;
+                    xVoxPos = highestVox;
+                }
+                else
+                {
+                    //dir.X = 0, so we don't want this to come up
+                    xDist = 10000000;
+                    //that should be sufficient
+                }
+
+                if (dir.Y > 0)
+                {
+                    yDir = 1;
+                    yDist = (minEdge - currentPos.Y) / dir.Y;
+                    yVoxPos = 0;
+                }
+                else if (dir.Y < 0)
+                {
+                    yDir = -1;
+                    yDist = (maxEdge - currentPos.Y) / dir.Y;
+                    yVoxPos = highestVox;
+                }
+                else
+                {
+                    //dir.Y = 0, so we don't want this to come up
+                    yDist = 10000000;
+                    //that should be sufficient
+                }
+
+                if (dir.Z > 0)
+                {
+                    zDir = 1;
+                    zDist = (minEdge - currentPos.Z) / dir.Z;
+                    zVoxPos = 0;
+                }
+                else if (dir.Z < 0)
+                {
+                    zDir = -1;
+                    zDist = (maxEdge - currentPos.Z) / dir.Z;
+                    zVoxPos = highestVox;
+                }
+                else
+                {
+                    //dir.Z = 0, so we don't want this to come up
+                    zDist = 10000000;
+                    //that should be sufficient
+                }
+
+                int x = 0;  //break excuse
+                #endregion initialization
+                #region seek
+
+                bool stillGoing = true;
+
+                bool xInVox = false, yInVox = false, zInVox = false;
+
+                while(stillGoing)
+                {
+                    if(xDist < yDist && xDist < zDist)
+                    {
+                        //x is lowest
+                        currentPos = currentPos * xDist;
+                        yDist -= xDist;
+                        zDist -= xDist;
+                        if(xInVox)
+                        {
+                            xInVox = false;
+                            xVoxPos += xDir;
+                            if (xVoxPos < 0 || xVoxPos > highestVox)
+                                stillGoing = false;
+                            xDist = spread / (dir.X * xDir);  //this *should* always be positive
+                        }
+                        else
+                        {
+                            xInVox = true;
+                            xDist = voxSize / (dir.X * xDir); //this also should always be positive
+                        }
+                    }
+                    else if(yDist < zDist)
+                    {
+                        //y is lowest
+                        currentPos = currentPos * yDist;
+                        xDist -= yDist;
+                        zDist -= yDist;
+                        if (yInVox)
+                        {
+                            yInVox = false;
+                            yVoxPos += yDir;
+                            if (yVoxPos < 0 || yVoxPos > highestVox)
+                                stillGoing = false;
+                            yDist = spread / (dir.Y * yDir);  //this *should* always be positive
+                        }
+                        else
+                        {
+                            yInVox = true;
+                            yDist = voxSize / (dir.Y * yDir); //this also should always be positive
+                        }
+                    }
+                    else
+                    {
+                        //z is lowest
+                        currentPos = currentPos * zDist;
+                        xDist -= zDist;
+                        yDist -= zDist;
+                        if (zInVox)
+                        {
+                            zInVox = false;
+                            zVoxPos += zDir;
+                            if (zVoxPos < 0 || zVoxPos > highestVox)
+                                stillGoing = false;
+                            zDist = spread / (dir.Z * zDir);  //this *should* always be positive
+                        }
+                        else
+                        {
+                            zInVox = true;
+                            zDist = voxSize / (dir.Z * zDir); //this also should always be positive
+                        }
+                    }
+
+                    if(xInVox && yInVox && zInVox)
+                        stillGoing = false;
+
+                }
+                #endregion seek
+                OutpostLibrary.IntVector3 selected = new OutpostLibrary.IntVector3(xVoxPos, yVoxPos, zVoxPos);
+                //this is safe, passing it voxel coordinates outside the voxture is already its failure condition
+                voxes[currentVoxture].makeSelection(selected);
+
+                if(mouse.LeftButton == ButtonState.Pressed)
+                {
+                    voxes[currentVoxture][selected] = colors[currentColor].Item2;
+                }
+            }
+
+
+            if(mouse.LeftButton == ButtonState.Pressed)
+            {
+                m1Down = true;
+            }
+            else
+            {
+                m1Down = false;
+            }
             lastMousePos = mousePos;
+
+
             return false;
         }
 

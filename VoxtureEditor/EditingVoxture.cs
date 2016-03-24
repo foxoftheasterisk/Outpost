@@ -15,10 +15,45 @@ namespace VoxtureEditor
     class EditingVoxture
     {
 
-        string name;
+        public string name;
         Voxture vox;
 
-         
+        public OutpostColor this[int i, int j, int k]
+        {
+            get
+            {
+                if(i >= 0 && i < Sizes.VoxelsPerEdge &&
+                   j >= 0 && j < Sizes.VoxelsPerEdge &&
+                   k >= 0 && k < Sizes.VoxelsPerEdge)
+                    return vox[i, j, k];
+                else
+                    return null;
+            }
+            set
+            {
+                if (!(i >= 0 && i < Sizes.VoxelsPerEdge &&
+                      j >= 0 && j < Sizes.VoxelsPerEdge &&
+                      k >= 0 && k < Sizes.VoxelsPerEdge))
+                    return;
+
+                vox[i, j, k] = value;
+
+                //and then
+                recolorVoxel(i, j, k);
+            }
+        }
+
+        public OutpostColor this[OutpostLibrary.IntVector3 voxel]
+        {
+            get
+            {
+                return this[voxel.X, voxel.Y, voxel.Z];
+            }
+            set
+            {
+                this[voxel.X, voxel.Y, voxel.Z] = value;
+            }
+        }
 
         public EditingVoxture(string _name, OutpostColor baseColor, GraphicsDevice graphics)
         {
@@ -51,7 +86,12 @@ namespace VoxtureEditor
             _rotation = _rotation * rotation;
         }
 
-        const float voxelSize = 0.1f;
+        public void resetRotation()
+        {
+            _rotation = Matrix.Identity;
+        }
+
+        public const float voxelSize = 0.1f;
 
         #region VertsAndInds
         VertexPositionColorNormal[] vertices;
@@ -79,8 +119,8 @@ namespace VoxtureEditor
         //MNEH.  sides we probably want to be able to see the specular in the editor.
         public const int numInds = Sizes.VoxelsPerEdge * Sizes.VoxelsPerEdge * Sizes.VoxelsPerEdge * 36;  //6 per face
 
-        public VertexPositionColor[] wireframeVertices;
-        public short[] wireframeIndices;
+        private VertexPositionColor[] wireframeVertices;
+        private short[] wireframeIndices;
         //TODO: these should really not be public
 
         public DynamicVertexBuffer wireframeVertexBuffer
@@ -102,6 +142,8 @@ namespace VoxtureEditor
 
         public const int numWfVerts = Sizes.VoxelsPerEdge * Sizes.VoxelsPerEdge * Sizes.VoxelsPerEdge * 8; //no duplication needed here! just one per vertex
         public const int numWfInds = Sizes.VoxelsPerEdge * Sizes.VoxelsPerEdge * Sizes.VoxelsPerEdge * 24; //2 per edge
+
+        private OutpostLibrary.IntVector3 lastSelected;
 
         public void makeVertices(float spread, OutpostLibrary.IntVector3 selected)
         {
@@ -139,6 +181,8 @@ namespace VoxtureEditor
 
             vBuff.SetData<VertexPositionColorNormal>(vertices);
             wfVBuff.SetData<VertexPositionColor>(wireframeVertices);
+
+            lastSelected = selected;
         }
 
         public void makeVertices(float spread, bool isSelected)
@@ -191,6 +235,99 @@ namespace VoxtureEditor
 
             vBuff.SetData<VertexPositionColorNormal>(vertices);
             wfVBuff.SetData<VertexPositionColor>(wireframeVertices);
+
+            lastSelected = null;
+        }
+
+
+        public void makeSelection(OutpostLibrary.IntVector3 selected)
+        {
+            if (selected == lastSelected)
+                return;  //it's still selected
+
+            int voxPerEdge = OutpostLibrary.Navigation.Sizes.VoxelsPerEdge;
+
+            if ((lastSelected.X >= 0 && lastSelected.X < voxPerEdge) &&
+                (lastSelected.Y >= 0 && lastSelected.Y < voxPerEdge) &&
+                (lastSelected.Z >= 0 && lastSelected.Z < voxPerEdge))
+            {
+                int offset = lastSelected.X * voxPerEdge * voxPerEdge +
+                             lastSelected.Y * voxPerEdge +
+                             lastSelected.Z;
+                offset = offset * 8; //a bit "magic number"-y, but it's the number of vertices per voxel.
+                for (int i = 0; i < 8; i++)
+                {
+                    wireframeVertices[i + offset].Color = Color.Black;
+                }
+            }
+
+            if ((selected.X >= 0 && selected.X < voxPerEdge) &&
+                (selected.Y >= 0 && selected.Y < voxPerEdge) &&
+                (selected.Z >= 0 && selected.Z < voxPerEdge))
+            {
+                int offset = selected.X * voxPerEdge * voxPerEdge +
+                             selected.Y * voxPerEdge +
+                             selected.Z;
+                offset = offset * 8; //a bit "magic number"-y, but it's the number of vertices per voxel.
+                for (int i = 0; i < 8; i++)
+                {
+                    wireframeVertices[i + offset].Color = Color.Red;
+                }
+            }
+
+            lastSelected = selected;
+
+            wfVBuff.SetData<VertexPositionColor>(wireframeVertices);
+            //actually, is that even necessary?
+            //ah well
+            //it doesn't hurt
+
+            //I mean... except for optimization
+            //but I don't think it makes a big difference there
+        }
+
+        public void makeSelection(bool isSelected)
+        {
+            if(isSelected)
+            {
+                for(int i=0; i<8; i++)
+                {
+                    wireframeVertices[i].Color = Color.Red;
+                }
+            }
+            else
+            {
+                for(int i=0; i<8; i++)
+                {
+                    wireframeVertices[i].Color = Color.Black;
+                }
+            }
+
+            wfVBuff.SetData<VertexPositionColor>(wireframeVertices);
+
+            lastSelected = null;
+        }
+
+        /// <summary>
+        /// Recolors the vertices to match the voxture's color
+        /// expects valid input
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public void recolorVoxel(int x, int y, int z)
+        {
+            int voxPerEdge = Sizes.VoxelsPerEdge;
+            Color intendedColor = vox[x, y, z].color;
+
+            int offset = x * voxPerEdge * voxPerEdge + y * voxPerEdge + z;
+            offset = offset * 24; //a bit "magic number"-y, but it's the number of vertices per voxel.
+            for (int i = 0; i < 24; i++)
+            {
+                vertices[i + offset].Color = intendedColor;
+            }
+
+            vBuff.SetData<VertexPositionColorNormal>(vertices);
         }
 
         //public DynamicVertexBuffer getVertexBuffer

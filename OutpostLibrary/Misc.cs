@@ -325,7 +325,19 @@ namespace OutpostLibrary
             arr[index.x, index.y] = item;
         }
         #endregion
+
+        #region colorConversions
+
+        public static System.Drawing.Color toSystemColor(this Microsoft.Xna.Framework.Color convertFrom)
+        {
+            return System.Drawing.Color.FromArgb(convertFrom.A, convertFrom.R, convertFrom.G, convertFrom.B);
+        }
+
+        public static Microsoft.Xna.Framework.Color toXnaColor(this System.Drawing.Color convertFrom)
+        {
+            return new Microsoft.Xna.Framework.Color(convertFrom.R, convertFrom.G, convertFrom.B, convertFrom.A);
+        }
+
+        #endregion colorConversions
     }
-
-
 }

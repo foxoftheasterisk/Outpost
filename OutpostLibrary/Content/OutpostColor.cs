@@ -24,5 +24,10 @@ namespace OutpostLibrary.Content
         {
             c = new Color(r, g, b, a);
         }
+
+        public OutpostColor(Color _c)
+        {
+            c = _c;
+        }
     }
 }
