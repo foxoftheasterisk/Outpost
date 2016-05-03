@@ -81,6 +81,9 @@ namespace VoxtureEditor
                 keys = new KeyboardState();//probably a very bad idea
             }
 
+            //Hotkeys include:
+            //C: create Color
+            #region hotkeys
             if(keys.IsKeyDown(Keys.C) && !wasInForm)
             {
                 cd.Color = colors[currentColor].Item2.color.toSystemColor();
@@ -123,7 +126,9 @@ namespace VoxtureEditor
                     colors.Add(new Tuple<string, OutpostColor>(colorname, new OutpostColor(createdColor)));
                 }
             }
+            #endregion hotkeys
 
+            #region rotation
             //rotation stuff
             if (currentVoxture - 1 >= 0)
             {
@@ -159,18 +164,26 @@ namespace VoxtureEditor
                 m2Down = false;
             }
 
+            #endregion rotation
+
             //selection stuff
+            //also includes on-click actions
+            #region selections
             //leaving it here instead of in the non-rotate section, cause i don't want the selection persisting like it did
             //there's an alternate solution but it's more complexicated.
             int leftSelectCutoff = graphics.Viewport.Width / 4;
             int rightSelectCutoff = graphics.Viewport.Width - (graphics.Viewport.Width / 4);
 
+            bool somethingSelected = false;
+
+            //check for left voxture selection
             if (mouse.X < leftSelectCutoff)
             {
                 //select left
                 if(currentVoxture - 1 >= 0)
                 {
                     voxes[currentVoxture - 1].makeSelection(true);
+                    somethingSelected = true;
                 }
                 if (mouse.LeftButton == ButtonState.Pressed && !m1Down)
                 {
@@ -190,12 +203,14 @@ namespace VoxtureEditor
                 }
             }
 
+            //check for right voxture selection
             if (mouse.X > rightSelectCutoff)
             {
                 //select right
                 if (currentVoxture + 1 < voxes.Count)
                 {
                     voxes[currentVoxture + 1].makeSelection(true);
+                    somethingSelected = true;
                 }
 
                 //!m1down so that it doesn't just breeze through the whole stack of voxtures
@@ -217,7 +232,33 @@ namespace VoxtureEditor
                 }
             }
 
-            if (mouse.X >= leftSelectCutoff && lastMousePos.X <= rightSelectCutoff)
+            //check for voxture name selection
+            if(!somethingSelected)
+            {
+                int midX = graphics.Viewport.Width / 2;
+                int baseY = graphics.Viewport.Height - nameDistFromScreenBottom;
+                int distX = (int)voxes[currentVoxture].nameSize.X / 2;
+                if (mouse.X > midX - distX && mouse.X < midX + distX &&
+                   mouse.Y > baseY - voxes[currentVoxture].nameSize.Y && mouse.Y < baseY)
+                {
+                    nameSelected = true;
+                    somethingSelected = true;
+
+                    //insert text editing code here
+                    //or is it?
+                }
+                else
+                {
+                    nameSelected = false;
+                }
+
+            }
+            else
+            {
+                nameSelected = false;
+            }
+
+            if (!somethingSelected)
             {
                 //check for selection in the editing one
 
@@ -392,8 +433,10 @@ namespace VoxtureEditor
                 }
             }
 
+            #endregion selections
 
-            if(mouse.LeftButton == ButtonState.Pressed)
+
+            if (mouse.LeftButton == ButtonState.Pressed)
             {
                 m1Down = true;
             }
@@ -434,6 +477,8 @@ namespace VoxtureEditor
         DynamicVertexBuffer sVBuff;
 
         private SpriteFont font;
+
+        const int nameDistFromScreenBottom = 10;
 
         void initializeGraphics()
         {
@@ -586,8 +631,11 @@ namespace VoxtureEditor
 
                 //now, display the name
                 int target = graphics.Viewport.Width / 2;
-                Vector2 drawPos = new Vector2(target - (drawee.nameSize.X / 2), graphics.Viewport.Height - 30);
-                drawer.DrawString(font, drawee.name, drawPos, Color.AntiqueWhite);
+                Vector2 drawPos = new Vector2(target - (drawee.nameSize.X / 2), graphics.Viewport.Height - (nameDistFromScreenBottom + drawee.nameSize.Y));
+                if(nameSelected)
+                    drawer.DrawString(font, drawee.name, drawPos, Color.Red);
+                else
+                    drawer.DrawString(font, drawee.name, drawPos, Color.Black);
             }
 
             if(currentVoxture + 1 < voxes.Count)
