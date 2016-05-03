@@ -60,12 +60,7 @@ namespace Outpost
 
         private void LoadContentInNewThread()
         {
-            //okay so i'm not entirely sure why this is new thread
-            //i mean what is going on in the main thread at this point?
-            //but w/e
-
-            //ohhhh it's so we can have a loading screen
-            //okay cool
+            //new thread to enable loading screen
 
             MainGame.mainGame.lua.initializeLua();
 

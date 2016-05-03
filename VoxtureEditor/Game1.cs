@@ -13,6 +13,7 @@ namespace VoxtureEditor
         SpriteBatch spriteBatch;
 
         VoxtureEditor mainThing;
+        SpriteFont fontThing;
 
         public Game1()
             : base()
@@ -31,7 +32,9 @@ namespace VoxtureEditor
         {
             // TODO: Add your initialization logic here
 
-            mainThing = new VoxtureEditor(GraphicsDevice);
+            fontThing = Content.Load<SpriteFont>("someFont");
+
+            mainThing = new VoxtureEditor(GraphicsDevice, fontThing);
             IsMouseVisible = true;
 
             base.Initialize();
@@ -45,6 +48,8 @@ namespace VoxtureEditor
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            
 
             // TODO: use this.Content to load your game content here
         }

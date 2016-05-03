@@ -25,8 +25,9 @@ namespace VoxtureEditor
 
         const float spread = 0.2f;
 
-        public VoxtureEditor(GraphicsDevice g)
+        public VoxtureEditor(GraphicsDevice g, SpriteFont f)
         {
+            font = f;
             graphics = g;
             filename = null;
 
@@ -35,7 +36,7 @@ namespace VoxtureEditor
             colors.Add(new Tuple<string, OutpostColor>("clr", new OutpostColor(0, 0, 0, 0)));
             
             currentColor = 0;
-            voxes.Add(new EditingVoxture("NewVox1", colors[0].Item2, graphics));
+            voxes.Add(new EditingVoxture("NewVox1", colors[0].Item2, graphics, font));
             currentVoxture = 0;
             
 
@@ -49,7 +50,7 @@ namespace VoxtureEditor
             //TODO: TEMP
             voxes[0].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
             colors.Add(new Tuple<string, OutpostColor>("tmp", new OutpostColor(1, 24, 128, 255)));
-            voxes.Add(new EditingVoxture("TEMP", colors[1].Item2, graphics));
+            voxes.Add(new EditingVoxture("TEMP", colors[1].Item2, graphics, font));
             voxes[1].makeVertices(0.0f, false);
         }
 
@@ -61,6 +62,10 @@ namespace VoxtureEditor
         System.Windows.Forms.DialogResult dr;
         bool wasInForm = false;
         bool unhandledForm = false;
+
+        bool nameSelected = false;
+        int nameSelectFlashTimer = 0;
+        const int nameSelectFlashTime = 4;
 
         public bool Update(bool useInput)
         {
@@ -428,6 +433,8 @@ namespace VoxtureEditor
         VertexPositionColor[] selectionVertices;
         DynamicVertexBuffer sVBuff;
 
+        private SpriteFont font;
+
         void initializeGraphics()
         {
             world = Matrix.Identity;
@@ -534,6 +541,8 @@ namespace VoxtureEditor
             }
 
             { //the current one must exist, so no if here
+                
+                //draws voxels
                 EditingVoxture drawee = voxes[currentVoxture];
                 drawingEngine.World = drawee.rotation;
 
@@ -548,8 +557,9 @@ namespace VoxtureEditor
                 }
 
 
-
+                //then draws outlines
                 //this makes it draw over the cubes when they're in the same place
+                //theoretically
                 RasterizerState standard = graphics.RasterizerState;
                 RasterizerState depthBiased = new RasterizerState();
                 depthBiased.DepthBias = 1;
@@ -569,6 +579,15 @@ namespace VoxtureEditor
 
                 //graphics.RasterizerState = standard;
                 drawingEngine.LightingEnabled = true;
+                
+                //Reboot SpriteBatch because transitioning from 3D to 2D
+                drawer.End();
+                drawer.Begin();
+
+                //now, display the name
+                int target = graphics.Viewport.Width / 2;
+                Vector2 drawPos = new Vector2(target - (drawee.nameSize.X / 2), graphics.Viewport.Height - 30);
+                drawer.DrawString(font, drawee.name, drawPos, Color.AntiqueWhite);
             }
 
             if(currentVoxture + 1 < voxes.Count)
