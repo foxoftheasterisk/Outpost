@@ -43,9 +43,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="EditingVoxture.cs" />
+    <Compile Include="EventInput.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextInputHandler.cs" />
     <Compile Include="VoxtureEditor.cs" />
   </ItemGroup>
   <ItemGroup>

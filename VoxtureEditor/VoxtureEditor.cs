@@ -64,8 +64,9 @@ namespace VoxtureEditor
         bool unhandledForm = false;
 
         bool nameSelected = false;
-        int nameSelectFlashTimer = 0;
-        const int nameSelectFlashTime = 4;
+        bool nameEditing = false;
+        int nameEditFlashTimer = 0;
+        const int nameEditFlashTime = 10;
 
         public bool Update(bool useInput)
         {
@@ -80,6 +81,8 @@ namespace VoxtureEditor
             {
                 keys = new KeyboardState();//probably a very bad idea
             }
+
+            
 
             //Hotkeys include:
             //C: create Color
@@ -184,15 +187,17 @@ namespace VoxtureEditor
                 {
                     voxes[currentVoxture - 1].makeSelection(true);
                     somethingSelected = true;
+
+                    if (mouse.LeftButton == ButtonState.Pressed && !m1Down)
+                    {
+                        voxes[currentVoxture].makeVertices(0, false);
+                        voxes[currentVoxture].resetRotation();
+                        currentVoxture--;
+                        voxes[currentVoxture].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
+                        voxes[currentVoxture].resetRotation();
+                    }
                 }
-                if (mouse.LeftButton == ButtonState.Pressed && !m1Down)
-                {
-                    voxes[currentVoxture].makeVertices(0, false);
-                    voxes[currentVoxture].resetRotation();
-                    currentVoxture--;
-                    voxes[currentVoxture].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
-                    voxes[currentVoxture].resetRotation();
-                }
+                
             }
             else if (lastMousePos.X < leftSelectCutoff)
             {
@@ -211,17 +216,18 @@ namespace VoxtureEditor
                 {
                     voxes[currentVoxture + 1].makeSelection(true);
                     somethingSelected = true;
-                }
 
-                //!m1down so that it doesn't just breeze through the whole stack of voxtures
-                if(mouse.LeftButton == ButtonState.Pressed && !m1Down)
-                {
-                    voxes[currentVoxture].makeVertices(0, false);
-                    voxes[currentVoxture].resetRotation();
-                    currentVoxture++;
-                    voxes[currentVoxture].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
-                    voxes[currentVoxture].resetRotation();
+                    //!m1down so that it doesn't just breeze through the whole stack of voxtures
+                    if (mouse.LeftButton == ButtonState.Pressed && !m1Down)
+                    {
+                        voxes[currentVoxture].makeVertices(0, false);
+                        voxes[currentVoxture].resetRotation();
+                        currentVoxture++;
+                        voxes[currentVoxture].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
+                        voxes[currentVoxture].resetRotation();
+                    }
                 }
+                
             }
             else if (lastMousePos.X > rightSelectCutoff)
             {
@@ -244,12 +250,18 @@ namespace VoxtureEditor
                     nameSelected = true;
                     somethingSelected = true;
 
-                    //insert text editing code here
-                    //or is it?
+                    if(mouse.LeftButton == ButtonState.Pressed && !m1Down)
+                    {
+                        nameEditing = true;
+                    }
                 }
                 else
                 {
                     nameSelected = false;
+                    if (mouse.LeftButton == ButtonState.Pressed && !m1Down)
+                    {
+                        nameEditing = false;
+                    }
                 }
 
             }
@@ -632,10 +644,20 @@ namespace VoxtureEditor
                 //now, display the name
                 int target = graphics.Viewport.Width / 2;
                 Vector2 drawPos = new Vector2(target - (drawee.nameSize.X / 2), graphics.Viewport.Height - (nameDistFromScreenBottom + drawee.nameSize.Y));
+                string drawString = drawee.name;
+                if (nameEditing)
+                {
+                    nameEditFlashTimer++;
+                    if (nameEditFlashTimer > 2 * nameEditFlashTime)
+                        nameEditFlashTimer = 0;
+                    if (nameEditFlashTimer < nameEditFlashTime)
+                        drawString = drawString + "|";
+                }
+
                 if(nameSelected)
-                    drawer.DrawString(font, drawee.name, drawPos, Color.Red);
+                    drawer.DrawString(font, drawString, drawPos, Color.Red);
                 else
-                    drawer.DrawString(font, drawee.name, drawPos, Color.Black);
+                    drawer.DrawString(font, drawString, drawPos, Color.Black);
             }
 
             if(currentVoxture + 1 < voxes.Count)
