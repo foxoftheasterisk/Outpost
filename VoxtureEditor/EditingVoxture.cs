@@ -15,28 +15,7 @@ namespace VoxtureEditor
     class EditingVoxture
     {
 
-        public string name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-                _nameSize = font.MeasureString(_name);
-            }
-        }
-        private string _name;
-        private SpriteFont font; //really shifting this to a statically available place would probably be good...
-        private Vector2 _nameSize;
-        public Vector2 nameSize
-        {
-            get
-            {
-                return _nameSize;
-            }
-        }
+        public StringBuilder name;
 
         Voxture vox;
 
@@ -77,10 +56,9 @@ namespace VoxtureEditor
             }
         }
 
-        public EditingVoxture(string _name, OutpostColor baseColor, GraphicsDevice graphics, SpriteFont f)
+        public EditingVoxture(string _name, OutpostColor baseColor, GraphicsDevice graphics)
         {
-            font = f;
-            name = _name;
+            name = new StringBuilder(_name);
             vox = new Voxture(baseColor);
 
             vBuff = new DynamicVertexBuffer(graphics, typeof(VertexPositionColorNormal), numVerts, BufferUsage.WriteOnly);

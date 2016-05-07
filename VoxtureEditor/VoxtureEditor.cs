@@ -25,7 +25,7 @@ namespace VoxtureEditor
 
         const float spread = 0.2f;
 
-        public VoxtureEditor(GraphicsDevice g, SpriteFont f)
+        public VoxtureEditor(GraphicsDevice g, SpriteFont f, GameWindow w)
         {
             font = f;
             graphics = g;
@@ -36,12 +36,14 @@ namespace VoxtureEditor
             colors.Add(new Tuple<string, OutpostColor>("clr", new OutpostColor(0, 0, 0, 0)));
             
             currentColor = 0;
-            voxes.Add(new EditingVoxture("NewVox1", colors[0].Item2, graphics, font));
+            voxes.Add(new EditingVoxture("NewVox1", colors[0].Item2, graphics));
             currentVoxture = 0;
             
 
 
             initializeGraphics();
+
+            nameEditor = new TextInputHandler(w);
 
             //TODO: maybe temp?
             cd = new System.Windows.Forms.ColorDialog();
@@ -50,7 +52,7 @@ namespace VoxtureEditor
             //TODO: TEMP
             voxes[0].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
             colors.Add(new Tuple<string, OutpostColor>("tmp", new OutpostColor(1, 24, 128, 255)));
-            voxes.Add(new EditingVoxture("TEMP", colors[1].Item2, graphics, font));
+            voxes.Add(new EditingVoxture("TEMP", colors[1].Item2, graphics));
             voxes[1].makeVertices(0.0f, false);
         }
 
@@ -67,6 +69,7 @@ namespace VoxtureEditor
         bool nameEditing = false;
         int nameEditFlashTimer = 0;
         const int nameEditFlashTime = 10;
+        TextInputHandler nameEditor;
 
         public bool Update(bool useInput)
         {
@@ -82,7 +85,19 @@ namespace VoxtureEditor
                 keys = new KeyboardState();//probably a very bad idea
             }
 
-            
+            if (nameEditing)
+            {
+                if (keys.IsKeyDown(Keys.Enter))
+                {
+                    nameEditor.stopEditing();
+                    nameEditing = false;
+
+                    //TODO: logging of current mouse state
+                }
+                else
+                    return false;
+            }
+                
 
             //Hotkeys include:
             //C: create Color
@@ -124,7 +139,7 @@ namespace VoxtureEditor
                     //dafuq there isn't a basic text input dialog box???
                     //i guess just make up names for now...
 
-                    string colorname = voxes[currentVoxture].name.Substring(0, 3) + colors.Count;
+                    string colorname = voxes[currentVoxture].name.ToString().Substring(0, 3) + colors.Count;
                     currentColor = colors.Count;
                     colors.Add(new Tuple<string, OutpostColor>(colorname, new OutpostColor(createdColor)));
                 }
@@ -241,11 +256,12 @@ namespace VoxtureEditor
             //check for voxture name selection
             if(!somethingSelected)
             {
+                Vector2 nameSize = font.MeasureString(voxes[currentVoxture].name.ToString());
                 int midX = graphics.Viewport.Width / 2;
                 int baseY = graphics.Viewport.Height - nameDistFromScreenBottom;
-                int distX = (int)voxes[currentVoxture].nameSize.X / 2;
+                float distX = nameSize.X / 2;
                 if (mouse.X > midX - distX && mouse.X < midX + distX &&
-                   mouse.Y > baseY - voxes[currentVoxture].nameSize.Y && mouse.Y < baseY)
+                   mouse.Y > baseY - nameSize.Y && mouse.Y < baseY)
                 {
                     nameSelected = true;
                     somethingSelected = true;
@@ -253,6 +269,7 @@ namespace VoxtureEditor
                     if(mouse.LeftButton == ButtonState.Pressed && !m1Down)
                     {
                         nameEditing = true;
+                        nameEditor.editString(voxes[currentVoxture].name);
                     }
                 }
                 else
@@ -643,21 +660,23 @@ namespace VoxtureEditor
 
                 //now, display the name
                 int target = graphics.Viewport.Width / 2;
-                Vector2 drawPos = new Vector2(target - (drawee.nameSize.X / 2), graphics.Viewport.Height - (nameDistFromScreenBottom + drawee.nameSize.Y));
-                string drawString = drawee.name;
+                string name = drawee.name.ToString();
+                Vector2 nameSize = font.MeasureString(name);
+                Vector2 drawPos = new Vector2(target - (nameSize.X / 2), graphics.Viewport.Height - (nameDistFromScreenBottom + nameSize.Y));
+                
                 if (nameEditing)
                 {
                     nameEditFlashTimer++;
                     if (nameEditFlashTimer > 2 * nameEditFlashTime)
                         nameEditFlashTimer = 0;
                     if (nameEditFlashTimer < nameEditFlashTime)
-                        drawString = drawString + "|";
+                        name = name + "|";
                 }
 
                 if(nameSelected)
-                    drawer.DrawString(font, drawString, drawPos, Color.Red);
+                    drawer.DrawString(font, name, drawPos, Color.Red);
                 else
-                    drawer.DrawString(font, drawString, drawPos, Color.Black);
+                    drawer.DrawString(font, name, drawPos, Color.Black);
             }
 
             if(currentVoxture + 1 < voxes.Count)

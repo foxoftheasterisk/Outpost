@@ -151,7 +151,7 @@ namespace EventInput
         static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        static extern int SetWindowLongPtr(IntPtr hWnd, int nIndex, int dwNewLong);
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace EventInput
                 throw new InvalidOperationException("TextInput.Initialize can only be called once!");
 
             hookProcDelegate = new WndProc(HookProc);
-            prevWndProc = (IntPtr)SetWindowLongPtr(window.Handle, GWL_WNDPROC,
+            prevWndProc = (IntPtr)SetWindowLong(window.Handle, GWL_WNDPROC,
                 (int)Marshal.GetFunctionPointerForDelegate(hookProcDelegate));
 
             hIMC = ImmGetContext(window.Handle);
@@ -174,6 +174,8 @@ namespace EventInput
         static IntPtr HookProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
         {
             IntPtr returnCode = CallWindowProc(prevWndProc, hWnd, msg, wParam, lParam);
+
+            
 
             switch (msg)
             {

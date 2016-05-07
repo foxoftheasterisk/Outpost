@@ -34,7 +34,7 @@ namespace VoxtureEditor
 
             fontThing = Content.Load<SpriteFont>("someFont");
 
-            mainThing = new VoxtureEditor(GraphicsDevice, fontThing);
+            mainThing = new VoxtureEditor(GraphicsDevice, fontThing, Window);
             IsMouseVisible = true;
 
             base.Initialize();
