@@ -10,7 +10,7 @@ namespace OutpostLibrary.Content
     //eventually I'll add custom specular and make this more than a pointless wrapper
     public class OutpostColor
     {
-        private Color c;
+        public Color c;
 
         public Color color
         {
@@ -29,5 +29,7 @@ namespace OutpostLibrary.Content
         {
             c = _c;
         }
+
+        
     }
 }

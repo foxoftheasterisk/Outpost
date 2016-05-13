@@ -36,10 +36,10 @@ namespace VoxtureEditor
             colors.Add(new Tuple<string, OutpostColor>("clr", new OutpostColor(0, 0, 0, 0)));
             
             currentColor = 0;
-            voxes.Add(new EditingVoxture("NewVox1", colors[0].Item2, graphics));
+            voxes.Add(new EditingVoxture("NewVox0", colors[0].Item2, graphics));
             currentVoxture = 0;
+            voxes[0].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
             
-
 
             initializeGraphics();
 
@@ -48,12 +48,6 @@ namespace VoxtureEditor
             //TODO: maybe temp?
             cd = new System.Windows.Forms.ColorDialog();
             cd.AllowFullOpen = true;
-
-            //TODO: TEMP
-            voxes[0].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
-            colors.Add(new Tuple<string, OutpostColor>("tmp", new OutpostColor(1, 24, 128, 255)));
-            voxes.Add(new EditingVoxture("TEMP", colors[1].Item2, graphics));
-            voxes[1].makeVertices(0.0f, false);
         }
 
         MouseState lastMouse;
@@ -119,6 +113,13 @@ namespace VoxtureEditor
 
             //Hotkeys include:
             //C: create Color
+            //E: Eyedropper (actually in selections)
+            //F: Fork color (that is, create new color registry that is the same color)
+            //+-: adjust alpha
+            //O: make completely Opaque
+            //Note, +, -, and O adjust the current color, *in all places it appears*
+            //However, the voxture does not update until switching to a different texture
+            //N: create New voxture
             #region hotkeys
             if(keys.IsKeyDown(Keys.C) && !wasInForm)
             {
@@ -161,6 +162,42 @@ namespace VoxtureEditor
                     currentColor = colors.Count;
                     colors.Add(new Tuple<string, OutpostColor>(colorname, new OutpostColor(createdColor)));
                 }
+            }
+
+            if(keys.IsKeyDown(Keys.F) && lastKeys.IsKeyUp(Keys.F))
+            {
+                OutpostColor col = new OutpostColor(colors[currentColor].Item2.color);
+                string colorname = voxes[currentVoxture].name.ToString().Substring(0, 3) + colors.Count;
+                currentColor = colors.Count;
+                colors.Add(new Tuple<string, OutpostColor>(colorname, col));
+            }
+
+            if (keys.IsKeyDown(Keys.O))
+            {
+                colors[currentColor].Item2.c.A = 255;
+            }
+
+            if (keys.IsKeyDown(Keys.OemPlus))
+            {
+                if (colors[currentColor].Item2.color.A < 255)
+                    colors[currentColor].Item2.c.A += 1;
+            }
+
+            if (keys.IsKeyDown(Keys.OemMinus))
+            {
+                if (colors[currentColor].Item2.color.A > 0)
+                    colors[currentColor].Item2.c.A -= 1;
+            }
+
+            if (keys.IsKeyDown(Keys.N) && lastKeys.IsKeyUp(Keys.N))
+            {
+                voxes[currentVoxture].makeVertices(0, false);
+                currentVoxture = voxes.Count;
+                voxes.Add(new EditingVoxture("NewVox" + currentVoxture, colors[currentColor].Item2, graphics));
+
+                voxes[currentVoxture].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
+                voxes[currentVoxture - 1].makeVertices(0, false);
+                voxes[currentVoxture - 1].resetRotation();
             }
             #endregion hotkeys
 
@@ -471,7 +508,21 @@ namespace VoxtureEditor
 
                 if(mouse.LeftButton == ButtonState.Pressed)
                 {
+                    //This... seems like it shouldn't be safe... but is somehow??
                     voxes[currentVoxture][selected] = colors[currentColor].Item2;
+                }
+
+                if(keys.IsKeyDown(Keys.E))
+                {
+                    OutpostColor col = voxes[currentVoxture][selected];
+                    for (int i = 0; i < colors.Count; i++)
+                    {
+                        if (colors[i].Item2 == col)
+                        {
+                            currentColor = i;
+                            break;
+                        }
+                    }
                 }
             }
 
