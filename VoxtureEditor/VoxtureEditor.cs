@@ -56,9 +56,8 @@ namespace VoxtureEditor
             voxes[1].makeVertices(0.0f, false);
         }
 
-        bool m1Down;
-        bool m2Down;
-        Vector2 lastMousePos;
+        MouseState lastMouse;
+        KeyboardState lastKeys;
 
         System.Windows.Forms.ColorDialog cd;
         System.Windows.Forms.DialogResult dr;
@@ -84,20 +83,39 @@ namespace VoxtureEditor
             {
                 keys = new KeyboardState();//probably a very bad idea
             }
+            MouseState mouse = Mouse.GetState();
 
+            #region textEditing
             if (nameEditing)
             {
+                #if OpenGL
+                if (keys.IsKeyDown(Keys.Back) && lastKeys.IsKeyUp(Keys.Back))
+                {
+                    nameEditor.specialCharacter(TextInputHandler.SpecialCharacters.Backspace);
+                }
+                #endif
+
+                //TODO: end name editing by clicking elsewhere
                 if (keys.IsKeyDown(Keys.Enter))
                 {
                     nameEditor.stopEditing();
                     nameEditing = false;
-
-                    //TODO: logging of current mouse state
                 }
                 else
+                {
+                    //while name editing disable other input
+                    //this is... not the best idea.
+                    
+                    //probably will handle this when I import to the main project
+                    //or when I convert it to more robust input
+                    //whichever happens later
+                    lastMouse = mouse;
+                    lastKeys = keys;
                     return false;
+                }
             }
-                
+            #endregion
+
 
             //Hotkeys include:
             //C: create Color
@@ -161,11 +179,12 @@ namespace VoxtureEditor
             if (!useInput)
                 return false;
 
-            MouseState mouse = Mouse.GetState();
-            Vector2 mousePos = new Vector2(mouse.X, mouse.Y);
+
+            Vector2 mousePos = mouse.Position.ToVector2();
+            Vector2 lastMousePos = lastMouse.Position.ToVector2();
             if(mouse.RightButton == ButtonState.Pressed)
             {
-                if(m2Down)
+                if(lastMouse.RightButton == ButtonState.Pressed)
                 {
                     Vector2 diff = mousePos - lastMousePos;
 
@@ -174,12 +193,6 @@ namespace VoxtureEditor
 
                     voxes[currentVoxture].rotate(rot);
                 }
-
-                m2Down = true;
-            }
-            else
-            {
-                m2Down = false;
             }
 
             #endregion rotation
@@ -203,7 +216,7 @@ namespace VoxtureEditor
                     voxes[currentVoxture - 1].makeSelection(true);
                     somethingSelected = true;
 
-                    if (mouse.LeftButton == ButtonState.Pressed && !m1Down)
+                    if (mouse.LeftButton == ButtonState.Pressed && !(lastMouse.LeftButton == ButtonState.Pressed))
                     {
                         voxes[currentVoxture].makeVertices(0, false);
                         voxes[currentVoxture].resetRotation();
@@ -214,7 +227,7 @@ namespace VoxtureEditor
                 }
                 
             }
-            else if (lastMousePos.X < leftSelectCutoff)
+            else if (lastMouse.X < leftSelectCutoff)
             {
                 //deselect left
                 if (currentVoxture - 1 >= 0)
@@ -233,7 +246,7 @@ namespace VoxtureEditor
                     somethingSelected = true;
 
                     //!m1down so that it doesn't just breeze through the whole stack of voxtures
-                    if (mouse.LeftButton == ButtonState.Pressed && !m1Down)
+                    if (mouse.LeftButton == ButtonState.Pressed && !(lastMouse.LeftButton == ButtonState.Pressed))
                     {
                         voxes[currentVoxture].makeVertices(0, false);
                         voxes[currentVoxture].resetRotation();
@@ -244,7 +257,7 @@ namespace VoxtureEditor
                 }
                 
             }
-            else if (lastMousePos.X > rightSelectCutoff)
+            else if (lastMouse.X > rightSelectCutoff)
             {
                 //deselect right
                 if (currentVoxture + 1 < voxes.Count)
@@ -266,7 +279,7 @@ namespace VoxtureEditor
                     nameSelected = true;
                     somethingSelected = true;
 
-                    if(mouse.LeftButton == ButtonState.Pressed && !m1Down)
+                    if (mouse.LeftButton == ButtonState.Pressed && !(lastMouse.LeftButton == ButtonState.Pressed))
                     {
                         nameEditing = true;
                         nameEditor.editString(voxes[currentVoxture].name);
@@ -275,7 +288,7 @@ namespace VoxtureEditor
                 else
                 {
                     nameSelected = false;
-                    if (mouse.LeftButton == ButtonState.Pressed && !m1Down)
+                    if (mouse.LeftButton == ButtonState.Pressed && !(lastMouse.LeftButton == ButtonState.Pressed))
                     {
                         nameEditing = false;
                     }
@@ -464,16 +477,8 @@ namespace VoxtureEditor
 
             #endregion selections
 
-
-            if (mouse.LeftButton == ButtonState.Pressed)
-            {
-                m1Down = true;
-            }
-            else
-            {
-                m1Down = false;
-            }
-            lastMousePos = mousePos;
+            lastMouse = mouse;
+            lastKeys = keys;
 
 
             return false;
