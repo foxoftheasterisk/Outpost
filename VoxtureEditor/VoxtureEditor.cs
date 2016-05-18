@@ -18,7 +18,7 @@ namespace VoxtureEditor
 
         List<EditingVoxture> voxes;
         
-        List<Tuple<string, OutpostColor>> colors;
+        List<EditingColor> colors;
 
         int currentVoxture;
         int currentColor;
@@ -32,11 +32,11 @@ namespace VoxtureEditor
             filename = null;
 
             voxes = new List<EditingVoxture>();
-            colors = new List<Tuple<string, OutpostColor>>();
-            colors.Add(new Tuple<string, OutpostColor>("clr", new OutpostColor(0, 0, 0, 0)));
+            colors = new List<EditingColor>();
+            colors.Add(new EditingColor("clr", 0, 0, 0, 0));
             
             currentColor = 0;
-            voxes.Add(new EditingVoxture("NewVox0", colors[0].Item2, graphics));
+            voxes.Add(new EditingVoxture("NewVox0", colors[0], graphics));
             currentVoxture = 0;
             voxes[0].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
             
@@ -123,7 +123,7 @@ namespace VoxtureEditor
             #region hotkeys
             if(keys.IsKeyDown(Keys.C) && !wasInForm)
             {
-                cd.Color = colors[currentColor].Item2.color.toSystemColor();
+                cd.Color = colors[currentColor].color.toSystemColor();
                 wasInForm = true;
                 unhandledForm = true;
 
@@ -145,7 +145,7 @@ namespace VoxtureEditor
                 for (int i = 0; i < colors.Count; i++)
                 {
 
-                    Color comp = colors[i].Item2.color;
+                    Color comp = colors[i].color;
                     if (comp == createdColor)
                     {
                         colorAlreadyExists = true;
@@ -160,40 +160,41 @@ namespace VoxtureEditor
 
                     string colorname = voxes[currentVoxture].name.ToString().Substring(0, 3) + colors.Count;
                     currentColor = colors.Count;
-                    colors.Add(new Tuple<string, OutpostColor>(colorname, new OutpostColor(createdColor)));
+                    colors.Add(new EditingColor(colorname, createdColor));
                 }
             }
 
             if(keys.IsKeyDown(Keys.F) && lastKeys.IsKeyUp(Keys.F))
             {
-                OutpostColor col = new OutpostColor(colors[currentColor].Item2.color);
+                //geez this is a bit confusing innit
                 string colorname = voxes[currentVoxture].name.ToString().Substring(0, 3) + colors.Count;
+                Color col = colors[currentColor].color;
                 currentColor = colors.Count;
-                colors.Add(new Tuple<string, OutpostColor>(colorname, col));
+                colors.Add(new EditingColor(colorname, col));
             }
 
             if (keys.IsKeyDown(Keys.O))
             {
-                colors[currentColor].Item2.c.A = 255;
+                colors[currentColor].c.A = 255;
             }
 
             if (keys.IsKeyDown(Keys.OemPlus))
             {
-                if (colors[currentColor].Item2.color.A < 255)
-                    colors[currentColor].Item2.c.A += 1;
+                if (colors[currentColor].color.A < 255)
+                    colors[currentColor].c.A += 1;
             }
 
             if (keys.IsKeyDown(Keys.OemMinus))
             {
-                if (colors[currentColor].Item2.color.A > 0)
-                    colors[currentColor].Item2.c.A -= 1;
+                if (colors[currentColor].color.A > 0)
+                    colors[currentColor].c.A -= 1;
             }
 
             if (keys.IsKeyDown(Keys.N) && lastKeys.IsKeyUp(Keys.N))
             {
                 voxes[currentVoxture].makeVertices(0, false);
                 currentVoxture = voxes.Count;
-                voxes.Add(new EditingVoxture("NewVox" + currentVoxture, colors[currentColor].Item2, graphics));
+                voxes.Add(new EditingVoxture("NewVox" + currentVoxture, colors[currentColor], graphics));
 
                 voxes[currentVoxture].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
                 voxes[currentVoxture - 1].makeVertices(0, false);
@@ -508,16 +509,19 @@ namespace VoxtureEditor
 
                 if(mouse.LeftButton == ButtonState.Pressed)
                 {
-                    //This... seems like it shouldn't be safe... but is somehow??
-                    voxes[currentVoxture][selected] = colors[currentColor].Item2;
+                    //This... seems like it shouldn't be safe... but it is somehow??
+                    //or, at least, it isn't throwing an error
+                    //TODO: investigate
+                    voxes[currentVoxture][selected] = colors[currentColor];
                 }
 
                 if(keys.IsKeyDown(Keys.E))
                 {
-                    OutpostColor col = voxes[currentVoxture][selected];
+                    //
+                    EditingColor col = voxes[currentVoxture][selected] as EditingColor;
                     for (int i = 0; i < colors.Count; i++)
                     {
-                        if (colors[i].Item2 == col)
+                        if (colors[i] == col)
                         {
                             currentColor = i;
                             break;

@@ -57,6 +57,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="EditingColor.cs" />
     <Compile Include="EditingVoxture.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
