@@ -98,6 +98,7 @@ namespace VoxtureEditor
                 else
                 {
                     //while name editing disable other input
+                    //as well as everything else in update
                     //this is... not the best idea.
                     
                     //probably will handle this when I import to the main project
@@ -113,13 +114,13 @@ namespace VoxtureEditor
 
             //Hotkeys include:
             //C: create Color
-            //E: Eyedropper (actually in selections)
+            //E: Eyedropper (actually in selections) (only works for current voxture)
             //F: Fork color (that is, create new color registry that is the same color)
             //+-: adjust alpha
             //O: make completely Opaque
             //Note, +, -, and O adjust the current color, *in all places it appears*
-            //However, the voxture does not update until switching to a different texture
             //N: create New voxture
+            //R: Reset Rotation of current voxture
             #region hotkeys
             if(keys.IsKeyDown(Keys.C) && !wasInForm)
             {
@@ -176,18 +177,26 @@ namespace VoxtureEditor
             if (keys.IsKeyDown(Keys.O))
             {
                 colors[currentColor].c.A = 255;
+                redrawVertices();
             }
 
             if (keys.IsKeyDown(Keys.OemPlus))
             {
                 if (colors[currentColor].color.A < 255)
                     colors[currentColor].c.A += 1;
+                redrawVertices();
             }
 
             if (keys.IsKeyDown(Keys.OemMinus))
             {
                 if (colors[currentColor].color.A > 0)
                     colors[currentColor].c.A -= 1;
+                redrawVertices();
+            }
+
+            if (keys.IsKeyDown(Keys.R))
+            {
+                voxes[currentVoxture].resetRotation();
             }
 
             if (keys.IsKeyDown(Keys.N) && lastKeys.IsKeyUp(Keys.N))
@@ -517,7 +526,6 @@ namespace VoxtureEditor
 
                 if(keys.IsKeyDown(Keys.E))
                 {
-                    //
                     EditingColor col = voxes[currentVoxture][selected] as EditingColor;
                     for (int i = 0; i < colors.Count; i++)
                     {
@@ -628,6 +636,21 @@ namespace VoxtureEditor
 
             transLeft = Matrix.CreateTranslation(0, 0, -2);
             transRight = Matrix.CreateTranslation(0, 0, 2);
+        }
+
+        void redrawVertices()
+        {
+            //TODO: let this handle selections?
+            //TODO: fancy transition
+            if(currentVoxture - 1 >= 0)
+            {
+                voxes[currentVoxture - 1].makeVertices(0, false);
+            }
+            voxes[currentVoxture].makeVertices(spread, new IntVector3(-1, -1, -1));
+            if(currentVoxture + 1 < voxes.Count)
+            {
+                voxes[currentVoxture + 1].makeVertices(0, false);
+            }
         }
 
         public void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer)
