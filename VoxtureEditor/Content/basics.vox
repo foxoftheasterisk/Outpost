@@ -1,0 +1,83 @@
+>colors:
+dt1:
+136 101 66 255
+dt2:
+145 107 70 255
+dt3:
+159 118 77 255
+clr:
+0 0 0 0
+
+>voxtures:
+dirtv:
+[ 
+dt1 dt2 dt2 dt1 dt3
+dt1 dt3 dt1 dt2 dt2
+dt2 dt3 dt1 dt1 dt3
+dt2 dt1 dt2 dt2 dt1
+dt1 dt1 dt2 dt3 dt3
+]
+[ 
+dt3 dt1 dt2 dt1 dt1
+dt1 dt2 dt3 dt2 dt1
+dt2 dt3 dt2 dt2 dt1
+dt1 dt2 dt3 dt1 dt1
+dt3 dt2 dt1 dt2 dt2
+]
+[ 
+dt2 dt3 dt1 dt2 dt2
+dt1 dt3 dt2 dt3 dt3
+dt2 dt2 dt3 dt2 dt2
+dt2 dt1 dt2 dt2 dt1
+dt3 dt2 dt1 dt3 dt3
+]
+[ 
+dt1 dt1 dt2 dt3 dt2
+dt1 dt3 dt1 dt2 dt2
+dt3 dt1 dt2 dt1 dt1
+dt1 dt3 dt2 dt3 dt3
+dt1 dt2 dt3 dt1 dt1
+]
+[ 
+dt2 dt2 dt3 dt1 dt3
+dt3 dt1 dt2 dt2 dt3
+dt2 dt2 dt3 dt1 dt1
+dt1 dt3 dt1 dt2 dt3
+dt2 dt1 dt3 dt2 dt2
+]
+clear:
+[ 
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+]
+[ 
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+]
+[ 
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+]
+[ 
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+]
+[ 
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+clr clr clr clr clr
+]

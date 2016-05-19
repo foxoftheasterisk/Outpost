@@ -318,6 +318,8 @@ namespace VoxtureEditor
         /// <param name="z"></param>
         public void recolorVoxel(int x, int y, int z)
         {
+            if (vertices == null)
+                return;
             int voxPerEdge = Sizes.VoxelsPerEdge;
             Color intendedColor = vox[x, y, z].color;
 

@@ -9,6 +9,8 @@ using OutpostLibrary.Content;
 using OutpostLibrary;
 using Microsoft.Xna.Framework.Input;
 
+using System.IO;
+
 namespace VoxtureEditor
 {
     class VoxtureEditor : Outpost.Screens.Screen
@@ -40,6 +42,12 @@ namespace VoxtureEditor
             currentVoxture = 0;
             voxes[0].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
             
+            //TODO: make this a thing you can actually choose
+            filename = ".\\Content\\basics.vox";
+
+            loadVoxtures(filename);
+
+            redrawVertices();
 
             initializeGraphics();
 
@@ -121,6 +129,7 @@ namespace VoxtureEditor
             //Note, +, -, and O adjust the current color, *in all places it appears*
             //N: create New voxture
             //R: Reset Rotation of current voxture
+            //S: Save (there is currently no save-as)
             #region hotkeys
             if(keys.IsKeyDown(Keys.C) && !wasInForm)
             {
@@ -209,6 +218,11 @@ namespace VoxtureEditor
                 voxes[currentVoxture - 1].makeVertices(0, false);
                 voxes[currentVoxture - 1].resetRotation();
             }
+
+            if(keys.IsKeyDown(Keys.S) && lastKeys.IsKeyUp(Keys.S))
+            {
+                saveVoxtures();
+            }
             #endregion hotkeys
 
             #region rotation
@@ -265,11 +279,10 @@ namespace VoxtureEditor
 
                     if (mouse.LeftButton == ButtonState.Pressed && !(lastMouse.LeftButton == ButtonState.Pressed))
                     {
-                        voxes[currentVoxture].makeVertices(0, false);
                         voxes[currentVoxture].resetRotation();
                         currentVoxture--;
-                        voxes[currentVoxture].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
                         voxes[currentVoxture].resetRotation();
+                        redrawVertices();
                     }
                 }
                 
@@ -295,11 +308,10 @@ namespace VoxtureEditor
                     //!m1down so that it doesn't just breeze through the whole stack of voxtures
                     if (mouse.LeftButton == ButtonState.Pressed && !(lastMouse.LeftButton == ButtonState.Pressed))
                     {
-                        voxes[currentVoxture].makeVertices(0, false);
                         voxes[currentVoxture].resetRotation();
                         currentVoxture++;
-                        voxes[currentVoxture].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
                         voxes[currentVoxture].resetRotation();
+                        redrawVertices();
                     }
                 }
                 
@@ -518,9 +530,12 @@ namespace VoxtureEditor
 
                 if(mouse.LeftButton == ButtonState.Pressed)
                 {
-                    //This... seems like it shouldn't be safe... but it is somehow??
-                    //or, at least, it isn't throwing an error
-                    //TODO: investigate
+                    //okay now i know why this is safe
+                    //i was thinking it went through the IntVector3 array extension method
+                    //but actually it just calls the set on the method for the IntVector3's coordinates
+                    //which has a bounds check
+
+
                     voxes[currentVoxture][selected] = colors[currentColor];
                 }
 
@@ -551,6 +566,203 @@ namespace VoxtureEditor
         {
             return false;
         }
+
+        #region loadFromFile
+
+        private enum Mode { none, colors, voxtures }
+
+        //copied this not-very-safe method from main project
+        //editing it ofc to suit this architecture
+        //but uhh hopefully it won't cause problems
+
+        //TODO: restore logging, once this is merged with the main project
+        private void loadVoxtures(string filepath)
+        {
+            //Outpost.Screens.LoadingScreen.Display("Loading voxtures from " + filename);
+
+            voxes = new List<EditingVoxture>();
+            colors = new List<EditingColor>();
+
+            //just to make it a bit easier to load by name
+            Dictionary<string, EditingColor> colorsByName = new Dictionary<string, EditingColor>();
+
+            Mode mode = Mode.none;
+            StreamReader input;
+            try
+            {
+                //input = new StreamReader(global["GAME_DIR"] + filename);
+                input = new StreamReader(filepath);
+            }
+            catch (FileNotFoundException e)
+            {
+                //MainGame.mainGame.Log("File " + filename + " does not exist!");
+                return;
+            }
+
+
+            while (input.Peek() >= 0)
+            {
+                string line = input.ReadLine();
+
+                if (line.Length == 0)
+                    continue;
+
+                if (line[0] == '>')
+                {
+                    if (line.Contains("colors"))
+                    {
+                        mode = Mode.colors;
+                    }
+                    else if (line.Contains("voxtures"))
+                    {
+                        mode = Mode.voxtures;
+                    }
+                    else
+                    {
+                        //MainGame.mainGame.Log("Non-recognized input mode: " + line);
+                    }
+                }
+                else
+                {
+                    //TODO: make this safer by not assuming colons
+                    //or other valid input really
+                    line = line.Remove(line.IndexOf(':'));
+                    switch (mode)
+                    {
+                        case Mode.colors:
+                            EditingColor color = loadColor(line, input);
+                            colorsByName.Add(line, color);
+                            colors.Add(color);
+                            break;
+                        case Mode.voxtures:
+                            voxes.Add(loadVoxture(line, colorsByName, input, graphics));
+                            break;
+                        default:
+                            //MainGame.mainGame.Log("Non-recognized input: " + line);
+                            break;
+                    }
+                }
+            }
+
+            input.Close();
+            input.Dispose();
+        }
+
+        //this is not a very safe method
+        //actually none of these three are
+        //also they don't handle set traversing
+        //which is important
+        private static EditingColor loadColor(string name, StreamReader input)
+        {
+            string[] values = input.ReadLine().Split(' ');
+            int[] ints = new int[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                ints[i] = Int32.Parse(values[i]);
+            }
+            return new EditingColor(name, ints[0], ints[1], ints[2], ints[3]);
+        }
+
+        private static EditingVoxture loadVoxture(string name, Dictionary<string, EditingColor> set, StreamReader input, GraphicsDevice g)
+        {
+            EditingVoxture vox = new EditingVoxture(name, new EditingColor("NULL_TEMP", 0,0,0,0), g);
+
+            string line = "";
+            bool overflow = false;
+            for (int i = 0; i < OutpostLibrary.Navigation.Sizes.VoxelsPerEdge; i++)
+            {
+                if (!overflow)
+                    line = input.ReadLine();
+                if (!line.StartsWith("["))
+                {
+                    //MainGame.mainGame.Log("Malformed voxture input: no opening bracket ([) at line reading " + line + ".\n  Attempting to compensate...");
+                    overflow = true;
+                }
+                for (int j = 0; j < OutpostLibrary.Navigation.Sizes.VoxelsPerEdge; j++)
+                {
+                    if (!overflow)
+                        line = input.ReadLine();
+                    string[] colors = line.Split(' ');
+                    if (colors.Length < OutpostLibrary.Navigation.Sizes.VoxelsPerEdge)
+                    {
+                        //MainGame.mainGame.Log("Malformed voxture input: Line reading " + line + " does not contain sufficient inputs ("
+                        //    + OutpostLibrary.Navigation.Sizes.VoxelsPerEdge + " required)!\n Attempting to compensate... (This may result in problems later!)");
+                        j--;
+                        continue;
+                    }
+                    int itor = 0;
+                    for (int k = 0; k < OutpostLibrary.Navigation.Sizes.VoxelsPerEdge; k++)
+                    {
+                        if (colors[itor].StartsWith("["))
+                        {
+                            //handle this later
+                        }
+                        else
+                        {
+                            vox[i, j, k] = set[colors[itor]];
+                            itor++;
+                        }
+                    }
+
+                }
+                if (!overflow)
+                    line = input.ReadLine();
+                if (!line.StartsWith("]"))
+                {
+                    //MainGame.mainGame.Log("Malformed voxture input: no closing bracket (]) at line reading " + line + ".\n  Attempting to compensate...");
+                    overflow = true;
+                }
+            }
+
+            return vox;
+        }
+
+        #endregion loadFromFile
+
+        #region saveToFile
+
+        private void saveVoxtures()
+        {
+            //TODO: handle this properly
+            if (filename == null)
+                return;
+
+            StreamWriter saveStream = new StreamWriter(filename, false);
+
+            saveStream.WriteLine(">colors:");
+
+            foreach(EditingColor color in colors)
+            {
+                saveStream.WriteLine(color);
+            }
+            
+            saveStream.WriteLine("");
+            saveStream.WriteLine(">voxtures:");
+
+            foreach(EditingVoxture vox in voxes)
+            {
+                saveStream.WriteLine(vox.name + ":");
+                for(int i = 0; i < OutpostLibrary.Navigation.Sizes.VoxelsPerEdge; i++)
+                {
+                    saveStream.WriteLine("[");
+                    for (int j = 0; j < OutpostLibrary.Navigation.Sizes.VoxelsPerEdge; j++)
+                    {
+
+                        for (int k = 0; k < OutpostLibrary.Navigation.Sizes.VoxelsPerEdge; k++)
+                        {
+                            saveStream.Write((vox[i, j, k] as EditingColor).name + " ");
+                        }
+                        saveStream.Write("\n");
+                    }
+                    saveStream.WriteLine("]");
+                }
+            }
+
+            saveStream.Close();
+            saveStream.Dispose();
+        }
+
+        #endregion saveToFile
 
         #region graphics
 

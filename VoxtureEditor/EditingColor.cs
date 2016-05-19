@@ -20,5 +20,10 @@ namespace VoxtureEditor
         {
             name = _name;
         }
+
+        public override string ToString()
+        {
+            return name + ":\n" + color.R + " " + color.G + " " + color.B + " " + color.A;
+        }
     }
 }
