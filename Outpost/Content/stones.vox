@@ -1,0 +1,369 @@
+>colors:
+clr:
+0 0 0 0
+Fli1:
+216 128 7 255
+Fli2:
+182 114 12 255
+Fli3:
+143 89 7 255
+Fli4:
+116 73 10 255
+Fli5:
+92 58 7 255
+Fli6:
+252 197 95 255
+Fli7:
+90 57 7 255
+Fli8:
+67 43 5 255
+New9:
+253 248 147 255
+New10:
+254 251 199 255
+New11:
+255 254 225 255
+New12:
+255 255 244 255
+New13:
+201 199 167 255
+Che14:
+188 186 169 255
+Che15:
+107 68 10 230
+Che16:
+236 227 215 255
+Cha17:
+244 242 240 255
+Cha18:
+252 252 252 255
+Dol19:
+165 156 162 255
+Dol20:
+160 142 141 255
+Dol21:
+162 160 159 255
+Dol22:
+120 113 109 255
+Dol23:
+129 125 124 255
+Dol24:
+121 111 111 255
+New25:
+16 16 16 255
+Obs26:
+6 6 6 255
+Obs27:
+10 12 10 255
+Qua28:
+199 192 186 255
+Qua29:
+196 196 179 255
+Qua30:
+204 202 191 255
+Qua31:
+251 251 249 255
+San32:
+183 77 40 255
+San33:
+218 118 84 255
+San34:
+225 142 115 255
+San35:
+90 154 69 255
+San36:
+241 217 165 255
+San37:
+230 193 125 255
+San38:
+218 164 103 255
+
+>voxtures:
+Flint:
+[
+Fli6 Fli1 Fli2 Fli2 Fli1 
+Fli1 Fli2 Fli3 Fli3 Fli2 
+Fli6 Fli3 Fli4 Fli4 Fli2 
+Fli1 Fli4 Fli3 Fli4 Fli6 
+Fli2 Fli5 Fli3 Fli2 Fli3 
+]
+[
+Fli2 Fli2 Fli3 Fli3 Fli2 
+Fli2 Fli3 Fli5 Fli4 Fli3 
+Fli1 Fli4 Fli5 Fli5 Fli3 
+Fli1 Fli4 Fli5 Fli3 Fli2 
+Fli3 Fli4 Fli5 Fli2 Fli2 
+]
+[
+Fli1 Fli2 Fli3 Fli4 Fli2 
+Fli1 Fli2 Fli5 Fli5 Fli4 
+Fli2 Fli4 Fli8 Fli5 Fli4 
+Fli3 Fli5 Fli8 Fli4 Fli4 
+Fli3 Fli4 Fli5 Fli3 Fli2 
+]
+[
+Fli6 Fli2 Fli2 Fli3 Fli6 
+Fli6 Fli2 Fli2 Fli4 Fli2 
+Fli1 Fli2 Fli8 Fli5 Fli2 
+Fli2 Fli3 Fli8 Fli5 Fli5 
+Fli2 Fli3 Fli5 Fli3 Fli2 
+]
+[
+Fli6 Fli1 Fli2 Fli2 Fli1 
+Fli1 Fli1 Fli4 Fli2 Fli1 
+Fli2 Fli4 Fli2 Fli4 Fli6 
+Fli2 Fli3 Fli5 Fli4 Fli6 
+Fli2 Fli3 Fli4 Fli4 Fli2 
+]
+Limestone:
+[
+New10 New10 New10 New11 New11 
+New10 New10 New12 New10 New10 
+New10 New12 New10 New10 New10 
+New10 New10 New10 New10 New10 
+New10 New12 New10 New11 New11 
+]
+[
+New10 New11 New11 New11 New11 
+New11 New11 New11 New10 New11 
+New11 New11 New11 New10 New10 
+New10 New10 New11 New10 New10 
+New10 New10 New10 New11 New10 
+]
+[
+New10 New10 New10 New12 New10 
+New11 New12 New12 New12 New10 
+New10 New11 New12 New12 New10 
+New10 New10 New12 New10 New10 
+New11 New12 New11 New11 New10 
+]
+[
+New10 New11 New11 New10 New10 
+New11 New11 New11 New10 New10 
+New10 New10 New11 New10 New12 
+New10 New11 New11 New11 New11 
+New11 New11 New11 New10 New12 
+]
+[
+New10 New11 New12 New10 New11 
+New10 New11 New10 New12 New12 
+New11 New12 New10 New10 New11 
+New11 New11 New10 New11 New12 
+New10 New12 New10 New10 New11 
+]
+Chert:
+[
+Che14 New13 New13 New13 Che14 
+Che14 New13 New13 New13 Che14 
+Che14 New13 New13 New13 New13 
+Che14 New13 New13 New13 New13 
+New13 New13 New13 Che14 New13 
+]
+[
+New13 New13 New13 Che14 New13 
+New13 New13 Che14 New13 Che15 
+New13 Che15 New13 Che14 New13 
+New13 New13 New13 Che14 Che14 
+New13 New13 Che14 Che14 New13 
+]
+[
+New13 New13 Che14 Che14 Che14 
+New13 Che14 New13 Che14 New13 
+Che14 New13 Che14 Che14 New13 
+Che14 Che14 Che14 New13 Che14 
+New13 New13 New13 New13 New13 
+]
+[
+New13 Che14 New13 New13 New13 
+Che14 Che14 Che14 New13 Che14 
+Che14 Che14 New13 Che14 Che14 
+Che14 Che14 Che15 New13 New13 
+Che14 New13 Che14 New13 Che14 
+]
+[
+Che14 New13 Che15 New13 New13 
+Che14 Che14 New13 New13 New13 
+New13 New13 Che14 New13 New13 
+New13 New13 New13 New13 New13 
+Che14 New13 New13 New13 New13 
+]
+Chalk:
+[
+Che16 Che16 Cha18 Cha18 Cha18 
+Che16 Cha18 Cha18 Cha18 Cha18 
+Cha18 Cha18 Cha18 Che16 Cha17 
+Cha18 Cha18 Che16 Che16 Che16 
+Cha18 Che16 Cha18 Cha18 Cha18 
+]
+[
+Cha18 Cha18 Cha18 Cha18 Cha18 
+Cha17 Cha18 Cha18 Cha18 Che16 
+Cha18 Cha18 Che16 Cha17 Cha17 
+Cha18 Cha18 Che16 Che16 Che16 
+Che16 Cha18 Che16 Cha18 Cha18 
+]
+[
+Cha18 Cha18 Cha17 Cha18 Cha18 
+Cha18 Cha18 Cha17 Cha17 Cha18 
+Cha18 Cha17 Cha18 Cha18 Cha17 
+Cha17 Cha18 Cha18 Cha17 Cha17 
+Che16 Cha18 Cha17 Che16 Cha18 
+]
+[
+Cha18 Cha18 Cha18 Cha18 Cha18 
+Cha17 Cha18 Cha18 Cha18 Cha18 
+Cha17 Cha17 Cha18 Cha18 Cha18 
+Cha18 Cha17 Cha17 Che16 Cha18 
+Cha18 Cha18 Cha17 Cha17 Cha18 
+]
+[
+Cha17 Cha18 Cha18 Cha18 Che16 
+Cha18 Cha17 Che16 Cha18 Cha18 
+Cha18 Cha17 Che16 Cha18 Cha18 
+Che16 Che16 Cha17 Che16 Cha18 
+Cha18 Cha18 Cha18 Cha18 Cha18 
+]
+Dolostone:
+[
+Dol22 Dol24 Dol22 Dol23 Dol22 
+Dol22 Dol23 Dol22 Dol23 Dol23 
+Dol22 Dol20 Dol22 Dol23 Dol23 
+Dol23 Dol23 Dol20 Dol20 Dol22 
+Dol20 Dol23 Dol23 Dol24 Dol24 
+]
+[
+Dol24 Dol22 Dol22 Dol24 Dol22 
+Dol24 Dol24 Dol24 Dol23 Dol24 
+Dol24 Dol22 Dol24 Dol24 Dol23 
+Dol24 Dol23 Dol22 Dol24 Dol24 
+Dol24 Dol23 Dol22 Dol22 Dol22 
+]
+[
+Dol23 Dol22 Dol20 Dol23 Dol22 
+Dol22 Dol24 Dol22 Dol22 Dol22 
+Dol23 Dol22 Dol22 Dol22 Dol22 
+Dol23 Dol22 Dol22 Dol22 Dol23 
+Dol20 Dol23 Dol23 Dol22 Dol22 
+]
+[
+Dol22 Dol22 Dol23 Dol23 Dol22 
+Dol22 Dol20 Dol23 Dol23 Dol22 
+Dol23 Dol22 Dol22 Dol23 Dol22 
+Dol22 Dol22 Dol23 Dol21 Dol22 
+Dol22 Dol21 Dol20 Dol22 Dol22 
+]
+[
+Dol22 Dol22 Dol23 Dol23 Dol22 
+Dol22 Dol23 Dol23 Dol23 Dol19 
+Dol24 Dol20 Dol22 Dol23 Dol22 
+Dol20 Dol24 Dol22 Dol23 Dol19 
+Dol22 Dol22 Dol23 Dol24 Dol20 
+]
+Obsidian:
+[
+Obs26 Obs26 New25 Obs27 Obs27 
+Obs26 Obs27 Obs27 Obs26 New25 
+New25 New25 Obs26 Obs26 New25 
+New25 New25 New25 Obs26 Obs26 
+Obs26 New25 New25 New25 New25 
+]
+[
+Obs26 Obs26 Obs27 Obs27 New25 
+Obs27 Obs27 Obs26 Obs26 Obs27 
+Obs27 Obs26 Obs26 New25 Obs27 
+New25 Obs27 Obs26 Obs27 Obs27 
+Obs26 Obs27 Obs26 New25 Obs27 
+]
+[
+New25 Obs27 Obs26 New25 Obs26 
+Obs26 Obs26 Obs26 Obs26 Obs26 
+Obs27 Obs27 New25 Obs26 Obs27 
+New25 Obs27 New25 Obs26 New25 
+Obs27 Obs26 Obs26 Obs27 New25 
+]
+[
+Obs27 Obs26 Obs27 Obs27 Obs27 
+New25 Obs27 Obs26 Obs26 Obs27 
+Obs26 Obs26 Obs26 Obs26 Obs26 
+New25 Obs27 New25 Obs26 Obs27 
+New25 Obs26 Obs26 Obs27 New25 
+]
+[
+New25 Obs26 Obs26 Obs26 Obs27 
+Obs26 Obs26 Obs26 Obs26 Obs27 
+Obs26 Obs26 Obs26 Obs27 New25 
+New25 Obs26 Obs27 Obs27 New25 
+Obs26 New25 Obs26 Obs26 Obs26 
+]
+Quartzite:
+[
+Qua31 Qua28 Qua28 Qua31 Qua28 
+Qua29 Qua29 Qua28 Qua28 Qua29 
+Qua28 Qua29 Qua29 Qua28 Qua31 
+Qua29 Qua31 Qua29 Qua29 Qua29 
+Qua30 Qua31 Qua29 Qua29 Qua28 
+]
+[
+Qua29 Qua31 Qua28 Qua29 Qua28 
+Qua28 Qua29 Qua31 Qua30 Qua29 
+Qua29 Qua29 Qua28 Qua30 Qua30 
+Qua28 Qua29 Qua31 Qua29 Qua30 
+Qua28 Qua29 Qua30 Qua30 Qua30 
+]
+[
+Qua29 Qua29 Qua30 Qua30 Qua28 
+Qua31 Qua29 Qua29 Qua30 Qua29 
+Qua28 Qua30 Qua30 Qua31 Qua30 
+Qua31 Qua30 Qua30 Qua30 Qua31 
+Qua30 Qua31 Qua29 Qua28 Qua29 
+]
+[
+Qua28 Qua29 Qua29 Qua31 Qua28 
+Qua28 Qua28 Qua30 Qua30 Qua30 
+Qua30 Qua31 Qua28 Qua30 Qua30 
+Qua29 Qua30 Qua28 Qua30 Qua30 
+Qua30 Qua29 Qua28 Qua29 Qua29 
+]
+[
+Qua31 Qua28 Qua28 Qua31 Qua28 
+Qua29 Qua29 Qua28 Qua29 Qua28 
+Qua29 Qua30 Qua30 Qua30 Qua30 
+Qua31 Qua29 Qua31 Qua28 Qua31 
+Qua30 Qua28 Qua31 Qua28 Qua30 
+]
+Sandstone:
+[
+San33 San36 San38 San37 San32 
+San36 San38 San37 San32 San33 
+San38 San37 San32 San33 San36 
+San37 San32 San33 San36 San38 
+San32 San33 San36 San38 San37 
+]
+[
+San36 San38 San37 San32 San33 
+San38 San37 San32 San33 San36 
+San37 San32 San33 San36 San38 
+San32 San33 San36 San38 San37 
+San33 San36 San38 San37 San32 
+]
+[
+San38 San37 San32 San33 San36 
+San37 San32 San33 San36 San38 
+San32 San33 San36 San38 San37 
+San33 San36 San38 San37 San32 
+San36 San38 San37 San32 San33 
+]
+[
+San37 San32 San33 San36 San38 
+San32 San33 San36 San38 San37 
+San33 San36 San38 San37 San32 
+San36 San38 San37 San32 San33 
+San38 San37 San32 San33 San36 
+]
+[
+San32 San33 San36 San38 San37 
+San33 San36 San38 San37 San32 
+San36 San38 San37 San32 San33 
+San38 San37 San32 San33 San36 
+San37 San32 San33 San36 San38 
+]

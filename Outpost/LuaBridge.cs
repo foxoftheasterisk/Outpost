@@ -79,8 +79,8 @@ namespace Outpost
             LuaType.RegisterTypeAlias("SolidBlock", typeof(Blocks.SolidBlock));
             global["SolidBlock"] = LuaType.GetType(typeof(Blocks.SolidBlock));
 
-            LuaType.RegisterTypeAlias("Structure", typeof(Structure));
-            global["Structure"] = LuaType.GetType(typeof(Structure));
+            LuaType.RegisterTypeAlias("Structure", typeof(MapStructure));
+            global["Structure"] = LuaType.GetType(typeof(MapStructure));
 
             //global["Double"] = LuaType.GetType(typeof(Double));
             
@@ -122,6 +122,8 @@ namespace Outpost
 
         //*/
 
+        //I should maybe move voxture loading to its own class
+        //
         #region loadVoxtures
 
         private enum Mode { none, colors, voxtures }

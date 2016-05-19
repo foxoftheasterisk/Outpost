@@ -85,7 +85,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Screens\Screen.cs" />
     <Compile Include="SetLoader.cs" />
-    <Compile Include="Structure.cs" />
+    <Compile Include="MapStructure.cs" />
     <Compile Include="TopLevel.cs" />
   </ItemGroup>
   <ItemGroup>

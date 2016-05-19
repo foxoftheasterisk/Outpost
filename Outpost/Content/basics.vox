@@ -7,77 +7,119 @@ dt3:
 159 118 77 255
 clr:
 0 0 0 0
+Wat4:
+0 0 160 200
+Wat5:
+11 54 202 200
+Wat6:
+14 3 148 200
 
 >voxtures:
 dirtv:
-[ 
-dt1 dt2 dt2 dt1 dt3
-dt1 dt3 dt1 dt2 dt2
-dt2 dt3 dt1 dt1 dt3
-dt2 dt1 dt2 dt2 dt1
-dt1 dt1 dt2 dt3 dt3
+[
+dt1 dt2 dt2 dt1 dt3 
+dt1 dt3 dt1 dt2 dt2 
+dt2 dt3 dt1 dt1 dt3 
+dt2 dt1 dt2 dt2 dt1 
+dt1 dt1 dt2 dt3 dt3 
 ]
-[ 
-dt3 dt1 dt2 dt1 dt1
-dt1 dt2 dt3 dt2 dt1
-dt2 dt3 dt2 dt2 dt1
-dt1 dt2 dt3 dt1 dt1
-dt3 dt2 dt1 dt2 dt2
+[
+dt3 dt1 dt2 dt1 dt1 
+dt1 dt2 dt3 dt2 dt1 
+dt2 dt3 dt2 dt2 dt1 
+dt1 dt2 dt3 dt1 dt1 
+dt3 dt2 dt1 dt2 dt2 
 ]
-[ 
-dt2 dt3 dt1 dt2 dt2
-dt1 dt3 dt2 dt3 dt3
-dt2 dt2 dt3 dt2 dt2
-dt2 dt1 dt2 dt2 dt1
-dt3 dt2 dt1 dt3 dt3
+[
+dt2 dt3 dt1 dt2 dt2 
+dt1 dt3 dt2 dt3 dt3 
+dt2 dt2 dt3 dt2 dt2 
+dt2 dt1 dt2 dt2 dt1 
+dt3 dt2 dt1 dt3 dt3 
 ]
-[ 
-dt1 dt1 dt2 dt3 dt2
-dt1 dt3 dt1 dt2 dt2
-dt3 dt1 dt2 dt1 dt1
-dt1 dt3 dt2 dt3 dt3
-dt1 dt2 dt3 dt1 dt1
+[
+dt1 dt1 dt2 dt3 dt2 
+dt1 dt3 dt1 dt2 dt2 
+dt3 dt1 dt2 dt1 dt1 
+dt1 dt3 dt2 dt3 dt3 
+dt1 dt2 dt3 dt1 dt1 
 ]
-[ 
-dt2 dt2 dt3 dt1 dt3
-dt3 dt1 dt2 dt2 dt3
-dt2 dt2 dt3 dt1 dt1
-dt1 dt3 dt1 dt2 dt3
-dt2 dt1 dt3 dt2 dt2
+[
+dt2 dt2 dt3 dt1 dt3 
+dt3 dt1 dt2 dt2 dt3 
+dt2 dt2 dt3 dt1 dt1 
+dt1 dt3 dt1 dt2 dt3 
+dt2 dt1 dt3 dt2 dt2 
 ]
 clear:
-[ 
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
+[
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
 ]
-[ 
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
+[
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
 ]
-[ 
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
+[
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
 ]
-[ 
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
+[
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
 ]
-[ 
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
-clr clr clr clr clr
+[
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
+clr clr clr clr clr 
+]
+Water:
+[
+Wat5 Wat6 Wat4 Wat4 Wat5 
+Wat6 Wat5 Wat6 Wat5 Wat5 
+Wat4 Wat4 Wat5 Wat4 Wat4 
+Wat6 Wat5 Wat6 Wat4 Wat6 
+Wat4 Wat6 Wat5 Wat6 Wat5 
+]
+[
+Wat4 Wat6 Wat4 Wat6 Wat6 
+Wat5 Wat6 Wat5 Wat4 Wat4 
+Wat4 Wat5 Wat4 Wat6 Wat5 
+Wat5 Wat6 Wat4 Wat5 Wat5 
+Wat4 Wat6 Wat4 Wat4 Wat4 
+]
+[
+Wat4 Wat4 Wat5 Wat5 Wat6 
+Wat4 Wat5 Wat4 Wat6 Wat5 
+Wat5 Wat5 Wat5 Wat5 Wat4 
+Wat6 Wat4 Wat4 Wat4 Wat4 
+Wat4 Wat4 Wat5 Wat5 Wat6 
+]
+[
+Wat4 Wat5 Wat4 Wat4 Wat4 
+Wat5 Wat4 Wat6 Wat5 Wat5 
+Wat6 Wat6 Wat4 Wat4 Wat6 
+Wat5 Wat5 Wat5 Wat6 Wat5 
+Wat6 Wat5 Wat5 Wat4 Wat6 
+]
+[
+Wat4 Wat6 Wat6 Wat5 Wat6 
+Wat6 Wat4 Wat5 Wat4 Wat4 
+Wat4 Wat5 Wat4 Wat5 Wat5 
+Wat4 Wat6 Wat6 Wat4 Wat6 
+Wat5 Wat4 Wat5 Wat4 Wat4 
 ]

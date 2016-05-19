@@ -41,12 +41,8 @@ namespace VoxtureEditor
             voxes.Add(new EditingVoxture("NewVox0", colors[0], graphics));
             currentVoxture = 0;
             voxes[0].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
-            
-            //TODO: make this a thing you can actually choose
-            filename = ".\\Content\\Laura.vox";
 
-            if(File.Exists(filename))
-                loadVoxtures(filename);
+            //TODO: possibly, file association type stuff?  i got no idea how that shit works tho
 
             initializeGraphics();
 
@@ -770,7 +766,18 @@ namespace VoxtureEditor
         {
             //TODO: handle this properly
             if (filename == null)
-                return;
+            {
+                sd.FilterIndex = 1;
+                System.Windows.Forms.DialogResult dr = sd.ShowDialog();
+
+                if (dr == System.Windows.Forms.DialogResult.OK)
+                {
+                    filename = sd.FileName;
+                    saveVoxtures();
+                }
+                else
+                    return;
+            }
 
             StreamWriter saveStream = new StreamWriter(filename, false);
 

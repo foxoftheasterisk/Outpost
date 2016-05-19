@@ -8,13 +8,11 @@ using Neo.IronLua;
 
 namespace Outpost
 {
-
-    //Super generic name go!
     /// <summary>
     /// Stores a mapgen structure, including its name, whether and how often to update it, and how to save it
     /// Basically it's all Lua-side, though.
     /// </summary>
-    class Structure : LuaTable
+    class MapStructure : LuaTable
     {
         //uh, hm, there should probably be something to intercept block interactions... for some structures, anyway.
         //...no idea how to do that effectively, atm.

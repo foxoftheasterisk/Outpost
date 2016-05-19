@@ -55,7 +55,7 @@ namespace Outpost
         int size;
         Block[,,] blocks;
 
-        List<Structure> structures;
+        List<MapStructure> structures;
 
         IntVector3 position;
         String filename;
@@ -87,7 +87,7 @@ namespace Outpost
         {
             size = Sizes.ChunkSize;
             blocks = new Block[Sizes.ChunkSize, Sizes.ChunkSize, Sizes.ChunkSize];
-            structures = new List<Structure>();
+            structures = new List<MapStructure>();
             position = pos;
             filename = MainGame.WorldFolder + position.X + "," + position.Y + "," + position.Z;
 
