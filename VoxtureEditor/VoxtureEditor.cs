@@ -43,28 +43,25 @@ namespace VoxtureEditor
             voxes[0].makeVertices(spread, new OutpostLibrary.IntVector3(-1, -1, -1));
             
             //TODO: make this a thing you can actually choose
-            filename = ".\\Content\\basics.vox";
+            filename = ".\\Content\\Laura.vox";
 
-            loadVoxtures(filename);
-
-            redrawVertices();
+            if(File.Exists(filename))
+                loadVoxtures(filename);
 
             initializeGraphics();
 
-            nameEditor = new TextInputHandler(w);
+            initializeDialogBoxes();
 
-            //TODO: maybe temp?
-            cd = new System.Windows.Forms.ColorDialog();
-            cd.AllowFullOpen = true;
+            nameEditor = new TextInputHandler(w);
         }
 
         MouseState lastMouse;
         KeyboardState lastKeys;
 
         System.Windows.Forms.ColorDialog cd;
-        System.Windows.Forms.DialogResult dr;
-        bool wasInForm = false;
-        bool unhandledForm = false;
+        System.Windows.Forms.OpenFileDialog od;
+        System.Windows.Forms.SaveFileDialog sd;
+        
 
         bool nameSelected = false;
         bool nameEditing = false;
@@ -129,52 +126,74 @@ namespace VoxtureEditor
             //Note, +, -, and O adjust the current color, *in all places it appears*
             //N: create New voxture
             //R: Reset Rotation of current voxture
-            //S: Save (there is currently no save-as)
+            //S: Save
+            //A: save-As (yes I'm aware this is alarmingly close to the s but)
+            //L: Load
             #region hotkeys
-            if(keys.IsKeyDown(Keys.C) && !wasInForm)
+            #region dialogs
+            if (keys.IsKeyDown(Keys.C) && lastKeys.IsKeyUp(Keys.C))
             {
                 cd.Color = colors[currentColor].color.toSystemColor();
-                wasInForm = true;
-                unhandledForm = true;
 
                 //color creation
                 //TODO: Create a dialog that includes specular?  (or, just throw a second one on, but that's less good.)
-                dr = cd.ShowDialog();
-            }
-            else if(!keys.IsKeyDown(Keys.C))
-            {
-                wasInForm = false;
-            }
+                //Or, make my own color selector, that isn't a dialog.  You know.  Whichever.
+                System.Windows.Forms.DialogResult dr = cd.ShowDialog();
 
-            if (unhandledForm && dr == System.Windows.Forms.DialogResult.OK)
-            {
-                unhandledForm = false;
-                Color createdColor = cd.Color.toXnaColor();
-                bool colorAlreadyExists = false;
-
-                for (int i = 0; i < colors.Count; i++)
+                if(dr == System.Windows.Forms.DialogResult.OK)
                 {
+                    Color createdColor = cd.Color.toXnaColor();
+                    bool colorAlreadyExists = false;
 
-                    Color comp = colors[i].color;
-                    if (comp == createdColor)
+                    for (int i = 0; i < colors.Count; i++)
                     {
-                        colorAlreadyExists = true;
-                        currentColor = i;
+
+                        Color comp = colors[i].color;
+                        if (comp == createdColor)
+                        {
+                            colorAlreadyExists = true;
+                            currentColor = i;
+                        }
+                    }
+
+                    if (!colorAlreadyExists)
+                    {
+                        //dafuq there isn't a basic text input dialog box???
+                        //i guess just make up names for now...
+
+                        string colorname = voxes[currentVoxture].name.ToString().Substring(0, 3) + colors.Count;
+                        currentColor = colors.Count;
+                        colors.Add(new EditingColor(colorname, createdColor));
                     }
                 }
+            }
 
-                if (!colorAlreadyExists)
+            if (keys.IsKeyDown(Keys.L) && lastKeys.IsKeyUp(Keys.L))
+            {
+                od.FilterIndex = 1;
+                System.Windows.Forms.DialogResult dr = od.ShowDialog();
+
+                if(dr == System.Windows.Forms.DialogResult.OK)
                 {
-                    //dafuq there isn't a basic text input dialog box???
-                    //i guess just make up names for now...
-
-                    string colorname = voxes[currentVoxture].name.ToString().Substring(0, 3) + colors.Count;
-                    currentColor = colors.Count;
-                    colors.Add(new EditingColor(colorname, createdColor));
+                    filename = od.FileName;
+                    loadVoxtures(filename);
                 }
             }
 
-            if(keys.IsKeyDown(Keys.F) && lastKeys.IsKeyUp(Keys.F))
+            if (keys.IsKeyDown(Keys.A) && lastKeys.IsKeyUp(Keys.A))
+            {
+                sd.FilterIndex = 1;
+                System.Windows.Forms.DialogResult dr = sd.ShowDialog();
+
+                if (dr == System.Windows.Forms.DialogResult.OK)
+                {
+                    filename = sd.FileName;
+                    saveVoxtures();
+                }
+            }
+            #endregion dialogs
+
+            if (keys.IsKeyDown(Keys.F) && lastKeys.IsKeyUp(Keys.F))
             {
                 //geez this is a bit confusing innit
                 string colorname = voxes[currentVoxture].name.ToString().Substring(0, 3) + colors.Count;
@@ -567,6 +586,27 @@ namespace VoxtureEditor
             return false;
         }
 
+        private void initializeDialogBoxes()
+        {
+            //TODO: the color dialog is probably going to be replaced
+            //eventually
+            cd = new System.Windows.Forms.ColorDialog();
+            cd.AllowFullOpen = true;
+
+
+            string filter = "Voxture files (*.vox)|*.vox|All Files (*.*)|*.*";
+
+            od = new System.Windows.Forms.OpenFileDialog();
+            od.Filter = filter;
+
+            od.InitialDirectory = ".";
+
+            sd = new System.Windows.Forms.SaveFileDialog();
+            sd.Filter = filter;
+
+            sd.InitialDirectory = ".";
+        }
+
         #region loadFromFile
 
         private enum Mode { none, colors, voxtures }
@@ -646,6 +686,11 @@ namespace VoxtureEditor
 
             input.Close();
             input.Dispose();
+
+            currentVoxture = 0;
+            currentColor = 0;
+
+            redrawVertices();
         }
 
         //this is not a very safe method
@@ -731,6 +776,9 @@ namespace VoxtureEditor
 
             saveStream.WriteLine(">colors:");
 
+            //TODO: cull unused colors?
+            //or, alternatively, make interface to manage colors
+            //EITHER WAY
             foreach(EditingColor color in colors)
             {
                 saveStream.WriteLine(color);
