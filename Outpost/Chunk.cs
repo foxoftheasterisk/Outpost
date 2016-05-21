@@ -572,6 +572,8 @@ namespace Outpost
                 if (vertices.Length > maxVerts)
                 {
                     GraphicsDevice graphics = vBuff.GraphicsDevice;
+                    if (graphics == null)
+                        throw new InvalidOperationException("Graphics device no longer exists!");
                     if (vBuff != null)
                         vBuff.Dispose();
                     maxVerts = vertices.Length + 1000;
