@@ -30,7 +30,7 @@ struct VertexData
 {
 	float4 position : POSITION0;
 	float4 color : COLOR0;
-	//float4 specularColor : COLOR1;
+	float4 specularColor : COLOR1;
 	float3 normal : NORMAL0;
 };
 
@@ -38,7 +38,8 @@ struct VertexToPixel
 {
 	float4 position : POSITION0;
 	float4 litColor : COLOR0;
-	//float4 specularColor : COLOR1;
+	float4 specularColor : COLOR1;
+	float3 reflection : NORMAL0;
 };
 
 VertexToPixel CubeVertexShader(VertexData input)
@@ -53,19 +54,27 @@ VertexToPixel CubeVertexShader(VertexData input)
 	//normally we'd need to switch the normal to be in world-space
 	//but, it conveniently already is
 	//so we cool.
+	//as long as we don't do any world space rotation.
 	float diffuseIntensity = dot(input.normal, -sunDir) * sunColor.a;
 	if (diffuseIntensity > 0)
 		lightColor = lightColor + sunColor * diffuseIntensity;
 
 	output.litColor = float4(0, 0, 0, 0);
 
-	output.litColor.r = input.color.r * lightColor.r;
-	output.litColor.g = input.color.g * lightColor.g;
-	output.litColor.b = input.color.b * lightColor.b;
+	output.litColor.rgb = input.color.rgb * lightColor.rgb;
+	//output.litColor.g = input.color.g * lightColor.g;
+	//output.litColor.b = input.color.b * lightColor.b;
 	output.litColor.a = input.color.a;
 
 	output.litColor = saturate(output.litColor);
-	//output.specularColor = input.specularColor;
+
+	output.specularColor = input.specularColor;
+
+	//normally, you wouldn't be able to perform this reflection in the vertex shader
+	//but since I'm working with faces that are guaranteed to have a single normal across the whole face, it works.
+	float3 worldNormal = mul(float4(input.normal, 0), World).xyz
+	float3 reflection = normalize(reflect(sunDir, worldNormal));
+	output.reflection = mul(float4(reflection, 0), View).xyz;
 
 	return output;
 }
@@ -79,11 +88,41 @@ void CubeGeometryShader(point VertexToPixel input[], inout TriangleStream<Vertex
 }
 //*/
 
-//will be doin' specular here
-//but not yet
+
 float4 CubePixelShader(VertexToPixel input) : COLOR0
 {
-	return input.litColor;
+	//specular time!!
+	//yes, this ENTIRE fragment/pixel shader is for specular. 
+
+	float eyePosition = float3(0, 0, 1.0);
+	//I have no idea if this is right...
+	//It would be a consistent one though, I think, since we're talking view space here.
+	//Or... do we have to go through projection to make it consistent?  No... no way, right?
+
+	float3 specularResult = input.specularColor.rgb * sunColor * pow(dot(reflection, eyePosition), input.specularColor.a);
+	
+	//Now, an experimental function to convert the "black" parts of the result to alpha
+	//first guess as to how to do that: set alpha to the brightest color result, and treat it as premultiplied alpha
+	float alphaFactor = max(specularResult.r, specularResult.g, specularResult.b);
+	
+	//this would convert it to non-premultiplied alpha
+	//but compositing is easier if we DON'T do that
+	//so
+	//not doing it
+	//float inverseAlphaFactor = 1 / alphaFactor;
+	//float4 specularFinal = float4(specularResult * inverseAlphaFactor, alphaFactor);
+
+	//now, alpha that over the lit color to get the final.
+	//since alpha compositing is easier with premultiplied alpha, and we already have that for the specular, convert our surface value to that.
+	float3 premultSurfaceColor = input.litColor.rgb * input.litColor.a;
+	float4 finalColor = float4(0, 0, 0, 0);
+	finalColor.rgb = specularResult.rgb + (premultSurfaceColor.rgb * (1 - alphaFactor));
+	finalColor.a = alphaFactor + premultSurfaceColor.a * (1 - alphaFactor);
+
+	//this does mean that our output color is premultiplied alpha
+	//wouldn't be particularly hard to convert back tho.
+	//although, it does make it slightly lossy I think?  but BFD
+	return finalColor;
 }
 
 technique CubeShader
