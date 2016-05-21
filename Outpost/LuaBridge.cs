@@ -18,7 +18,7 @@ namespace Outpost
         private LuaTable game;
         private LuaCompileOptions lc;
 
-        const string GAME_DIR_DEFAULT = ".\\Content\\";
+        public const string GAME_DIR_DEFAULT = ".\\Content\\";
 
         public LuaBridge()
         {
@@ -35,7 +35,7 @@ namespace Outpost
             game = new LuaTable();
             global["Game"] = game;
 
-            global["Log"] = new Action<string>(MainGame.mainGame.Log);
+            global["Log"] = new Action<string>(Logger.Log);
 
             global["GAME_DIR"] = GAME_DIR_DEFAULT;
             //TODO: make this load from some kind of config file and only fail to this default
@@ -96,27 +96,27 @@ namespace Outpost
         {
             try
             {
-                MainGame.mainGame.Log("Compiling Lua file: " + filename);
+                Logger.Log("Compiling Lua file: " + filename);
                 LuaChunk c = compiler.CompileChunk(global["GAME_DIR"] + filename, lc);
-                MainGame.mainGame.Log("Running " + filename + "...");
+                Logger.Log("Running " + filename + "...");
                 c.Run(environment);
-                MainGame.mainGame.Log(filename + " run successfully!");
+                Logger.Log(filename + " run successfully!");
                 //MainGame.mainGame.env.DoChunk(OutpostLibrary.Misc.GAME_DIR + "vanilla.set");
             }
             catch (LuaParseException e)
             {
-                MainGame.mainGame.Log("Lua compile error while compiling " + filename + "!");
-                MainGame.mainGame.Log(e.Message);
-                MainGame.mainGame.Log("At " + e.FileName + " line " + e.Line);
+                Logger.Log("Lua compile error while compiling " + filename + "!");
+                Logger.Log(e.Message);
+                Logger.Log("At " + e.FileName + " line " + e.Line);
             }
             catch (LuaRuntimeException e)
             {
-                MainGame.mainGame.Log("Lua error while running " + filename + "!");
-                MainGame.mainGame.Log(e.Message);
-                MainGame.mainGame.Log("In " + e.FileName + " line " + e.Line);
-                MainGame.mainGame.Log(e.ToString());
+                Logger.Log("Lua error while running " + filename + "!");
+                Logger.Log(e.Message);
+                Logger.Log("In " + e.FileName + " line " + e.Line);
+                Logger.Log(e.ToString());
                 LuaExceptionData d = LuaExceptionData.GetData(e);
-                MainGame.mainGame.Log(d.GetStackTrace(0, false));
+                Logger.Log(d.GetStackTrace(0, false));
             }
         }
 
@@ -143,7 +143,7 @@ namespace Outpost
             }
             catch (FileNotFoundException e)
             {
-                MainGame.mainGame.Log("File " + filename + " does not exist!");
+                Logger.Log("File " + filename + " does not exist!");
                 return new LuaTable();
             }
 
@@ -167,7 +167,7 @@ namespace Outpost
                     }
                     else
                     {
-                        MainGame.mainGame.Log("Non-recognized input mode: " + line);
+                        Logger.Log("Non-recognized input mode: " + line);
                     }
                 }
                 else
@@ -182,7 +182,7 @@ namespace Outpost
                             table[line] = loadVoxture(line, colors, input);
                             break;
                         default:
-                            MainGame.mainGame.Log("Non-recognized input: " + line);
+                            Logger.Log("Non-recognized input: " + line);
                             break;
                     }
                 }
@@ -217,7 +217,7 @@ namespace Outpost
                     line = input.ReadLine();
                 if (!line.StartsWith("["))
                 {
-                    MainGame.mainGame.Log("Malformed voxture input: no opening bracket ([) at line reading " + line + ".\n  Attempting to compensate...");
+                    Logger.Log("Malformed voxture input: no opening bracket ([) at line reading " + line + ".\n  Attempting to compensate...");
                     overflow = true;
                 }
                 for (int j = 0; j < OutpostLibrary.Navigation.Sizes.VoxelsPerEdge; j++)
@@ -227,7 +227,7 @@ namespace Outpost
                     string[] colors = line.Split(' ');
                     if (colors.Length < OutpostLibrary.Navigation.Sizes.VoxelsPerEdge)
                     {
-                        MainGame.mainGame.Log("Malformed voxture input: Line reading " + line + " does not contain sufficient inputs ("
+                        Logger.Log("Malformed voxture input: Line reading " + line + " does not contain sufficient inputs ("
                             + OutpostLibrary.Navigation.Sizes.VoxelsPerEdge + " required)!\n Attempting to compensate... (This may result in problems later!)");
                         j--;
                         continue;
@@ -251,7 +251,7 @@ namespace Outpost
                     line = input.ReadLine();
                 if (!line.StartsWith("]"))
                 {
-                    MainGame.mainGame.Log("Malformed voxture input: no closing bracket (]) at line reading " + line + ".\n  Attempting to compensate...");
+                    Logger.Log("Malformed voxture input: no closing bracket (]) at line reading " + line + ".\n  Attempting to compensate...");
                     overflow = true;
                 }
             }
@@ -273,9 +273,9 @@ namespace Outpost
             }
             catch (LuaRuntimeException e)
             {
-                MainGame.mainGame.Log(e.ToString());
+                Logger.Log(e.ToString());
                 LuaExceptionData d = LuaExceptionData.GetData(e);
-                MainGame.mainGame.Log(d.GetStackTrace(0, false));
+                Logger.Log(d.GetStackTrace(0, false));
 
             }
         }

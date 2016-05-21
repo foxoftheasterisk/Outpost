@@ -24,7 +24,6 @@ namespace Outpost
     // -player and screen drawing
     // -basic graphics stuff that can be used by multiple screens that want to draw in 3D
     // -lua and game rules
-    // -logging
     //--possibly other things too
     public class MainGame : Screen
     {
@@ -40,10 +39,6 @@ namespace Outpost
 
         Texture2D reticule;
         public Texture2D blank;
-
-        //pretty sure my current log solution sucks
-        //StringBuilder log;
-        private StreamWriter log;
 
         public static string WorldFolder = "firstSavedWorld/";
         public static StorageContainer cont;
@@ -93,11 +88,6 @@ namespace Outpost
 
             cont.CreateDirectory(WorldFolder);
             //*/
-
-            log = new StreamWriter(File.Create("log.txt", 4096, FileOptions.Asynchronous));
-            //if (File.Exists("log.txt"))
-                //File.Delete("log.txt");
-            Log("Begin log");
             
             MainGame.mainGame = this;
 
@@ -112,14 +102,6 @@ namespace Outpost
             initializeGraphics();
 
             lua = new LuaBridge();
-        }
-
-        public void Log(string message)
-        {
-            log.WriteLine(DateTime.Now.ToLongTimeString() + ": " + message);
-            log.Flush();
-            //terrible slowdown from this i'm sure
-            //but it should make the log actually appear
         }
 
         public void newMap()
@@ -528,8 +510,6 @@ namespace Outpost
             }
 
             player.Action();
-
-            //log.FlushAsync();
 
             return false;
         }

@@ -40,7 +40,7 @@ namespace Outpost
             get { return VertexPositionColorNormal.VertexDeclaration; }
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return "Position: " + Position.ToString() + "; Color: " + Color.ToString() + "; Normal: " + Normal.ToString();
         }
@@ -101,7 +101,7 @@ namespace Outpost
             }
             catch(OpenTK.Graphics.GraphicsContextException e)
             {
-                MainGame.mainGame.Log(e.ToString());
+                Logger.Log(e.ToString());
             }
             
 
@@ -498,47 +498,47 @@ namespace Outpost
             patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(1, 0, 0));
             if (adjChunk.chunk == null)
             {
-                //MainGame.mainGame.Log("Skipping " + position + ", north (" + (position + new IntVector3(1,0,0)) + ") unset");
+                //Logger.Log("Skipping " + position + ", north (" + (position + new IntVector3(1,0,0)) + ") unset");
                 return;
             }
 
             adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(-1, 0, 0));
             if (adjChunk.chunk == null)
             {
-                //MainGame.mainGame.Log("Skipping " + position + ", south (" + (position + new IntVector3(-1, 0, 0)) + ") unset");
+                //Logger.Log("Skipping " + position + ", south (" + (position + new IntVector3(-1, 0, 0)) + ") unset");
                 return;
             }
 
             adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, 1, 0));
             if (adjChunk.chunk == null)
             {
-                //MainGame.mainGame.Log("Skipping " + position + ", top (" + (position + new IntVector3(0, 1, 0)) + ") unset");
+                //Logger.Log("Skipping " + position + ", top (" + (position + new IntVector3(0, 1, 0)) + ") unset");
                 return;
             }
 
             adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, -1, 0));
             if (adjChunk.chunk == null)
             {
-                //MainGame.mainGame.Log("Skipping " + position + ", bottom (" + (position + new IntVector3(0, -1, 0)) + ") unset");
+                //Logger.Log("Skipping " + position + ", bottom (" + (position + new IntVector3(0, -1, 0)) + ") unset");
                 return;
             }
 
             adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, 0, 1));
             if (adjChunk.chunk == null)
             {
-                //MainGame.mainGame.Log("Skipping " + position + ", east (" + (position + new IntVector3(0, 0, 1)) + ") unset");
+                //Logger.Log("Skipping " + position + ", east (" + (position + new IntVector3(0, 0, 1)) + ") unset");
                 return;
             }
 
             adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, 0, -1));
             if (adjChunk.chunk == null)
             {
-                //MainGame.mainGame.Log("Skipping " + position + ", west (" + (position + new IntVector3(0, 0, -1)) + ") unset");
+                //Logger.Log("Skipping " + position + ", west (" + (position + new IntVector3(0, 0, -1)) + ") unset");
                 return;
             }
             #endregion neighborChecks
 
-            MainGame.mainGame.Log("Drawing " + position);
+            Logger.Log("Drawing " + position);
             Screens.LoadingScreen.ChangeMessage("Generating vertices for " + position);
             //there SHOULD be something set up so that it only needs to rebuild the vertices for changed sections
             //but i don't believe there currently is
@@ -577,10 +577,10 @@ namespace Outpost
                     maxVerts = vertices.Length + 1000;
                     vBuff = new DynamicVertexBuffer(graphics, typeof(VertexPositionColorNormal), maxVerts, BufferUsage.WriteOnly);
                     //vBuff.ContentLost += new EventHandler<EventArgs>(verticesLostHandler);
-                    //MainGame.mainGame.Log("Vertices extended to " + maxVerts);
+                    //Logger.Log("Vertices extended to " + maxVerts);
                 }
                 vBuff.SetData<VertexPositionColorNormal>(vertices, 0, vertices.Length);
-                MainGame.mainGame.Log("Vertices: " + vertices.Length);
+                Logger.Log("Vertices: " + vertices.Length);
             }
 
             indices = inds.ToArray();
@@ -595,10 +595,10 @@ namespace Outpost
                     maxInds = indices.Length + 1500;
                     iBuff = new DynamicIndexBuffer(graphics, IndexElementSize.SixteenBits, maxInds, BufferUsage.WriteOnly);
                     //iBuff.ContentLost += new EventHandler<EventArgs>(indicesLostHandler);
-                    //MainGame.mainGame.Log("Indices extended to " + maxInds);
+                    //Logger.Log("Indices extended to " + maxInds);
                 }
                 iBuff.SetData<short>(indices, 0, indices.Length);
-                MainGame.mainGame.Log("Indices: " + indices.Length);
+                Logger.Log("Indices: " + indices.Length);
             }
 
 

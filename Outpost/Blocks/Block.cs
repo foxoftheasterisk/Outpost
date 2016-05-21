@@ -457,7 +457,7 @@ namespace Outpost.Blocks
                     verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, 0, size), color, new Vector3(0, -1, 0)));
                     break;
                 default:
-                    MainGame.mainGame.Log("Nonstandard CompassDirection??");
+                    Logger.Log("Nonstandard CompassDirection??");
                     break;
             }
 

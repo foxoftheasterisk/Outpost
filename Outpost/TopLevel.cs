@@ -21,11 +21,18 @@ namespace Outpost
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        //Not included due to singleton:
+        //ScreenManager
+        //MainGame
+        //...possibly others
+
+
 
         public TopLevel()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            //TODO: logging possibly goes here?
         }
 
         /// <summary>
@@ -36,12 +43,10 @@ namespace Outpost
         /// </summary>
         protected override void Initialize()
         {
-            //whatever it is I have to do to declare this a multithreaded application
-            //I should probably do that
-            //it might help performance
-            //er okay so
-            //the apartment shit is something completely different
-            //and I think we're good as is
+            //TODO: make this run in something besides the *default* game directory
+            //Logger.newLog(LuaBridge.GAME_DIR_DEFAULT + DateTime.Now.ToString("yyyy-MM-dd-hh-mm") + ".log");
+            Logger.newLog(LuaBridge.GAME_DIR_DEFAULT + "Outpost.log");
+            //TODO: make this save to a dated log file, without filling the computer with a million log files.
 
             MainGame mainGame = new MainGame(this.Content, GraphicsDevice);
 
@@ -67,14 +72,14 @@ namespace Outpost
             MainGame.mainGame.lua.runLuaFile("vanilla.set");
             
             //TODO: make the filename be loaded from a config file
-            
+            //TODO: move this out of the immediate-on-opening and into a set-specific area
 
             //Material.materials = new Dictionary<String, Material>();
             //when you remove this also remove the using OutpostLibrary.Content;
 
             //SetLoader.loadSet(OutpostLibrary.Misc.GAME_DIR + "vanilla.set");
 
-            //MainGame.mainGame.Log(Material.materials["dirt"].solidity.ToString());
+            //Logger.Log(Material.materials["dirt"].solidity.ToString());
 
             MainGame.mainGame.newMap();
 
@@ -82,15 +87,13 @@ namespace Outpost
         }
 
         /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
+        /// Does jack all, is just a required XNA thing.
+        /// Actual loading occurs elsewheres.
         /// </summary>
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
         }
 
         /// <summary>
@@ -121,7 +124,7 @@ namespace Outpost
             }
             catch (InvalidOperationException e)
             {
-                MainGame.mainGame.Log(e.ToString());
+                Logger.Log(e.ToString());
             }
 
             ScreenManager.screenManager.update();

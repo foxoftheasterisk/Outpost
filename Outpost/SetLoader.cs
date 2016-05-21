@@ -78,7 +78,7 @@ namespace Outpost
                                     currentSet.addItem(loadMaterial(line, currentSet, input));
                                     break;
                                 default:
-                                    MainGame.mainGame.Log("Modeless input: " + line);
+                                    Logger.Log("Modeless input: " + line);
                                     break;
                             }
                             break;
@@ -100,7 +100,7 @@ namespace Outpost
                     line = input.ReadLine();
                 if (!line.StartsWith("["))
                 {
-                    MainGame.mainGame.Log("Malformed voxture input: no opening bracket ([) at line reading " + line + ".\n  Attempting to compensate...");
+                    Logger.Log("Malformed voxture input: no opening bracket ([) at line reading " + line + ".\n  Attempting to compensate...");
                     overflow = true;
                 }
                 for(int j = 0; j < OutpostLibrary.Navigation.Sizes.VoxelsPerEdge; j++)
@@ -110,7 +110,7 @@ namespace Outpost
                     string[] colors = line.Split(' ');
                     if (colors.Length < OutpostLibrary.Navigation.Sizes.VoxelsPerEdge)
                     {
-                        MainGame.mainGame.Log("Malformed voxture input: Line reading " + line + " does not contain sufficient inputs ("
+                        Logger.Log("Malformed voxture input: Line reading " + line + " does not contain sufficient inputs ("
                             + OutpostLibrary.Navigation.Sizes.VoxelsPerEdge + " required)!\n Attempting to compensate... (This may result in problems later!)");
                         j--;
                         continue;
@@ -134,7 +134,7 @@ namespace Outpost
                     line = input.ReadLine();
                 if (!line.StartsWith("]"))
                 {
-                    MainGame.mainGame.Log("Malformed voxture input: no closing bracket (]) at line reading " + line + ".\n  Attempting to compensate...");
+                    Logger.Log("Malformed voxture input: no closing bracket (]) at line reading " + line + ".\n  Attempting to compensate...");
                     overflow = true;
                 }
             }
@@ -146,7 +146,7 @@ namespace Outpost
         {
             string line = input.ReadLine();
             if (!line.StartsWith("["))
-                MainGame.mainGame.Log("Malformed material definition: Line reading " + line + " does not start with opening bracket ([).\nAttempting to compensate...");
+                Logger.Log("Malformed material definition: Line reading " + line + " does not start with opening bracket ([).\nAttempting to compensate...");
             else
                 line = input.ReadLine();
 
@@ -176,7 +176,7 @@ namespace Outpost
                                 mat.transparency = OutpostLibrary.Content.Transparency.translucent;
                                 break;
                             default:
-                                MainGame.mainGame.Log(("Did not recognize transparency: " + line));
+                                Logger.Log(("Did not recognize transparency: " + line));
                                 break;
                         }
                         break;
@@ -200,7 +200,7 @@ namespace Outpost
                                 mat.solidity = OutpostLibrary.Content.Solidity.vacuum;
                                 break;
                             default:
-                                MainGame.mainGame.Log(("Did not recognize solidity: " + line));
+                                Logger.Log(("Did not recognize solidity: " + line));
                                 break;
                         }
                         break;

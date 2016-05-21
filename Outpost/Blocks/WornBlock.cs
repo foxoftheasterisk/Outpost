@@ -935,7 +935,7 @@ namespace Outpost.Blocks
                 if (other != null)
                 {
                     if (other != m)
-                        MainGame.mainGame.Log("Unhandled case: three materials in WearDown.");
+                        Logger.Log("Unhandled case: three materials in WearDown.");
                 }
                 else
                     other = m;
@@ -964,7 +964,7 @@ namespace Outpost.Blocks
                 if (other != null)
                 {
                     if (other != m)
-                        MainGame.mainGame.Log("Unhandled case: three materials in WearDown.");
+                        Logger.Log("Unhandled case: three materials in WearDown.");
                 }
                 else
                     other = m;
@@ -993,7 +993,7 @@ namespace Outpost.Blocks
                 if (other != null)
                 {
                     if (other != m)
-                        MainGame.mainGame.Log("Unhandled case: three materials in WearDown.");
+                        Logger.Log("Unhandled case: three materials in WearDown.");
                 }
                 else
                     other = m;
@@ -1022,7 +1022,7 @@ namespace Outpost.Blocks
                 if (other != null)
                 {
                     if (other != m)
-                        MainGame.mainGame.Log("Unhandled case: three materials in WearDown.");
+                        Logger.Log("Unhandled case: three materials in WearDown.");
                 }
                 else
                     other = m;
@@ -1051,7 +1051,7 @@ namespace Outpost.Blocks
                 if (other != null)
                 {
                     if (other != m)
-                        MainGame.mainGame.Log("Unhandled case: three materials in WearDown.");
+                        Logger.Log("Unhandled case: three materials in WearDown.");
                 }
                 else
                     other = m;
