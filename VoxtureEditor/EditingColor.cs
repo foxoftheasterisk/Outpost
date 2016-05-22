@@ -11,6 +11,30 @@ namespace VoxtureEditor
     {
         public string name;
 
+        public Color color
+        {
+            get
+            {
+                return c;
+            }
+            set
+            {
+                c = value;
+            }
+        }
+
+        public Color specular
+        {
+            get
+            {
+                return s;
+            }
+            set
+            {
+                s = value;
+            }
+        }
+
         public EditingColor(string _name, int r, int g, int b, int a) : base(r,g,b,a)
         {
             name = _name;

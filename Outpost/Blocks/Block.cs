@@ -145,7 +145,7 @@ namespace Outpost.Blocks
     public static class BlockMethods
     {
         
-        public static void createVertices(this Block block, List<VertexPositionColorNormal> verts, List<short> inds, Vector3 offset)
+        public static void createVertices(this Block block, List<OutpostVertex> verts, List<short> inds, Vector3 offset)
         {
             if (block.isTransparent)
                 return;
@@ -300,7 +300,7 @@ namespace Outpost.Blocks
             //*/
         }
         //*/
-        private static void createVerticesRecurse(Block block, List<VertexPositionColorNormal> verts, List<short> inds, Vector3 offset, List<IntVector3> completed, IntVector3 adding)
+        private static void createVerticesRecurse(Block block, List<OutpostVertex> verts, List<short> inds, Vector3 offset, List<IntVector3> completed, IntVector3 adding)
         {
             if (completed.Contains(adding))
                 return;
@@ -412,7 +412,7 @@ namespace Outpost.Blocks
         /// <param name="color"></param>
         /// <param name="offset">The voxel's position in 3D space.</param>
         /// <param name="face"></param>
-        private static void renderVoxelFace(List<VertexPositionColorNormal> verts, List<short> inds, Color color, Vector3 offset, Directions.CompassDirection face)
+        private static void renderVoxelFace(List<OutpostVertex> verts, List<short> inds, OutpostColor color, Vector3 offset, Directions.CompassDirection face)
         {
             short currentIndex = (short)verts.Count;
 
@@ -421,40 +421,40 @@ namespace Outpost.Blocks
             switch (face)
             {
                 case Directions.CompassDirection.N:
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, 0, 0), color, new Vector3(1, 0, 0)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, 0, size), color, new Vector3(1, 0, 0)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, size, 0), color, new Vector3(1, 0, 0)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, size, size), color, new Vector3(1, 0, 0)));
+                    verts.Add(new OutpostVertex(offset + new Vector3(size, 0, 0), new Vector3(1, 0, 0), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(size, 0, size), new Vector3(1, 0, 0), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(size, size, 0), new Vector3(1, 0, 0), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(size, size, size), new Vector3(1, 0, 0), color));
                     break;
                 case Directions.CompassDirection.S:
-                    verts.Add(new VertexPositionColorNormal(offset, color, new Vector3(-1, 0, 0)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(0, 0, size), color, new Vector3(-1, 0, 0)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(0, size, 0), color, new Vector3(-1, 0, 0)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(0, size, size), color, new Vector3(-1, 0, 0)));
+                    verts.Add(new OutpostVertex(offset, new Vector3(-1, 0, 0), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(0, 0, size), new Vector3(-1, 0, 0), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(0, size, 0), new Vector3(-1, 0, 0), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(0, size, size), new Vector3(-1, 0, 0), color));
                     break;
                 case Directions.CompassDirection.E:
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(0, 0, size), color, new Vector3(0, 0, 1)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, 0, size), color, new Vector3(0, 0, 1)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(0, size, size), color, new Vector3(0, 0, 1)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, size, size), color, new Vector3(0, 0, 1)));
+                    verts.Add(new OutpostVertex(offset + new Vector3(0, 0, size), new Vector3(0, 0, 1), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(size, 0, size), new Vector3(0, 0, 1), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(0, size, size), new Vector3(0, 0, 1), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(size, size, size), new Vector3(0, 0, 1), color));
                     break;
                 case Directions.CompassDirection.W:
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(0, 0, 0), color, new Vector3(0, 0, -1)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, 0, 0), color, new Vector3(0, 0, -1)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(0, size, 0), color, new Vector3(0, 0, -1)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, size, 0), color, new Vector3(0, 0, -1)));
+                    verts.Add(new OutpostVertex(offset + new Vector3(0, 0, 0), new Vector3(0, 0, -1), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(size, 0, 0), new Vector3(0, 0, -1), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(0, size, 0), new Vector3(0, 0, -1), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(size, size, 0), new Vector3(0, 0, -1), color));
                     break;
                 case Directions.CompassDirection.U:
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(0, size, 0), color, new Vector3(0, 1, 0)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(0, size, size), color, new Vector3(0, 1, 0)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, size, 0), color, new Vector3(0, 1, 0)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, size, size), color, new Vector3(0, 1, 0)));
+                    verts.Add(new OutpostVertex(offset + new Vector3(0, size, 0), new Vector3(0, 1, 0), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(0, size, size), new Vector3(0, 1, 0), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(size, size, 0), new Vector3(0, 1, 0), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(size, size, size), new Vector3(0, 1, 0), color));
                     break;
                 case Directions.CompassDirection.D:
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(0, 0, 0), color, new Vector3(0, -1, 0)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(0, 0, size), color, new Vector3(0, -1, 0)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, 0, 0), color, new Vector3(0, -1, 0)));
-                    verts.Add(new VertexPositionColorNormal(offset + new Vector3(size, 0, size), color, new Vector3(0, -1, 0)));
+                    verts.Add(new OutpostVertex(offset + new Vector3(0, 0, 0), new Vector3(0, -1, 0), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(0, 0, size), new Vector3(0, -1, 0), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(size, 0, 0), new Vector3(0, -1, 0), color));
+                    verts.Add(new OutpostVertex(offset + new Vector3(size, 0, size), new Vector3(0, -1, 0), color));
                     break;
                 default:
                     Logger.Log("Nonstandard CompassDirection??");

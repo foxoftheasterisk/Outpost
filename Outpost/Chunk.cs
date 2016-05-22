@@ -15,40 +15,53 @@ using OutpostLibrary.Navigation;
 
 namespace Outpost
 {
-    public struct VertexPositionColorNormal : IVertexType
+    public struct OutpostVertex : IVertexType
     {
         public Vector3 Position;
         public Color Color;
         public Vector3 Normal;
+        public Color Specular;
 
-        public VertexPositionColorNormal(Vector3 pos, Color col, Vector3 norm)
+        public OutpostVertex(Vector3 pos, Color col, Vector3 norm, Color spec)
         {
             Position = pos;
             Color = col;
             Normal = norm;
+            Specular = spec;
+        }
+
+        public OutpostVertex(Vector3 pos, Vector3 norm, OutpostLibrary.Content.OutpostColor col)
+        {
+            Position = pos;
+            Color = col.color;
+            Normal = norm;
+            Specular = col.specular;
         }
 
         public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
         (
             new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
             new VertexElement(sizeof(float) * 3, VertexElementFormat.Color, VertexElementUsage.Color, 0),
-            new VertexElement(sizeof(float) * 3 + 4, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0)
+            new VertexElement(sizeof(float) * 3 + 4, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
+            new VertexElement(sizeof(float) * 6 + 4, VertexElementFormat.Color, VertexElementUsage.Color, 1)
         );
 
         VertexDeclaration IVertexType.VertexDeclaration
         {
-            get { return VertexPositionColorNormal.VertexDeclaration; }
+            get { return OutpostVertex.VertexDeclaration; }
         }
 
         public override string ToString()
         {
-            return "Position: " + Position.ToString() + "; Color: " + Color.ToString() + "; Normal: " + Normal.ToString();
+            return "Position: " + Position.ToString() + "; Color: " + Color.ToString() + "; Normal: " + Normal.ToString() + "; Specular: " + Specular.ToString();
         }
     }
     //when I write that shader, I should also be able to include a geometry shader which calculates per-poly normals
     //and thus obviate the need to include a normal here.
     //although, it may make some normals backwards?  not sure if this is a problem.
     //it probably is, but all I'd need to do is change the order of the indices, nbd.
+
+    //oh kay uhm I don't think I'm doing that...
 
     public class Chunk : IDisposable
     {
@@ -62,7 +75,7 @@ namespace Outpost
 
         public bool isDisposed = false;
 
-        VertexPositionColorNormal[] vertices;  
+        OutpostVertex[] vertices;  
         //If I want to do custom specular
         //(which I do, eventually)
         //I'll need to write my own shader
@@ -93,7 +106,7 @@ namespace Outpost
 
             try
             {
-                vBuff = new DynamicVertexBuffer(graphics, typeof(VertexPositionColorNormal), maxVerts, BufferUsage.WriteOnly);
+                vBuff = new DynamicVertexBuffer(graphics, typeof(OutpostVertex), maxVerts, BufferUsage.WriteOnly);
                 //vBuff.ContentLost += new EventHandler<EventArgs>(verticesLostHandler);
                 iBuff = new DynamicIndexBuffer(graphics, IndexElementSize.SixteenBits, maxInds, BufferUsage.WriteOnly);
                 //iBuff.ContentLost += new EventHandler<EventArgs>(indicesLostHandler);
@@ -103,9 +116,9 @@ namespace Outpost
             {
                 Logger.Log(e.ToString());
             }
-            
 
-            vertices = new VertexPositionColorNormal[0];
+
+            vertices = new OutpostVertex[0];
             indices = new short[0];
         }
 
@@ -121,7 +134,7 @@ namespace Outpost
             blocks = new Block[size, size, size];
             this.filename = MainGame.WorldFolder + filename;
 
-            vBuff = new DynamicVertexBuffer(graphics, typeof(VertexPositionColorNormal), maxVerts, BufferUsage.WriteOnly);
+            vBuff = new DynamicVertexBuffer(graphics, typeof(OutpostVertex), maxVerts, BufferUsage.WriteOnly);
             //vBuff.ContentLost += new EventHandler<EventArgs>(verticesLostHandler);
 
             iBuff = new DynamicIndexBuffer(graphics, IndexElementSize.SixteenBits, maxInds, BufferUsage.WriteOnly);
@@ -546,7 +559,7 @@ namespace Outpost
             //ofc that does mean significantly more memory cost... maybe it's not worth it.
 
 
-            List<VertexPositionColorNormal> verts = new List<VertexPositionColorNormal>(4096);
+            List<OutpostVertex> verts = new List<OutpostVertex>(4096);
             List<short> inds = new List<short>(4096);
             //Having the 4096 should make it not have to increase the capacity often, since 4096 is the number of blocks in a chunk,
             //and not all of them will be distinct, probably.
@@ -575,11 +588,11 @@ namespace Outpost
                     if (vBuff != null)
                         vBuff.Dispose();
                     maxVerts = vertices.Length + 1000;
-                    vBuff = new DynamicVertexBuffer(graphics, typeof(VertexPositionColorNormal), maxVerts, BufferUsage.WriteOnly);
+                    vBuff = new DynamicVertexBuffer(graphics, typeof(OutpostVertex), maxVerts, BufferUsage.WriteOnly);
                     //vBuff.ContentLost += new EventHandler<EventArgs>(verticesLostHandler);
                     //Logger.Log("Vertices extended to " + maxVerts);
                 }
-                vBuff.SetData<VertexPositionColorNormal>(vertices, 0, vertices.Length);
+                vBuff.SetData<OutpostVertex>(vertices, 0, vertices.Length);
                 Logger.Log("Vertices: " + vertices.Length);
             }
 
@@ -607,7 +620,7 @@ namespace Outpost
 
         void verticesLostHandler(object sender, EventArgs e)
         {
-            vBuff.SetData<VertexPositionColorNormal>(vertices);
+            vBuff.SetData<OutpostVertex>(vertices);
         }
 
         /// <summary>

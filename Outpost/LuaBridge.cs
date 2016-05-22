@@ -193,6 +193,7 @@ namespace Outpost
 
         //this is not a very safe method
         //actually none of these three are
+        //but this one is the worst
         //also they don't handle set traversing
         //which is important
         private static OutpostLibrary.Content.OutpostColor loadColor(string name, StreamReader input)
@@ -203,7 +204,15 @@ namespace Outpost
             {
                 ints[i] = Int32.Parse(values[i]);
             }
-            return new OutpostLibrary.Content.OutpostColor(ints[0], ints[1], ints[2], ints[3]);
+            Microsoft.Xna.Framework.Color surfaceColor = new Microsoft.Xna.Framework.Color(ints[0], ints[1], ints[2], ints[3]);
+            values = input.ReadLine().Split(' ');
+            ints = new int[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                ints[i] = Int32.Parse(values[i]);
+            }
+            Microsoft.Xna.Framework.Color specularColor = new Microsoft.Xna.Framework.Color(ints[0], ints[1], ints[2], ints[3]);
+            return new OutpostLibrary.Content.OutpostColor(surfaceColor, specularColor);
         }
 
         private static OutpostLibrary.Content.Voxture loadVoxture(string name, Dictionary<string, OutpostLibrary.Content.OutpostColor> set, StreamReader input)

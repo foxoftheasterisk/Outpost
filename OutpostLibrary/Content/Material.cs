@@ -13,18 +13,18 @@ namespace OutpostLibrary.Content
         public Solidity solidity;
         public Voxture voxture;
 
-        public string name;  //for toString purposes
+        public string name;  //for toString purposes, mostly
 
         public Material(string _name)
         {
             name = _name;
         }
 
-        public Color this[int i, int j, int k]
+        public OutpostColor this[int i, int j, int k]
         {
             get
             {
-                return voxture[i, j, k].color;
+                return voxture[i, j, k];
             }
         }
 

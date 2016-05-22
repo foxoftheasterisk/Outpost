@@ -72,21 +72,25 @@ VertexToPixel CubeVertexShader(VertexData input)
 
 	//normally, you wouldn't be able to perform this reflection in the vertex shader
 	//but since I'm working with faces that are guaranteed to have a single normal across the whole face, it works.
-	float3 worldNormal = mul(float4(input.normal, 0), World).xyz
+	float3 worldNormal = mul(float4(input.normal, 0), World).xyz;
 	float3 reflection = normalize(reflect(sunDir, worldNormal));
 	output.reflection = mul(float4(reflection, 0), View).xyz;
 
 	return output;
 }
 
-/*
+
 //far as I know, MonoGame doesn't currently support Geometry shaders.  So, no doin' that.
 //If it ever does become an option, I should have one point per face rather than one per voxel.
-void CubeGeometryShader(point VertexToPixel input[], inout TriangleStream<VertexToPixel> output)
-{
+//void CubeGeometryShader(point VertexToPixel input[], inout TriangleStream<VertexToPixel> output)
+//{
+//
+//}
 
-}
-//*/
+float3 eyePosition = float3(0, 0, 1.0);
+//I have no idea if this is right...
+//It would be a consistent one though, I think, since we're talking view space here.
+//Or... do we have to go through projection to make it consistent?  No... no way, right?
 
 
 float4 CubePixelShader(VertexToPixel input) : COLOR0
@@ -94,16 +98,16 @@ float4 CubePixelShader(VertexToPixel input) : COLOR0
 	//specular time!!
 	//yes, this ENTIRE fragment/pixel shader is for specular. 
 
-	float eyePosition = float3(0, 0, 1.0);
-	//I have no idea if this is right...
-	//It would be a consistent one though, I think, since we're talking view space here.
-	//Or... do we have to go through projection to make it consistent?  No... no way, right?
+	float angle = dot(input.reflection, eyePosition);
 
-	float3 specularResult = input.specularColor.rgb * sunColor * pow(dot(reflection, eyePosition), input.specularColor.a);
+	//if (angle < 0)
+	//	return float4(premultSurfaceColor, input.litColor.a);
+
+	float3 specularResult = input.specularColor.rgb * sunColor.rgb * pow(abs(angle), input.specularColor.a);
 	
 	//Now, an experimental function to convert the "black" parts of the result to alpha
 	//first guess as to how to do that: set alpha to the brightest color result, and treat it as premultiplied alpha
-	float alphaFactor = max(specularResult.r, specularResult.g, specularResult.b);
+	float alphaFactor = max(max(specularResult.r, specularResult.g), specularResult.b);
 	
 	//this would convert it to non-premultiplied alpha
 	//but compositing is easier if we DON'T do that
@@ -115,9 +119,10 @@ float4 CubePixelShader(VertexToPixel input) : COLOR0
 	//now, alpha that over the lit color to get the final.
 	//since alpha compositing is easier with premultiplied alpha, and we already have that for the specular, convert our surface value to that.
 	float3 premultSurfaceColor = input.litColor.rgb * input.litColor.a;
+
 	float4 finalColor = float4(0, 0, 0, 0);
 	finalColor.rgb = specularResult.rgb + (premultSurfaceColor.rgb * (1 - alphaFactor));
-	finalColor.a = alphaFactor + premultSurfaceColor.a * (1 - alphaFactor);
+	finalColor.a = alphaFactor + input.litColor.a * (1 - alphaFactor);
 
 	//this does mean that our output color is premultiplied alpha
 	//wouldn't be particularly hard to convert back tho.

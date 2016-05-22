@@ -42,9 +42,9 @@
 /processorParam:TextureFormat=Color
 /build:Content/blank.png
 
-#begin ../../../extra programming/C# Projects/Outpost 0.2/Outpost/CubeShader.fx
+#begin Outpost/CubeShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:../../../extra programming/C# Projects/Outpost 0.2/Outpost/CubeShader.fx
+/build:Outpost/CubeShader.fx
 
