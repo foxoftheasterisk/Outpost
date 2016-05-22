@@ -15,6 +15,8 @@ using OutpostLibrary.Navigation;
 
 namespace Outpost
 {
+
+    //TODO: this probably shouldn't be in Chunk.
     public struct VertexPositionColorNormal : IVertexType
     {
         public Vector3 Position;

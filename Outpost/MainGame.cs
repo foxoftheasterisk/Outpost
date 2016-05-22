@@ -67,6 +67,8 @@ namespace Outpost
         public const float gravity = .05f;
         #endregion
 
+        #region Mapgen and Loading
+
         /// <summary>
         /// Creates a game with a new world.
         /// </summary>
@@ -478,7 +480,9 @@ namespace Outpost
             //playerPos = new Vector3(Int16.Parse(pos[0]), Int16.Parse(pos[1]), Int16.Parse(pos[2]));
         }
 
-//TODO: i'm pretty sure there are times it should close
+        #endregion Mapgen and Loading
+
+        //TODO: i'm pretty sure there are times it should close
         public bool shouldClose()
         {
             return false;
@@ -513,6 +517,8 @@ namespace Outpost
 
             return false;
         }
+
+        #region Collision & Selection Detection
 
         public Block getBlock(BlockAddress address)
         {
@@ -861,6 +867,8 @@ namespace Outpost
             }
             #endregion
         }
+
+        #endregion Collision & Selection Detection
 
         #region Graphics
 
