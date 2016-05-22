@@ -1,6 +1,9 @@
 ﻿
 //okay let's do this
 
+//Note to self:
+//Although this is targeting OpenGL, the shader is written in HLSL due to Monogame quirks.
+
 //probably more efficient to combine these CPU-side, as otherwise we'd need to do it per-vertex
 //but we'll worry about that later
 //for now, following the tutorial
@@ -39,7 +42,7 @@ struct VertexToPixel
 	float4 position : POSITION0;
 	float4 litColor : COLOR0;
 	float4 specularColor : COLOR1;
-	float3 reflection : NORMAL0;
+	float3 normal : NORMAL0;  //It refuses to recognize this 
 };
 
 VertexToPixel CubeVertexShader(VertexData input)
@@ -69,12 +72,7 @@ VertexToPixel CubeVertexShader(VertexData input)
 	output.litColor = saturate(output.litColor);
 
 	output.specularColor = input.specularColor;
-
-	//normally, you wouldn't be able to perform this reflection in the vertex shader
-	//but since I'm working with faces that are guaranteed to have a single normal across the whole face, it works.
-	float3 worldNormal = mul(float4(input.normal, 0), World).xyz;
-	float3 reflection = normalize(reflect(sunDir, worldNormal));
-	output.reflection = mul(float4(reflection, 0), View).xyz;
+	output.normal = input.normal;
 
 	return output;
 }
@@ -87,24 +85,31 @@ VertexToPixel CubeVertexShader(VertexData input)
 //
 //}
 
-float3 eyePosition = float3(0, 0, 1.0);
-//I have no idea if this is right...
-//It would be a consistent one though, I think, since we're talking view space here.
-//Or... do we have to go through projection to make it consistent?  No... no way, right?
+
+//normally, you wouldn't be able to perform this reflection in the vertex shader
+//but since I'm working with faces that are guaranteed to have a single normal across the whole face, it works.
+//...unless it somehow breaks the compiler???
 
 
 float4 CubePixelShader(VertexToPixel input) : COLOR0
 {
 	//specular time!!
-	//yes, this ENTIRE fragment/pixel shader is for specular. 
+	//yes, this ENTIRE fragment slash pixel shader is for specular. 
 
-	float angle = dot(input.reflection, eyePosition);
+	float3 eyePosition = float3(0, 0, 1.0);
+	//I have no idea if this is right...
+	//It would be a consistent one though, I think, since we're talking view space here.
+	//Or... do we have to go through projection to make it consistent?  No... no way, right?
+
+	float3 worldNormal = mul(float4(input.normal, 0), World).xyz;
+	float3 reflection = normalize(sunDir - (2 * worldNormal * dot(sunDir, worldNormal)));
+	reflection = mul(float4(reflection, 0), View).xyz;
 
 	//if (angle < 0)
-	//	return float4(premultSurfaceColor, input.litColor.a);
+	//return float4(premultSurfaceColor, input.litColor.a);
 
-	float3 specularResult = input.specularColor.rgb * sunColor.rgb * pow(abs(angle), input.specularColor.a);
-	
+	float3 specularResult = input.specularColor.rgb * sunColor.rgb * pow(dot(reflection, eyePosition), input.specularColor.a);
+
 	//Now, an experimental function to convert the "black" parts of the result to alpha
 	//first guess as to how to do that: set alpha to the brightest color result, and treat it as premultiplied alpha
 	float alphaFactor = max(max(specularResult.r, specularResult.g), specularResult.b);
