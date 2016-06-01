@@ -73,6 +73,11 @@ namespace Outpost
             return posInChunk;
         }
 
+        public Vector3 headPos()
+        {
+            return posInChunk + new Vector3(0, height, 0) + new Vector3(chunk.X * 16, chunk.Y * 16, chunk.Z * 16);
+        }
+
         Vector3 lastMove;
         /// <summary>
         /// Rotation and movement
@@ -585,9 +590,9 @@ namespace Outpost
 
         public Matrix createViewMatrix()
         {
-            Vector3 headPos = posInChunk + new Vector3(0, height, 0) + new Vector3(chunk.X * 16, chunk.Y * 16, chunk.Z * 16);
-            Vector3 lookingAt = getDirection() + headPos;
-            return Matrix.CreateLookAt(headPos, lookingAt, Vector3.Up);
+            Vector3 head = headPos();
+            Vector3 lookingAt = getDirection() + head;
+            return Matrix.CreateLookAt(head, lookingAt, Vector3.Up);
         }
 
         public Vector3 getDirection()

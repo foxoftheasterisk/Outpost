@@ -25,6 +25,8 @@ float4 ambientColor = float4(1, 1, 1, 1);
 float3 sunDir = float3(0.1, -1, 0.1);
 float4 sunColor = float4(1, 1, 0.8, 1);
 
+float3 eyePosition = float3(0, 0, -1.0);
+
 //so geometry shader-ing might be a terrible mistake, but we'll try it
 //...except that Monogame (probably) doesn't support it.  Not worth it.
 //float cubeSize = 0.2;
@@ -43,6 +45,7 @@ struct VertexToPixel
 	float4 litColor : COLOR0;
 	float4 specularColor : COLOR1;
 	float3 normal : NORMAL0;  //It refuses to recognize this 
+	float3 worldPosition : POSITION1;
 };
 
 VertexToPixel CubeVertexShader(VertexData input)
@@ -52,6 +55,7 @@ VertexToPixel CubeVertexShader(VertexData input)
 	float4 worldPosition = mul(input.position, World);
 	float4 viewPosition = mul(worldPosition, View);
 	output.position = mul(viewPosition, Projection);
+	output.worldPosition = worldPosition.xyz;
 
 	float4 lightColor = ambientColor * ambientColor.a;
 	//normally we'd need to switch the normal to be in world-space
@@ -96,24 +100,37 @@ float4 CubePixelShader(VertexToPixel input) : COLOR0
 	//specular time!!
 	//yes, this ENTIRE fragment slash pixel shader is for specular. 
 
-	float3 eyePosition = float3(0, 0, 1.0);
+	//return float4(input.normal, input.litColor.a);
+
+	
 	//I have no idea if this is right...
 	//It would be a consistent one though, I think, since we're talking view space here.
 	//Or... do we have to go through projection to make it consistent?  No... no way, right?
 
-	float3 worldNormal = mul(float4(input.normal, 0), World).xyz;
-	float3 reflection = normalize(sunDir - (2 * worldNormal * dot(sunDir, worldNormal)));
-	reflection = mul(float4(reflection, 0), View).xyz;
+	float3 worldNormal = normalize(mul(float4(input.normal, 0), World).xyz);
+	float3 normSunDir = normalize(sunDir);
+	float3 reflection = normalize(sunDir - (2 * worldNormal * dot(normSunDir, worldNormal)));
+	//reflection = mul(float4(reflection, 0), View).xyz;
+	//reflection = mul(float4(reflection, 0), Projection).xyz;
 
-	//if (angle < 0)
-	//return float4(premultSurfaceColor, input.litColor.a);
+	float3 eyeVector = eyePosition - input.worldPosition;
 
-	float3 specularResult = input.specularColor.rgb * sunColor.rgb * pow(dot(reflection, eyePosition), input.specularColor.a);
+	float angle = dot(reflection, normalize(eyeVector));
+	float3 premultSurfaceColor = input.litColor.rgb * input.litColor.a;
+
+	//return float4(premultSurfaceColor * angle, angle);
+
+	if (angle < 0)
+		return float4(premultSurfaceColor, input.litColor.a);
+
+	float specularPower = input.specularColor.a * 255;
+
+	float3 specularResult = input.specularColor.rgb * sunColor.rgb * pow(angle, specularPower);
 
 	//Now, an experimental function to convert the "black" parts of the result to alpha
 	//first guess as to how to do that: set alpha to the brightest color result, and treat it as premultiplied alpha
 	float alphaFactor = max(max(specularResult.r, specularResult.g), specularResult.b);
-	
+
 	//this would convert it to non-premultiplied alpha
 	//but compositing is easier if we DON'T do that
 	//so
@@ -123,7 +140,7 @@ float4 CubePixelShader(VertexToPixel input) : COLOR0
 
 	//now, alpha that over the lit color to get the final.
 	//since alpha compositing is easier with premultiplied alpha, and we already have that for the specular, convert our surface value to that.
-	float3 premultSurfaceColor = input.litColor.rgb * input.litColor.a;
+	
 
 	float4 finalColor = float4(0, 0, 0, 0);
 	finalColor.rgb = specularResult.rgb + (premultSurfaceColor.rgb * (1 - alphaFactor));

@@ -966,6 +966,8 @@ namespace Outpost
             voxelEffect.Parameters["sunColor"].SetValue(new Vector4(1.0f, 1.0f, 0.8f, 0.9f));
             voxelEffect.Parameters["sunDir"].SetValue(new Vector3(-0.1f, -1.0f, -0.5f));
 
+            voxelEffect.Parameters["eyePosition"].SetValue(player.headPos());
+
             for (int x = 0; x < mapSize; x++)
             {
                 for (int y = 0; y < mapSize; y++)
