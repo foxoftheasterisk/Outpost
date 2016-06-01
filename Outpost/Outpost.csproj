@@ -76,6 +76,8 @@
     <Compile Include="Items\PlayerFist.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="LuaBridge.cs" />
+    <Compile Include="Map\MapManager.cs" />
+    <Compile Include="Map\MapSection.cs" />
     <Compile Include="Screens\LoadingScreen.cs" />
     <Compile Include="Screens\PauseScreen.cs" />
     <Compile Include="Screens\ScreenManager.cs" />
@@ -86,7 +88,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Screens\Screen.cs" />
     <Compile Include="SetLoader.cs" />
-    <Compile Include="MapStructure.cs" />
+    <Compile Include="Map\MapStructure.cs" />
     <Compile Include="TopLevel.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,24 @@ using Outpost.Blocks;
 
 namespace Outpost
 {
+    public struct patternOrChunk
+    {
+        public OutpostLibrary.Structure pattern;
+        public Chunk chunk;
+
+        public patternOrChunk(Chunk oct)
+        {
+            chunk = oct;
+            pattern = OutpostLibrary.Structure.field;
+        }
+
+        public patternOrChunk(OutpostLibrary.Structure pat)
+        {
+            pattern = pat;
+            chunk = null;
+        }
+    }
+
     /*
     public static class Mapgen
     {
@@ -571,22 +589,4 @@ namespace Outpost
         }
     }
     //*/
-
-    public struct patternOrChunk
-    {
-        public OutpostLibrary.Structure pattern;
-        public Chunk chunk;
-
-        public patternOrChunk(Chunk oct)
-        {
-            chunk = oct;
-            pattern = OutpostLibrary.Structure.field;
-        }
-
-        public patternOrChunk(OutpostLibrary.Structure pat)
-        {
-            pattern = pat;
-            chunk = null;
-        }
-    }
 }

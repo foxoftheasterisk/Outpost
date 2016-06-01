@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Neo.IronLua;
 
-namespace Outpost
+namespace Outpost.Map
 {
     /// <summary>
     /// Stores a mapgen structure, including its name, whether and how often to update it, and how to save it
@@ -31,11 +31,13 @@ namespace Outpost
         [LuaMember("radius")]
         public int radius {get;set;}
         //how many chunks away this structure should be considered (for mapgen, updates, etc.)
+        
 
-        public enum UpdateMode { None, ActiveOnly, CatchUp, Maintain, ActivateChunk}
+        public enum UpdateMode { None, GraphicsOnly, ActiveOnly, CatchUp, Maintain, ActivateChunk}
         //when this structure should be updated
         //None: Does not update.
-        //ActiveOnly: Updates only when the chunk is active.  Preferred mode for animations, etc.
+        //GraphicsOnly: Updates only when the chunk is in a drawn region.  Preferred mode for animations.
+        //ActiveOnly: Updates only when the chunk is active.  Preferred mode for periodic effects.
         //CatchUp: When the chunk is made active, updates a number of times required to "catch up" to the current game time.  Preferred mode for plants and other growing structures.
         //Maintain: Continues to update even while the chunk is inactive.  Use sparingly.
         //ActivateChunk: Prevents the chunk containing this structure from ever being made inactive.  Use extremely sparingly.
