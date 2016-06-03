@@ -71,11 +71,12 @@
     <Compile Include="Blocks\Block.cs" />
     <Compile Include="Blocks\SolidBlock.cs" />
     <Compile Include="Blocks\WornBlock.cs" />
-    <Compile Include="Chunk.cs" />
+    <Compile Include="Map\Chunk.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\PlayerFist.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="LuaBridge.cs" />
+    <Compile Include="Map\ChunkManager.cs" />
     <Compile Include="Map\MapManager.cs" />
     <Compile Include="Map\MapSection.cs" />
     <Compile Include="Screens\LoadingScreen.cs" />

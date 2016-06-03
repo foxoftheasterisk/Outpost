@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using OutpostLibrary.Navigation;
+
 namespace Outpost.Map
 {
     public class MapManager
@@ -30,7 +32,7 @@ namespace Outpost.Map
         //...should all the map management be in Lua?
         //......nah.
 
-
+        Dictionary<ChunkAddress, ChunkManager> chunkStore;
 
     }
 }

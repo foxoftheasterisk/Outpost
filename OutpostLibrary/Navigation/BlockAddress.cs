@@ -10,6 +10,7 @@ namespace OutpostLibrary.Navigation
 {
     public class BlockAddress
     {
+        public string world;
         public IntVector3 chunk, block;
 
         public int x
@@ -36,11 +37,16 @@ namespace OutpostLibrary.Navigation
 
         public override string ToString()
         {
-            return chunk.X + ":" + block.X + ", " + chunk.Y + ":" + block.Y + ", " + chunk.Z + ":" + block.Z;
+            return world + ": " + chunk.X + ":" + block.X + ", " + chunk.Y + ":" + block.Y + ", " + chunk.Z + ":" + block.Z;
         }
 
-        public BlockAddress(IntVector3 chunkBase, IntVector3 blockBase)
+        public BlockAddress(ChunkAddress chunk, IntVector3 block)
+            : this(chunk.world, chunk.position, block)
+        { }
+
+        public BlockAddress(string _world, IntVector3 chunkBase, IntVector3 blockBase)
         {
+            world = _world;
             chunk = new IntVector3(chunkBase);
             block = new IntVector3(blockBase);
 
@@ -74,11 +80,15 @@ namespace OutpostLibrary.Navigation
                 block.Z += 16;
                 chunk.Z -= 1;
             }
-            
+
         }
 
-        public BlockAddress(IntVector3 chunk, Vector3 block)
-            : this(chunk, new IntVector3((int)Math.Floor(block.X), (int)Math.Floor(block.Y), (int)Math.Floor(block.Z)))
+        public BlockAddress(string _world, IntVector3 chunk, Vector3 block)
+            : this(_world, chunk, new IntVector3((int)Math.Floor(block.X), (int)Math.Floor(block.Y), (int)Math.Floor(block.Z)))
+        { }
+
+        public BlockAddress(ChunkAddress chunk, Vector3 block)
+            : this(chunk.world, chunk.position, new IntVector3((int)Math.Floor(block.X), (int)Math.Floor(block.Y), (int)Math.Floor(block.Z)))
         { }
     }
 }

@@ -13,7 +13,7 @@ using Outpost.Blocks;
 using OutpostLibrary;
 using OutpostLibrary.Navigation;
 
-namespace Outpost
+namespace Outpost.Map
 {
 
     //TODO: this probably shouldn't be in Chunk.
