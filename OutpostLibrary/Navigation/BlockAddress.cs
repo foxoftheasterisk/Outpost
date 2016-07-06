@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace OutpostLibrary.Navigation
 {
-    public class BlockAddress
+    public struct BlockAddress
     {
         public string world;
         public IntVector3 chunk, block;

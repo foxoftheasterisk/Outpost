@@ -31,6 +31,9 @@ namespace Outpost
         /// </summary>
         public void initializeLua()
         {
+            //well, this is messy
+            //is there not a better way to do this?
+
             global = compiler.CreateEnvironment();
             game = new LuaTable();
             global["Game"] = game;
@@ -262,6 +265,11 @@ namespace Outpost
         #endregion loadVoxtures
 
         #region mapgen
+
+        //uh what
+        //...
+        //I... guess this makes sense?
+        //sort of?
 
         public void buildChunk(OutpostLibrary.IntVector3 location, Chunk chunk)
         {

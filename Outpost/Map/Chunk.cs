@@ -54,8 +54,18 @@ namespace Outpost.Map
 
     public class Chunk : IDisposable
     {
+        public class LoadManager
+        {
+            //Manages the load state of a single chunk.
+            LoadState currentLoadState;
+
+            List<LoadState> requestedLoadStates;
+        }
+
         int size;
         Block[,,] blocks;
+
+        LoadManager loadManager;
 
         List<MapStructure> structures;
 

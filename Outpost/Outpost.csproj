@@ -76,7 +76,7 @@
     <Compile Include="Items\PlayerFist.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="LuaBridge.cs" />
-    <Compile Include="Map\ChunkManager.cs" />
+    <Compile Include="Map\LoadState.cs" />
     <Compile Include="Map\MapManager.cs" />
     <Compile Include="Map\MapSection.cs" />
     <Compile Include="Screens\LoadingScreen.cs" />

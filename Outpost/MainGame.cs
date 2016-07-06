@@ -28,7 +28,7 @@ namespace Outpost
     public class MainGame : Screen
     {
         IntVector3 mapOffset; // 
-        Chunk[, ,] map;
+        Chunk[, ,] map; //NO
         Dictionary<IntVector3, patternOrChunk> mapGenHelper;
         //Is here to keep map-generation from loading quite so many files
         //since that's what's slowing it down so much

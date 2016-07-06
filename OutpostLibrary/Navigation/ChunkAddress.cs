@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace OutpostLibrary.Navigation
 {
-    class ChunkAddress
+    public struct ChunkAddress
     {
         public string world;
         public IntVector3 position;

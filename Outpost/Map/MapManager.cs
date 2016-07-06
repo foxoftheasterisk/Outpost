@@ -11,6 +11,8 @@ namespace Outpost.Map
     public class MapManager
     {
 
+
+
         //okay, so, I need to figure a way to manage what chunks are loaded or not
         //such that:
         //*each chunk is never loaded more than once
@@ -33,6 +35,8 @@ namespace Outpost.Map
         //......nah.
 
         Dictionary<ChunkAddress, ChunkManager> chunkStore;
+
+        
 
     }
 }

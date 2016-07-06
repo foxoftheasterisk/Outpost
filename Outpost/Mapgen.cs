@@ -6,6 +6,9 @@ using OutpostLibrary.Navigation;
 using OutpostLibrary.Content;
 using OutpostLibrary;
 using Outpost.Blocks;
+using Outpost.Map;
+
+//TODO: abolish the rest of this
 
 namespace Outpost
 {
