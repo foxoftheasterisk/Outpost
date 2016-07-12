@@ -52,6 +52,9 @@ namespace Outpost.Map
     //although, it may make some normals backwards?  not sure if this is a problem.
     //it probably is, but all I'd need to do is change the order of the indices, nbd.
 
+    //except, geometry shaders are kind of enormous gpu sinks
+    //so i should probably avoid using them for simple things like that.
+
     public class Chunk : IDisposable
     {
         public class LoadManager
@@ -69,7 +72,7 @@ namespace Outpost.Map
 
         List<MapStructure> structures;
 
-        IntVector3 position;
+        public ChunkAddress address;
         String filename;
 
         public bool isDisposed = false;
@@ -95,13 +98,13 @@ namespace Outpost.Map
         /// </summary>
         /// <param name="layers"></param>
         /// <param name="pos"></param>
-        public Chunk(IntVector3 pos, GraphicsDevice graphics)
+        public Chunk(ChunkAddress addr, GraphicsDevice graphics)
         {
             size = Sizes.ChunkSize;
             blocks = new Block[Sizes.ChunkSize, Sizes.ChunkSize, Sizes.ChunkSize];
             structures = new List<MapStructure>();
-            position = pos;
-            filename = MainGame.WorldFolder + position.X + "," + position.Y + "," + position.Z;
+            address = addr;
+            filename = MainGame.WorldFolder + address.position.X + "," + address.position.Y + "," + address.position.Z;
 
             try
             {
@@ -250,27 +253,27 @@ namespace Outpost.Map
 
             if (!isFilling)
             {
-                patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(1, 0, 0));
+                patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(1, 0, 0));
                 if (adjChunk.chunk != null)
                     adjChunk.chunk.generateVertices();
 
-                adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(-1, 0, 0));
+                adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
                 if (adjChunk.chunk != null)
                     adjChunk.chunk.generateVertices();
 
-                adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, 1, 0));
+                adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 1, 0));
                 if (adjChunk.chunk != null)
                     adjChunk.chunk.generateVertices();
 
-                adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, -1, 0));
+                adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, -1, 0));
                 if (adjChunk.chunk != null)
                     adjChunk.chunk.generateVertices();
 
-                adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, 0, 1));
+                adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, 1));
                 if (adjChunk.chunk != null)
                     adjChunk.chunk.generateVertices();
 
-                adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, 0, -1));
+                adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, -1));
                 if (adjChunk.chunk != null)
                     adjChunk.chunk.generateVertices();
             }
@@ -291,7 +294,7 @@ namespace Outpost.Map
             }
             else
             {
-                IntVector3 chunkAddr = position + new IntVector3(1, 0, 0);
+                IntVector3 chunkAddr = address + new IntVector3(1, 0, 0);
                 Block adj = MainGame.mainGame.getBlock(new BlockAddress(chunkAddr, new IntVector3(0, y, z)));
                 if (adj != null)
                 {
@@ -318,7 +321,7 @@ namespace Outpost.Map
             }
             else
             {
-                IntVector3 chunkAddr = position + new IntVector3(-1, 0, 0);
+                IntVector3 chunkAddr = address + new IntVector3(-1, 0, 0);
                 Block adj = MainGame.mainGame.getBlock(new BlockAddress(chunkAddr, new IntVector3(Sizes.ChunkSize - 1, y, z)));
                 if (adj != null)
                 {
@@ -345,7 +348,7 @@ namespace Outpost.Map
             }
             else
             {
-                IntVector3 chunkAddr = position + new IntVector3(0, 1, 0);
+                IntVector3 chunkAddr = address + new IntVector3(0, 1, 0);
                 Block adj = MainGame.mainGame.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, 0, z)));
                 if (adj != null)
                 {
@@ -373,7 +376,7 @@ namespace Outpost.Map
             }
             else
             {
-                IntVector3 chunkAddr = position + new IntVector3(0, -1, 0);
+                IntVector3 chunkAddr = address + new IntVector3(0, -1, 0);
                 Block adj = MainGame.mainGame.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, Sizes.ChunkSize - 1, z)));
                 if (adj != null)
                 {
@@ -400,7 +403,7 @@ namespace Outpost.Map
             }
             else
             {
-                IntVector3 chunkAddr = position + new IntVector3(0, 0, 1);
+                IntVector3 chunkAddr = address + new IntVector3(0, 0, 1);
                 Block adj = MainGame.mainGame.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, y, 0)));
                 if (adj != null)
                 {
@@ -427,7 +430,7 @@ namespace Outpost.Map
             }
             else
             {
-                IntVector3 chunkAddr = position + new IntVector3(0, 0, -1);
+                IntVector3 chunkAddr = address + new IntVector3(0, 0, -1);
                 Block adj = MainGame.mainGame.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, y, Sizes.ChunkSize - 1)));
                 if (adj != null)
                 {
@@ -463,27 +466,27 @@ namespace Outpost.Map
                 }
             }
 
-            patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(1,0,0));
+            patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(1,0,0));
             if (adjChunk.chunk != null)
                 adjChunk.chunk.generateVertices();
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(-1, 0, 0));
+            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
             if (adjChunk.chunk != null)
                 adjChunk.chunk.generateVertices();
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, 1, 0));
+            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 1, 0));
             if (adjChunk.chunk != null)
                 adjChunk.chunk.generateVertices();
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, -1, 0));
+            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, -1, 0));
             if (adjChunk.chunk != null)
                 adjChunk.chunk.generateVertices();
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, 0, 1));
+            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, 1));
             if (adjChunk.chunk != null)
                 adjChunk.chunk.generateVertices();
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, 0, -1));
+            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, -1));
             if (adjChunk.chunk != null)
                 adjChunk.chunk.generateVertices();
 
@@ -507,42 +510,42 @@ namespace Outpost.Map
         public void generateVertices()
         {
             #region neighborChecks
-            patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(1, 0, 0));
+            patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(1, 0, 0));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", north (" + (position + new IntVector3(1,0,0)) + ") unset");
                 return;
             }
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(-1, 0, 0));
+            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", south (" + (position + new IntVector3(-1, 0, 0)) + ") unset");
                 return;
             }
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, 1, 0));
+            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 1, 0));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", top (" + (position + new IntVector3(0, 1, 0)) + ") unset");
                 return;
             }
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, -1, 0));
+            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, -1, 0));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", bottom (" + (position + new IntVector3(0, -1, 0)) + ") unset");
                 return;
             }
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, 0, 1));
+            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, 1));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", east (" + (position + new IntVector3(0, 0, 1)) + ") unset");
                 return;
             }
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(position + new IntVector3(0, 0, -1));
+            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, -1));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", west (" + (position + new IntVector3(0, 0, -1)) + ") unset");
@@ -550,8 +553,8 @@ namespace Outpost.Map
             }
             #endregion neighborChecks
 
-            Logger.Log("Drawing " + position);
-            Screens.LoadingScreen.ChangeMessage("Generating vertices for " + position);
+            Logger.Log("Drawing " + address);
+            Screens.LoadingScreen.ChangeMessage("Generating vertices for " + address);
             //there SHOULD be something set up so that it only needs to rebuild the vertices for changed sections
             //but i don't believe there currently is
 
@@ -570,7 +573,7 @@ namespace Outpost.Map
                 {
                     for (int z = 0; z < size; z++)
                     {
-                        blocks[x, y, z].createVertices(verts, inds, new Vector3(position.X * Sizes.ChunkSize + x, position.Y * Sizes.ChunkSize + y, position.Z * Sizes.ChunkSize + z));
+                        blocks[x, y, z].createVertices(verts, inds, new Vector3(address.X * Sizes.ChunkSize + x, address.Y * Sizes.ChunkSize + y, address.Z * Sizes.ChunkSize + z));
                     }
                 }
             }
@@ -614,7 +617,7 @@ namespace Outpost.Map
             }
 
 
-            Screens.LoadingScreen.ChangeMessage("Finished generating vertices for " + position);
+            Screens.LoadingScreen.ChangeMessage("Finished generating vertices for " + address);
         }
 
         void verticesLostHandler(object sender, EventArgs e)

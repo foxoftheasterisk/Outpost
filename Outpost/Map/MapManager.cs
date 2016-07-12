@@ -34,8 +34,51 @@ namespace Outpost.Map
         //...should all the map management be in Lua?
         //......nah.
 
-        Dictionary<ChunkAddress, ChunkManager> chunkStore;
+        public static MapManager map
+        {
+            get 
+            {
+                return _map;
+            }
+        }
+        private static MapManager _map;
 
+        public static void CreateMap()
+        {
+            //hopefully, this shouldn't come up
+            if (_map != null)
+                DisposeMap();
+
+            _map = new MapManager();
+        }
+
+        public static void DisposeMap()
+        {
+            foreach(KeyValuePair<ChunkAddress, Chunk> pair in _map.chunkStore)
+            {
+                Chunk chunk = pair.Value;
+                
+                //TODO: save and dispose all chunks
+                chunk.ForceUnload();
+            }
+        }
+
+        private Dictionary<ChunkAddress, Chunk> chunkStore;
+
+        public Chunk this[ChunkAddress ca]
+        {
+            get
+            {
+                Chunk chunk = chunkStore[ca];
+                if(chunk != null)
+                    return chunkStore[ca];
+
+                //TODO: work out what exactly goes here
+                //cause it's not this
+                //NEEDS TO HAVE: ChunkAddress, LoadStateManager (with no load states)
+                return null;
+            }
+        }
         
 
     }

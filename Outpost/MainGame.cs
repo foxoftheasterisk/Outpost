@@ -28,7 +28,7 @@ namespace Outpost
     public class MainGame : Screen
     {
         IntVector3 mapOffset; // 
-        Chunk[, ,] map; //NO
+
         Dictionary<IntVector3, patternOrChunk> mapGenHelper;
         //Is here to keep map-generation from loading quite so many files
         //since that's what's slowing it down so much
@@ -109,7 +109,7 @@ namespace Outpost
         public void newMap()
         {
             LoadingScreen.Display("Creating Map");
-            map = new Chunk[mapSize, mapSize, mapSize];
+            Outpost.Map.MapManager.CreateMap();
 
             IntVector3 playerChunk = new IntVector3(0);
             mapOffset = new IntVector3(-mapCenter) + playerChunk;
