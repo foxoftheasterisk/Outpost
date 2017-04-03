@@ -37,7 +37,40 @@ namespace Outpost.Map
             }
             return result;
         }
-    }
 
-    
+        /// <summary>
+        /// Returns true if ANY of a's load states are greater than b's corresponding states.
+        /// Be careful! It is possible for both a > b and b > a to be true!
+        /// It is also possible for a > b and a < b to be true!
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static bool operator >(LoadState a, LoadState b)
+        {
+            if (a.data > b.data)
+                return true;
+            if (a.graphical > b.graphical)
+                return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Returns true if ANY of a's load states are less than b's corresponding states.
+        /// Be careful! It is possible for both a < b and b < a to be true!
+        /// It is also possible for a < b and a > b to be true!
+        /// (However, a > b does guarantee that b < a.)
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static bool operator <(LoadState a, LoadState b)
+        {
+            if (a.data < b.data)
+                return true;
+            if (a.graphical < b.graphical)
+                return true;
+            return false;
+        }
+    }
 }

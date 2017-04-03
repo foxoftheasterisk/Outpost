@@ -44,6 +44,11 @@ namespace OutpostLibrary.Navigation
             : this(chunk.world, chunk.position, block)
         { }
 
+        public BlockAddress(string _world)
+            :this(_world, new IntVector3(0), new IntVector3(0))
+        { }
+
+        //the one real constructor
         public BlockAddress(string _world, IntVector3 chunkBase, IntVector3 blockBase)
         {
             world = _world;

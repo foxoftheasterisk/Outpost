@@ -73,17 +73,20 @@ namespace Outpost
             LuaType.RegisterTypeAlias("IntVector3", typeof(OutpostLibrary.IntVector3));
             global["IntVector3"] = LuaType.GetType(typeof(OutpostLibrary.IntVector3));
 
+            LuaType.RegisterTypeAlias("ChunkAddress", typeof(OutpostLibrary.Navigation.ChunkAddress));
+            global["ChunkAddress"] = LuaType.GetType(typeof(OutpostLibrary.Navigation.ChunkAddress));
+
             LuaType.RegisterTypeAlias("Vector3", typeof(Microsoft.Xna.Framework.Vector3));
             global["Vector3"] = LuaType.GetType(typeof(Microsoft.Xna.Framework.Vector3));
 
-            LuaType.RegisterTypeAlias("Chunk", typeof(Chunk));
-            global["Chunk"] = LuaType.GetType(typeof(Chunk));
+            LuaType.RegisterTypeAlias("Chunk", typeof(Outpost.Map.Chunk));
+            global["Chunk"] = LuaType.GetType(typeof(Outpost.Map.Chunk));
 
             LuaType.RegisterTypeAlias("SolidBlock", typeof(Blocks.SolidBlock));
             global["SolidBlock"] = LuaType.GetType(typeof(Blocks.SolidBlock));
 
-            LuaType.RegisterTypeAlias("Structure", typeof(MapStructure));
-            global["Structure"] = LuaType.GetType(typeof(MapStructure));
+            LuaType.RegisterTypeAlias("Structure", typeof(Outpost.Map.MapStructure));
+            global["Structure"] = LuaType.GetType(typeof(Outpost.Map.MapStructure));
 
             //global["Double"] = LuaType.GetType(typeof(Double));
             
@@ -271,9 +274,9 @@ namespace Outpost
         //I... guess this makes sense?
         //sort of?
 
-        public void buildChunk(OutpostLibrary.IntVector3 location, Chunk chunk)
+        public void buildChunk(OutpostLibrary.Navigation.ChunkAddress location, Outpost.Map.Chunk chunk)
         {
-            Func<Chunk, OutpostLibrary.IntVector3, LuaResult> doBuild = game["buildChunk"] as Func<Chunk, OutpostLibrary.IntVector3, LuaResult>;
+            Func<Outpost.Map.Chunk, OutpostLibrary.Navigation.ChunkAddress, LuaResult> doBuild = game["buildChunk"] as Func<Outpost.Map.Chunk, OutpostLibrary.Navigation.ChunkAddress, LuaResult>;
 
             try
             {

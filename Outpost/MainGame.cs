@@ -540,6 +540,7 @@ namespace Outpost
         }
 
         //possible efficiency increaser: create a combined get+change block function
+        //probably not actually very helpful
 
         /// <summary>
         /// NOT FULLY IMPLEMENTED: Does not use the x/z size.  Or the direction, for that matter.
@@ -620,7 +621,7 @@ namespace Outpost
 
         public delegate bool blockChecker(BlockAddress blockToCheck);
 
-        public BlockAddress findBlock(IntVector3 chunk, Vector3 posInChunk, Vector3 directionToSeek, int lengthToStop, blockChecker isAcceptable)
+        public BlockAddress findBlock(ChunkAddress chunk, Vector3 posInChunk, Vector3 directionToSeek, int lengthToStop, blockChecker isAcceptable)
         {
             Vector3 unitX, unitY, unitZ;
             Vector3 nextX, nextY, nextZ;
@@ -706,7 +707,7 @@ namespace Outpost
             {
                 fTemp = Math.Min(Math.Min(xDist, yDist), Math.Min(zDist, stopDist));
                 if (fTemp == stopDist)
-                    return null;
+                    return new BlockAddress("none");
                 if (fTemp == xDist)
                 {
                     vTemp = new Vector3(unitX.X / 10, 0, 0);

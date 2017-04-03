@@ -1,12 +1,14 @@
 ﻿
-Game.buildChunk = function(chunk : Chunk, location : IntVector3)
+--TODO: make this a real function
+--which involves doing some like pattern building beforehand
+Game.buildChunk = function(chunk : Chunk, location : ChunkAddress)
 	Game.LoadingScreen.change("Building chunk at " .. location.ToString())
 	Log("Building chunk at " .. location)
-	if location.Y == 0 then
+	if location.position.Y == 0 then
 		buildSurface(chunk,location, basics.dirt, basics.air)
-	elseif location.Y < 0 then
+	elseif location.position.Y < 0 then
 		buildSolid(chunk, basics.dirt)
-	elseif location.Y > 0 then
+	elseif location.position.Y > 0 then
 		buildSolid(chunk, basics.air)
 	else
 		Log("Chunk's Y is not a number??")
@@ -60,7 +62,7 @@ function buildSurface(chunk : Chunk, location : IntVector3, bottom : material, t
 	--not entirely sure what'll happen if there is
 	--it shouldn't explode too bad but it might be a bit weird
 
-	local checkpoints = twoDArray(numPortions + 1) --I believe the +1 is necessary...
+	local checkpoints = twoDArray(numPortions + 1) --I beLIEVE the +1 is necessary...
 	local maxCount = 0
 	local start = { }
 

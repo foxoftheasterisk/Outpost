@@ -57,18 +57,8 @@ namespace Outpost.Map
 
     public class Chunk : IDisposable
     {
-        public class LoadManager
-        {
-            //Manages the load state of a single chunk.
-            LoadState currentLoadState;
-
-            List<LoadState> requestedLoadStates;
-        }
-
         int size;
         Block[,,] blocks;
-
-        LoadManager loadManager;
 
         List<MapStructure> structures;
 
@@ -106,6 +96,9 @@ namespace Outpost.Map
             address = addr;
             filename = MainGame.WorldFolder + address.position.X + "," + address.position.Y + "," + address.position.Z;
 
+            requestedLoadStates = new List<LoadState>();
+            currentLoadState = new LoadState(LoadState.GraphicalLoadState.None, LoadState.DataLoadState.None);
+
             try
             {
                 vBuff = new DynamicVertexBuffer(graphics, typeof(VertexPositionColorNormal), maxVerts, BufferUsage.WriteOnly);
@@ -126,7 +119,7 @@ namespace Outpost.Map
 
         /// <summary>
         /// Creates a new Chunk of size size x size x size, filled with null blocks
-        /// This was intended for chunks that are part of blueprints, but may still be useful (vehicles?)
+        /// This was intended for chunks that are part of blueprints, which are probably not happening, but may still be useful (vehicles?)
         /// </summary>
         /// <param name="layers"></param>
         /// <param name="filename"></param>
@@ -194,6 +187,128 @@ namespace Outpost.Map
         }
 
         //*/
+
+        //TODO: verify this is safe with non-graphical load states
+        //or rewrite it to be
+        public bool isTransparent()
+        {
+            return indices.Length == 0;
+        }
+
+        #region LoadUnload
+        List<LoadState> requestedLoadStates;
+        LoadState currentLoadState;
+
+        public void addLoadStateRequest(LoadState ls)
+        {
+            requestedLoadStates.Add(ls);
+            if (ls > currentLoadState)
+                MapManager.map.registerToLoad(this);
+        }
+
+        public void removeLoadStateRequest(LoadState ls)
+        {
+            if (!requestedLoadStates.Contains(ls))
+                throw new InvalidOperationException("Tried to remove a nonpresent load request!");
+            requestedLoadStates.Remove(ls);
+            if (ls < currentLoadState)
+                MapManager.map.registerToUnload(this);
+        }
+
+        public void doLoad()
+        {
+            LoadState targetState = LoadState.max(requestedLoadStates);
+
+            if (targetState.data == LoadState.DataLoadState.Full && (int)currentLoadState.data < (int)LoadState.DataLoadState.Full)
+                loadData();
+
+            if (targetState.graphical == LoadState.GraphicalLoadState.Low && ((int)currentLoadState.graphical < (int)LoadState.GraphicalLoadState.Low))
+                loadGraphicalLow();
+
+            if (targetState.graphical == LoadState.GraphicalLoadState.Full && (int)currentLoadState.graphical < (int)LoadState.GraphicalLoadState.Full)
+                loadGraphicalFull();
+
+        }
+
+        private void loadData()
+        {
+            //////////////////////////////////////////////////////////////how
+
+            //TODO: load from file
+
+
+            //is this a terrible idea
+            MainGame.mainGame.lua.buildChunk(address, this);
+        }
+
+        private void loadGraphicalLow()
+        {
+            //TODO: this
+
+            //i don't think it's used yet anyway
+        }
+
+        private void loadGraphicalFull()
+        {
+            generateVertices();
+            //TODO: verify completeness
+        }
+
+        public void doUnload()
+        {
+            LoadState targetState = LoadState.max(requestedLoadStates);
+
+            if (targetState.graphical == LoadState.GraphicalLoadState.Low && currentLoadState.graphical > LoadState.GraphicalLoadState.Low)
+                unloadGraphicalLow();
+
+            if (targetState.graphical == LoadState.GraphicalLoadState.None && currentLoadState.graphical > LoadState.GraphicalLoadState.None)
+                unloadGraphicalFull();
+
+            if (targetState.data == LoadState.DataLoadState.None && currentLoadState.data > LoadState.DataLoadState.None)
+                unloadData();
+        }
+
+        private void unloadGraphicalLow()
+        {
+            //TODO: this
+            //can probably just call loadGraphicalLow but who knows
+        }
+
+        private void unloadGraphicalFull()
+        {
+            if (vBuff != null)
+                vBuff.Dispose();
+            if (iBuff != null)
+                iBuff.Dispose();
+
+            vertices = null;
+            indices = null;
+
+            //TODO: is this complete?
+        }
+
+        private void unloadData()
+        {
+            //TODO: save!!!
+
+
+            blocks = null;
+        }
+
+        public void forceUnload()
+        {
+            if(currentLoadState.graphical > LoadState.GraphicalLoadState.None)
+                unloadGraphicalFull();
+
+            if (currentLoadState.data > LoadState.DataLoadState.None)
+                unloadData();
+        }
+
+        //TODO: ForceUnload
+
+        #endregion LoadStates
+
+        #region dataMethods
 
         /// <summary>
         /// Assigns a block, generating new vertices for the chunk afterwards.
@@ -447,12 +562,6 @@ namespace Outpost.Map
             #endregion west
         }
 
-        public bool isTransparent()
-        {
-            return indices.Length == 0;
-        }
-        //*/
-
         public void endFill()
         {
             for (int x = 0; x < size; x++)
@@ -505,51 +614,71 @@ namespace Outpost.Map
             return blocks[x, y, z];
         }
 
+        public Block this[IntVector3 loc]
+        {
+            get
+            {
+                return getBlock(loc.X, loc.Y, loc.Z);
+            }
+           
+        }
+
+        public Block this[int x, int y, int z]
+        {
+            get
+            {
+                return getBlock(x, y, z);
+            }
+
+        }
+
+        #endregion
+
         #region graphics
 
-        public void generateVertices()
+        public bool generateVertices()
         {
             #region neighborChecks
             patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(1, 0, 0));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", north (" + (position + new IntVector3(1,0,0)) + ") unset");
-                return;
+                return false;
             }
 
             adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", south (" + (position + new IntVector3(-1, 0, 0)) + ") unset");
-                return;
+                return false;
             }
 
             adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 1, 0));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", top (" + (position + new IntVector3(0, 1, 0)) + ") unset");
-                return;
+                return false;
             }
 
             adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, -1, 0));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", bottom (" + (position + new IntVector3(0, -1, 0)) + ") unset");
-                return;
+                return false;
             }
 
             adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, 1));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", east (" + (position + new IntVector3(0, 0, 1)) + ") unset");
-                return;
+                return false;
             }
 
             adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, -1));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", west (" + (position + new IntVector3(0, 0, -1)) + ") unset");
-                return;
+                return false;
             }
             #endregion neighborChecks
 
@@ -573,7 +702,7 @@ namespace Outpost.Map
                 {
                     for (int z = 0; z < size; z++)
                     {
-                        blocks[x, y, z].createVertices(verts, inds, new Vector3(address.X * Sizes.ChunkSize + x, address.Y * Sizes.ChunkSize + y, address.Z * Sizes.ChunkSize + z));
+                        blocks[x, y, z].createVertices(verts, inds, new Vector3(address.position.X * Sizes.ChunkSize + x, address.position.Y * Sizes.ChunkSize + y, address.position.Z * Sizes.ChunkSize + z));
                     }
                 }
             }
@@ -618,6 +747,7 @@ namespace Outpost.Map
 
 
             Screens.LoadingScreen.ChangeMessage("Finished generating vertices for " + address);
+            return true;
         }
 
         void verticesLostHandler(object sender, EventArgs e)
