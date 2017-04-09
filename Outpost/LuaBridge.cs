@@ -63,7 +63,7 @@ namespace Outpost
             game["Sizes"] = LuaType.GetType(typeof(OutpostLibrary.Navigation.Sizes));
             game["Directions"] = LuaType.GetType(typeof(OutpostLibrary.Navigation.Directions));
 
-            game["map"] = MainGame.mainGame;
+            game["map"] = GameShell.gameShell;
             //TODO: this clearly needs reworked
             
 

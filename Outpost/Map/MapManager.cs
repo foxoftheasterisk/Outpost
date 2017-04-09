@@ -36,14 +36,14 @@ namespace Outpost.Map
         //...should all the map management be in Lua?
         //......nah.
 
-        public static MapManager map
+        public static MapManager Map
         {
             get 
             {
-                return _map;
+                return _Map;
             }
         }
-        private static MapManager _map;
+        private static MapManager _Map;
 
         private MapManager()
         {
@@ -62,31 +62,28 @@ namespace Outpost.Map
         public static void CreateMap()
         {
             //hopefully, this shouldn't come up
-            if (_map != null)
+            if (_Map != null)
                 DisposeMap();
 
-            _map = new MapManager();
+            _Map = new MapManager();
         }
 
         public static void DisposeMap()
         {
-            map.beginDispose();
-            lock (_map.chunkStore)
+            _Map.beginDispose();
+            lock (_Map.chunkStore)
             {
-                foreach (KeyValuePair<ChunkAddress, Chunk> pair in _map.chunkStore)
+                foreach (KeyValuePair<ChunkAddress, Chunk> pair in _Map.chunkStore)
                 {
                     Chunk chunk = pair.Value;
 
-                    //TODO: save and dispose all chunks
                     chunk.forceUnload();
                     chunk.Dispose();
                 }
             }
-            
         }
 
         private ConcurrentDictionary<ChunkAddress, Chunk> chunkStore;
-
         public Chunk this[ChunkAddress ca]
         {
             get
@@ -95,13 +92,18 @@ namespace Outpost.Map
                 if(chunk != null)
                     return chunkStore[ca];
 
-                //TODO: work out what exactly goes here
-                //cause it's not this
-                //NEEDS TO HAVE: ChunkAddress, LoadStateManager (with no load states)
+                //TODO: if it doesn't exist, create shell and return that
+                //maybe with a pattern, but we'll worry about that later
+                //we could throw the empty shell in the dictionary but why the hell would we it has no information
+
+                //okay, problem: we need the GraphicsDevice
+                //i think we should probably just make that thing public i mean really
+                //return new Chunk(ca, )
                 return null;
             }
         }
 
+        public string worldFolder;
 
         private ConcurrentQueue<Chunk> loadQueue;
         private ConcurrentQueue<Chunk> unloadQueue;
@@ -174,6 +176,18 @@ namespace Outpost.Map
             disposing = true;
             loadAdded.Set();
             unloadAdded.Set();
+        }
+
+
+        public void newMap(string folder)
+        {
+
+        }
+
+        //TODO: this
+        public void loadMap(string folder)
+        {
+
         }
     }
 }

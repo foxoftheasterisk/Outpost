@@ -73,7 +73,7 @@ namespace VoxtureEditor
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            mainThing.Update(true);
+            mainThing.update(true);
 
             // TODO: Add your update logic here
 
@@ -94,7 +94,7 @@ namespace VoxtureEditor
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, rs);
 
-            mainThing.Draw(spriteBatch);
+            mainThing.draw(spriteBatch);
 
             spriteBatch.End();
 

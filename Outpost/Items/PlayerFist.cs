@@ -49,8 +49,8 @@ namespace Outpost.Items
 
         public bool actionStart(BlockAddress target)
         {
-            justMined = MainGame.mainGame.getBlock(target);
-            MainGame.mainGame.changeBlock(target, new SolidBlock(((MainGame.mainGame.lua.global["vanilla"] as LuaTable)["basics"] as LuaTable)["air"] as Material));
+            justMined = GameShell.gameShell.getBlock(target);
+            GameShell.gameShell.changeBlock(target, new SolidBlock(((GameShell.gameShell.lua.global["vanilla"] as LuaTable)["basics"] as LuaTable)["air"] as Material));
             return true;
         }
 

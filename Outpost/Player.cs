@@ -36,20 +36,15 @@ namespace Outpost
         #endregion
         #endregion
 
-        MainGame parent;
 
-        
+        //TODO: Player should have a MapSection following them about
+        //possibly two, for data and graphics
 
-        
-        
-        
-
-        public Player(MainGame creator, IntVector2 screenCenter, IntVector3 chunkIn, Vector3 posInChunk)
+        public Player(ChunkAddress chunkIn, Vector3 posInChunk)
         {
-            parent = creator;
-            this.screenCenter = screenCenter;
+            IntVector2 screenCenter = GameShell.gameShell.screenCenter;
             
-            Mouse.SetPosition(screenCenter.x, screenCenter.x);
+            Mouse.SetPosition(screenCenter.x, screenCenter.y);
 
             chunk = chunkIn;
             this.posInChunk = posInChunk;
@@ -59,7 +54,7 @@ namespace Outpost
         }
 
         #region movement
-        public IntVector3 chunk;
+        public ChunkAddress chunk;
         Vector3 posInChunk; 
         float pitch; //i.e. vertical rotation
         float yaw; //i.e. horizontal rotation
@@ -391,7 +386,7 @@ namespace Outpost
                 {
                     #region airborne movement
                     movement = lastMove;
-                    movement -= new Vector3(0, MainGame.gravity, 0);
+                    movement -= new Vector3(0, GameShell.gravity, 0);
 
                     Solidity[][][] flyingInto = parent.detectCollision(chunk, posInChunk + movement, direction, new IntVector3(length, height + 1, width));
 
@@ -551,20 +546,20 @@ namespace Outpost
             switch (activeItem.order())
             {
                 case TestingOrder.onOnly:
-                    found = MainGame.mainGame.findBlock(chunk, headPos, direction, activeItem.range(), activeItem.onTest);
+                    found = GameShell.gameShell.findBlock(chunk, headPos, direction, activeItem.range(), activeItem.onTest);
                     break;
                 case TestingOrder.beforeOnly:
-                    found = MainGame.mainGame.findBlockBefore(chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
+                    found = GameShell.gameShell.findBlockBefore(chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
                     break;
                 case TestingOrder.beforeFirst:
-                    found = MainGame.mainGame.findBlockBefore(chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
+                    found = GameShell.gameShell.findBlockBefore(chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
                     if (found == null)
-                        found = MainGame.mainGame.findBlock(chunk, headPos, direction, activeItem.range(), activeItem.onTest);
+                        found = GameShell.gameShell.findBlock(chunk, headPos, direction, activeItem.range(), activeItem.onTest);
                     break;
                 case TestingOrder.onFirst:
-                    found = MainGame.mainGame.findBlock(chunk, headPos, direction, activeItem.range(), activeItem.onTest);
+                    found = GameShell.gameShell.findBlock(chunk, headPos, direction, activeItem.range(), activeItem.onTest);
                     if (found == null)
-                        found = MainGame.mainGame.findBlockBefore(chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
+                        found = GameShell.gameShell.findBlockBefore(chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
                     break;
                 default:
                     break;

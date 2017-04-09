@@ -37,7 +37,7 @@ namespace Outpost
         {
             if (testing == null)
                 return false;
-            if (MainGame.mainGame.getBlock(testing).solidity == Solidity.solid)
+            if (GameShell.gameShell.getBlock(testing).solidity == Solidity.solid)
                 return true;
             return false;
         }

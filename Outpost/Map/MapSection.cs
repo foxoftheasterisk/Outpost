@@ -111,7 +111,7 @@ namespace Outpost.Map
 
             foreach(IntVector3 iv in hash)
             {
-                Chunk chunk = MapManager.map[new ChunkAddress(center.world, iv)];
+                Chunk chunk = MapManager.Map[new ChunkAddress(center.world, iv)];
                 chunk.addLoadStateRequest(targetState);
             }
 
@@ -165,7 +165,7 @@ namespace Outpost.Map
                 {
                     if (currentChunk.position.Z > center.position.Z + radius)
                         throw new InvalidOperationException("Overiterated a MapSectionIterator.");
-                    return MapManager.map[currentChunk];
+                    return MapManager.Map[currentChunk];
                 }
             }
 

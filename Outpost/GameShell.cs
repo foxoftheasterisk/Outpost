@@ -14,7 +14,6 @@ using System.Threading;
 using Microsoft.Xna.Framework.Storage;
 using System.Xml.Serialization;
 using Outpost.Blocks;
-using Outpost.Screens;
 
 namespace Outpost
 {
@@ -25,9 +24,14 @@ namespace Outpost
     // -basic graphics stuff that can be used by multiple screens that want to draw in 3D
     // -lua and game rules
     //--possibly other things too
-    public class MainGame : Screen
+
+    //okay okay so
+    //GameShell should hold only game rule things that can keep when you unload one game and load another in the same modset
+    //...not 100% sure this will work correctly but
+    //something to aim for
+    public class GameShell
     {
-        IntVector3 mapOffset; // 
+        IntVector3 mapOffset;
 
         Dictionary<IntVector3, patternOrChunk> mapGenHelper;
         //Is here to keep map-generation from loading quite so many files
@@ -40,13 +44,26 @@ namespace Outpost
         Texture2D reticule;
         public Texture2D blank;
 
-        public static string WorldFolder = "firstSavedWorld/";
+        public static string WorldFolder = "";
         public static StorageContainer cont;
         //you know, for once I actually get saving a-workin'
 
-        public static MainGame mainGame;
+
+        public static GameShell gameShell
+        {
+            get
+            {
+                return _gameShell;
+            }
+        }
+        private static GameShell _gameShell;
         //is this a good idea? prevents another MainGame instance being around.  Is there any reason there should be another?
         //No, I don't think so - although I might have to make a child class for multiplayer.  Multiple maps (that might share chunks)? Sure.  But not multiple GAMES.
+
+        public static void makeGameShell(ContentManager c, GraphicsDevice g)
+        {
+            _gameShell = new GameShell(c, g);
+        }
 
         public LuaBridge lua;
 
@@ -58,8 +75,6 @@ namespace Outpost
         const int mapSize = 9;
         const int mapCenter = 4;
         const int allowedStray = 2;
-
-        IntVector2 screenCenter;
         #endregion
 
         //but messing with these will change the game 'balance'.
@@ -74,7 +89,7 @@ namespace Outpost
         /// </summary>
         /// <param name="c">The content manager to use.</param>
         /// <param name="g">The graphics device to use.</param>
-        public MainGame(ContentManager c, GraphicsDevice g)
+        private GameShell(ContentManager c, GraphicsDevice g)
         {
             //what is this I don't even
             /*
@@ -90,8 +105,6 @@ namespace Outpost
 
             cont.CreateDirectory(WorldFolder);
             //*/
-            
-            MainGame.mainGame = this;
 
             content = c;
             graphics = g;
@@ -106,22 +119,7 @@ namespace Outpost
             lua = new LuaBridge();
         }
 
-        public void newMap()
-        {
-            LoadingScreen.Display("Creating Map");
-            Outpost.Map.MapManager.CreateMap();
-
-            IntVector3 playerChunk = new IntVector3(0);
-            mapOffset = new IntVector3(-mapCenter) + playerChunk;
-
-            map.set(playerChunk - mapOffset, loadChunk(playerChunk));
-            map.get(playerChunk - mapOffset).endFill();
-
-            screenCenter = new IntVector2(graphics.Viewport.Width / 2, graphics.Viewport.Height / 2);
-            player = new Player(this, screenCenter, new IntVector3(0), new Vector3(2, 15, 2));
-
-            fillMap();
-        }
+        
 
         /// <summary>
         /// After having at least one loaded chunk, loads the rest of the map[,,].
@@ -889,6 +887,15 @@ namespace Outpost
         
         const int numTriangles = 4;
 
+        public IntVector2 screenCenter
+        {
+            get
+            {
+                return _screenCenter;
+            }
+        }
+        private IntVector2 _screenCenter;
+
         short[] selectionIndices;
         DynamicIndexBuffer sIBuff;
         VertexPositionColor[] selectionVertices;
@@ -903,6 +910,8 @@ namespace Outpost
 
         public void initializeGraphics()
         {
+            _screenCenter = new IntVector2(graphics.Viewport.Width / 2, graphics.Viewport.Height / 2);
+
             world = Matrix.Identity;
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), (float)graphics.Viewport.Width / (float)graphics.Viewport.Height, .01f, 50.0f);
 

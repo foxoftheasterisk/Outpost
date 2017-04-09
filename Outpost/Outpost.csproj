@@ -71,6 +71,7 @@
     <Compile Include="Blocks\Block.cs" />
     <Compile Include="Blocks\SolidBlock.cs" />
     <Compile Include="Blocks\WornBlock.cs" />
+    <Compile Include="GameManager.cs" />
     <Compile Include="Map\Chunk.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\PlayerFist.cs" />
@@ -79,11 +80,12 @@
     <Compile Include="Map\LoadState.cs" />
     <Compile Include="Map\MapManager.cs" />
     <Compile Include="Map\MapSection.cs" />
+    <Compile Include="Screens\GameScreen.cs" />
     <Compile Include="Screens\LoadingScreen.cs" />
     <Compile Include="Screens\PauseScreen.cs" />
     <Compile Include="Screens\ScreenManager.cs" />
     <Compile Include="Items\Tile.cs" />
-    <Compile Include="MainGame.cs" />
+    <Compile Include="GameShell.cs" />
     <Compile Include="Mapgen.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

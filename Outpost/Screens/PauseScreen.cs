@@ -13,7 +13,7 @@ namespace Outpost.Screens
         bool close = false;
 
         //pauses the game... forEVer!
-        public bool Update(bool useInput)
+        public bool update(bool useInput)
         {
             KeyboardState keys;
             try
@@ -36,9 +36,9 @@ namespace Outpost.Screens
             return true;
         }
 
-        public void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer)
+        public void draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer)
         {
-            drawer.Draw(MainGame.mainGame.blank, drawer.GraphicsDevice.Viewport.Bounds, new Microsoft.Xna.Framework.Color(0, 0, 0, 140));
+            drawer.Draw(GameShell.gameShell.blank, drawer.GraphicsDevice.Viewport.Bounds, new Microsoft.Xna.Framework.Color(0, 0, 0, 140));
         }
 
         public bool shouldClose()

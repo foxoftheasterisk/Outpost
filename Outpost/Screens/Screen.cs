@@ -14,7 +14,7 @@ namespace Outpost.Screens
         /// </summary>
         /// <param name="useInput">Whether the screen is allowed to use input.</param>
         /// <returns>Whether the screen below should be updated.</returns>
-        bool Update(bool useInput);
+        bool update(bool useInput);
 
         /// <summary>
         /// Determines whether the screen under this one should be drawn.
@@ -22,7 +22,7 @@ namespace Outpost.Screens
         /// </summary>
         /// <returns></returns>
         bool drawUnder();
-        void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer);
+        void draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer);
 
         /// <summary>
         /// Polling method to determine if the screen should be removed from the stack.

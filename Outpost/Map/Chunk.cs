@@ -94,7 +94,7 @@ namespace Outpost.Map
             blocks = new Block[Sizes.ChunkSize, Sizes.ChunkSize, Sizes.ChunkSize];
             structures = new List<MapStructure>();
             address = addr;
-            filename = MainGame.WorldFolder + address.position.X + "," + address.position.Y + "," + address.position.Z;
+            filename = GameShell.WorldFolder + address.position.X + "," + address.position.Y + "," + address.position.Z;
 
             requestedLoadStates = new List<LoadState>();
             currentLoadState = new LoadState(LoadState.GraphicalLoadState.None, LoadState.DataLoadState.None);
@@ -127,7 +127,7 @@ namespace Outpost.Map
         {
             this.size = size;
             blocks = new Block[size, size, size];
-            this.filename = MainGame.WorldFolder + filename;
+            this.filename = GameShell.WorldFolder + filename;
 
             vBuff = new DynamicVertexBuffer(graphics, typeof(VertexPositionColorNormal), maxVerts, BufferUsage.WriteOnly);
             //vBuff.ContentLost += new EventHandler<EventArgs>(verticesLostHandler);
@@ -203,7 +203,7 @@ namespace Outpost.Map
         {
             requestedLoadStates.Add(ls);
             if (ls > currentLoadState)
-                MapManager.map.registerToLoad(this);
+                MapManager.Map.registerToLoad(this);
         }
 
         public void removeLoadStateRequest(LoadState ls)
@@ -212,7 +212,7 @@ namespace Outpost.Map
                 throw new InvalidOperationException("Tried to remove a nonpresent load request!");
             requestedLoadStates.Remove(ls);
             if (ls < currentLoadState)
-                MapManager.map.registerToUnload(this);
+                MapManager.Map.registerToUnload(this);
         }
 
         public void doLoad()
@@ -220,37 +220,60 @@ namespace Outpost.Map
             LoadState targetState = LoadState.max(requestedLoadStates);
 
             if (targetState.data == LoadState.DataLoadState.Full && (int)currentLoadState.data < (int)LoadState.DataLoadState.Full)
-                loadData();
+            {
+                bool r = loadData();
+                if (r)
+                    currentLoadState.data = LoadState.DataLoadState.Full;
+            }
 
             if (targetState.graphical == LoadState.GraphicalLoadState.Low && ((int)currentLoadState.graphical < (int)LoadState.GraphicalLoadState.Low))
-                loadGraphicalLow();
+            {
+                bool r = loadGraphicalLow();
+                if (r)
+                    currentLoadState.graphical = LoadState.GraphicalLoadState.Low;
+            }
 
             if (targetState.graphical == LoadState.GraphicalLoadState.Full && (int)currentLoadState.graphical < (int)LoadState.GraphicalLoadState.Full)
-                loadGraphicalFull();
+            {
+                bool r = loadGraphicalFull();
+                if (r)
+                    currentLoadState.graphical = LoadState.GraphicalLoadState.Full;
+            }
 
+            targetState = LoadState.max(requestedLoadStates); //just for thread safety
+
+            if (currentLoadState < targetState)
+                MapManager.Map.registerToLoad(this);
+            if (currentLoadState > targetState)
+                MapManager.Map.registerToUnload(this);
+
+            //one for persistence, the other for thread safety
+            //hopefully will not cause problems
         }
 
-        private void loadData()
+        private bool loadData()
         {
-            //////////////////////////////////////////////////////////////how
-
             //TODO: load from file
 
 
             //is this a terrible idea
-            MainGame.mainGame.lua.buildChunk(address, this);
+            //i think it might be
+            //i need to re-figure out how i'm doing mapgen in this refactor
+            GameShell.gameShell.lua.buildChunk(address, this);
+            return true;
         }
 
-        private void loadGraphicalLow()
+        private bool loadGraphicalLow()
         {
             //TODO: this
 
             //i don't think it's used yet anyway
+            return false;
         }
 
-        private void loadGraphicalFull()
+        private bool loadGraphicalFull()
         {
-            generateVertices();
+            return generateVertices();
             //TODO: verify completeness
         }
 
@@ -259,22 +282,46 @@ namespace Outpost.Map
             LoadState targetState = LoadState.max(requestedLoadStates);
 
             if (targetState.graphical == LoadState.GraphicalLoadState.Low && currentLoadState.graphical > LoadState.GraphicalLoadState.Low)
-                unloadGraphicalLow();
+            {
+                bool r = unloadGraphicalLow();
+                if (r)
+                    currentLoadState.graphical = LoadState.GraphicalLoadState.Low;
+            }
+                
 
             if (targetState.graphical == LoadState.GraphicalLoadState.None && currentLoadState.graphical > LoadState.GraphicalLoadState.None)
-                unloadGraphicalFull();
+            {
+                bool r = unloadGraphicalFull();
+                if (r)
+                    currentLoadState.graphical = LoadState.GraphicalLoadState.None;
+            }
 
             if (targetState.data == LoadState.DataLoadState.None && currentLoadState.data > LoadState.DataLoadState.None)
-                unloadData();
+            {
+                bool r = unloadData();
+                if (r)
+                    currentLoadState.data = LoadState.DataLoadState.None;
+            }
+
+            targetState = LoadState.max(requestedLoadStates); //just for thread safety
+
+            if (currentLoadState < targetState)
+                MapManager.Map.registerToLoad(this);
+            if (currentLoadState > targetState)
+                MapManager.Map.registerToUnload(this);
+
+            //one for persistence, the other for thread safety
+            //hopefully will not cause problems
         }
 
-        private void unloadGraphicalLow()
+        private bool unloadGraphicalLow()
         {
             //TODO: this
             //can probably just call loadGraphicalLow but who knows
+            return false;
         }
 
-        private void unloadGraphicalFull()
+        private bool unloadGraphicalFull()
         {
             if (vBuff != null)
                 vBuff.Dispose();
@@ -285,14 +332,16 @@ namespace Outpost.Map
             indices = null;
 
             //TODO: is this complete?
+            return true;
         }
 
-        private void unloadData()
+        private bool unloadData()
         {
             //TODO: save!!!
 
 
             blocks = null;
+            return true;
         }
 
         public void forceUnload()
@@ -368,27 +417,27 @@ namespace Outpost.Map
 
             if (!isFilling)
             {
-                patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(1, 0, 0));
+                patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(1, 0, 0));
                 if (adjChunk.chunk != null)
                     adjChunk.chunk.generateVertices();
 
-                adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
+                adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
                 if (adjChunk.chunk != null)
                     adjChunk.chunk.generateVertices();
 
-                adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 1, 0));
+                adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 1, 0));
                 if (adjChunk.chunk != null)
                     adjChunk.chunk.generateVertices();
 
-                adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, -1, 0));
+                adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, -1, 0));
                 if (adjChunk.chunk != null)
                     adjChunk.chunk.generateVertices();
 
-                adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, 1));
+                adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 0, 1));
                 if (adjChunk.chunk != null)
                     adjChunk.chunk.generateVertices();
 
-                adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, -1));
+                adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 0, -1));
                 if (adjChunk.chunk != null)
                     adjChunk.chunk.generateVertices();
             }
@@ -410,7 +459,7 @@ namespace Outpost.Map
             else
             {
                 IntVector3 chunkAddr = address + new IntVector3(1, 0, 0);
-                Block adj = MainGame.mainGame.getBlock(new BlockAddress(chunkAddr, new IntVector3(0, y, z)));
+                Block adj = GameShell.gameShell.getBlock(new BlockAddress(chunkAddr, new IntVector3(0, y, z)));
                 if (adj != null)
                 {
                     adj.neighborS = block;
@@ -418,7 +467,7 @@ namespace Outpost.Map
                 }
                 if (!isFilling)
                 {
-                    patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(chunkAddr);
+                    patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(chunkAddr);
                     if (adjChunk.chunk != null)
                         adjChunk.chunk.generateVertices();
                 }
@@ -437,7 +486,7 @@ namespace Outpost.Map
             else
             {
                 IntVector3 chunkAddr = address + new IntVector3(-1, 0, 0);
-                Block adj = MainGame.mainGame.getBlock(new BlockAddress(chunkAddr, new IntVector3(Sizes.ChunkSize - 1, y, z)));
+                Block adj = GameShell.gameShell.getBlock(new BlockAddress(chunkAddr, new IntVector3(Sizes.ChunkSize - 1, y, z)));
                 if (adj != null)
                 {
                     adj.neighborN = block;
@@ -445,7 +494,7 @@ namespace Outpost.Map
                 }
                 if (!isFilling)
                 {
-                    patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(chunkAddr);
+                    patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(chunkAddr);
                     if (adjChunk.chunk != null)
                         adjChunk.chunk.generateVertices();
                 }
@@ -464,7 +513,7 @@ namespace Outpost.Map
             else
             {
                 IntVector3 chunkAddr = address + new IntVector3(0, 1, 0);
-                Block adj = MainGame.mainGame.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, 0, z)));
+                Block adj = GameShell.gameShell.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, 0, z)));
                 if (adj != null)
                 {
                     adj.neighborD = block;
@@ -472,7 +521,7 @@ namespace Outpost.Map
                 }
                 if (!isFilling)
                 {
-                    patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(chunkAddr);
+                    patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(chunkAddr);
                     if (adjChunk.chunk != null)
                         adjChunk.chunk.generateVertices();
                 }
@@ -492,7 +541,7 @@ namespace Outpost.Map
             else
             {
                 IntVector3 chunkAddr = address + new IntVector3(0, -1, 0);
-                Block adj = MainGame.mainGame.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, Sizes.ChunkSize - 1, z)));
+                Block adj = GameShell.gameShell.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, Sizes.ChunkSize - 1, z)));
                 if (adj != null)
                 {
                     adj.neighborU = block;
@@ -500,7 +549,7 @@ namespace Outpost.Map
                 }
                 if (!isFilling)
                 {
-                    patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(chunkAddr);
+                    patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(chunkAddr);
                     if (adjChunk.chunk != null)
                         adjChunk.chunk.generateVertices();
                 }
@@ -519,7 +568,7 @@ namespace Outpost.Map
             else
             {
                 IntVector3 chunkAddr = address + new IntVector3(0, 0, 1);
-                Block adj = MainGame.mainGame.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, y, 0)));
+                Block adj = GameShell.gameShell.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, y, 0)));
                 if (adj != null)
                 {
                     adj.neighborW = block;
@@ -527,7 +576,7 @@ namespace Outpost.Map
                 }
                 if (!isFilling)
                 {
-                    patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(chunkAddr);
+                    patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(chunkAddr);
                     if (adjChunk.chunk != null)
                         adjChunk.chunk.generateVertices();
                 }
@@ -546,7 +595,7 @@ namespace Outpost.Map
             else
             {
                 IntVector3 chunkAddr = address + new IntVector3(0, 0, -1);
-                Block adj = MainGame.mainGame.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, y, Sizes.ChunkSize - 1)));
+                Block adj = GameShell.gameShell.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, y, Sizes.ChunkSize - 1)));
                 if (adj != null)
                 {
                     adj.neighborE = block;
@@ -554,7 +603,7 @@ namespace Outpost.Map
                 }
                 if (!isFilling)
                 {
-                    patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(chunkAddr);
+                    patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(chunkAddr);
                     if (adjChunk.chunk != null)
                         adjChunk.chunk.generateVertices();
                 }
@@ -575,27 +624,27 @@ namespace Outpost.Map
                 }
             }
 
-            patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(1,0,0));
+            patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(1,0,0));
             if (adjChunk.chunk != null)
                 adjChunk.chunk.generateVertices();
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
+            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
             if (adjChunk.chunk != null)
                 adjChunk.chunk.generateVertices();
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 1, 0));
+            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 1, 0));
             if (adjChunk.chunk != null)
                 adjChunk.chunk.generateVertices();
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, -1, 0));
+            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, -1, 0));
             if (adjChunk.chunk != null)
                 adjChunk.chunk.generateVertices();
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, 1));
+            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 0, 1));
             if (adjChunk.chunk != null)
                 adjChunk.chunk.generateVertices();
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, -1));
+            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 0, -1));
             if (adjChunk.chunk != null)
                 adjChunk.chunk.generateVertices();
 
@@ -639,42 +688,42 @@ namespace Outpost.Map
         public bool generateVertices()
         {
             #region neighborChecks
-            patternOrChunk adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(1, 0, 0));
+            patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(1, 0, 0));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", north (" + (position + new IntVector3(1,0,0)) + ") unset");
                 return false;
             }
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
+            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", south (" + (position + new IntVector3(-1, 0, 0)) + ") unset");
                 return false;
             }
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 1, 0));
+            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 1, 0));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", top (" + (position + new IntVector3(0, 1, 0)) + ") unset");
                 return false;
             }
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, -1, 0));
+            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, -1, 0));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", bottom (" + (position + new IntVector3(0, -1, 0)) + ") unset");
                 return false;
             }
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, 1));
+            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 0, 1));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", east (" + (position + new IntVector3(0, 0, 1)) + ") unset");
                 return false;
             }
 
-            adjChunk = MainGame.mainGame.getPatternOrChunk(address + new IntVector3(0, 0, -1));
+            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 0, -1));
             if (adjChunk.chunk == null)
             {
                 //Logger.Log("Skipping " + position + ", west (" + (position + new IntVector3(0, 0, -1)) + ") unset");

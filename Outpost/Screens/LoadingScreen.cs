@@ -42,7 +42,7 @@ namespace Outpost.Screens
         }
 
         private string message;
-        private bool isActive = true;
+        private bool isActive = true; //what??? is this???? doing???
         private bool hardClose = false;
 
         private LoadingScreen(string _message)
@@ -50,7 +50,7 @@ namespace Outpost.Screens
             message = _message;
         }
 
-        public bool Update(bool useInput)
+        public bool update(bool useInput)
         {
             isActive = true;
             return false; //...i think
@@ -61,10 +61,10 @@ namespace Outpost.Screens
             return false;
         }
 
-        public void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer)
+        public void draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer)
         {
             drawer.GraphicsDevice.Clear(new Microsoft.Xna.Framework.Color(0, 0, 200));
-            drawer.DrawString(MainGame.mainGame.fontling, message, new Microsoft.Xna.Framework.Vector2(100, 100), new Microsoft.Xna.Framework.Color(0, 0, 0));
+            drawer.DrawString(GameShell.gameShell.fontling, message, new Microsoft.Xna.Framework.Vector2(100, 100), new Microsoft.Xna.Framework.Color(0, 0, 0));
         }
 
         public bool shouldClose()

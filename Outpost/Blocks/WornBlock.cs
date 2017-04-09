@@ -1072,7 +1072,7 @@ namespace Outpost.Blocks
                 const int maxDistance = 7; //yay magic numbers
                 int distance = Math.Abs(trying.X - root.X) * Math.Abs(trying.Y - root.Y) * Math.Abs(trying.Z - root.Z);
 
-                if (MainGame.mainGame.random.Next(maxDistance) > distance)
+                if (GameShell.gameShell.random.Next(maxDistance) > distance)
                     switching = true;
             }
 

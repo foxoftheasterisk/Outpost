@@ -23,7 +23,8 @@ namespace Outpost
         SpriteBatch spriteBatch;
         //Not included due to singleton:
         //ScreenManager
-        //MainGame
+        //GameShell
+        //GameManager
         //...possibly others
 
 
@@ -48,9 +49,9 @@ namespace Outpost
             Logger.newLog(LuaBridge.GAME_DIR_DEFAULT + "Outpost.log");
             //TODO: make this save to a dated log file, without filling the computer with a million log files.
 
-            MainGame mainGame = new MainGame(this.Content, GraphicsDevice);
+            GameShell.gameShell = new GameShell(this.Content, GraphicsDevice);
 
-            ScreenManager.screenManager.push(mainGame);
+            ScreenManager.screenManager.push(new GameScreen());
 
             LoadingScreen.Display("Starting up");
 
@@ -67,21 +68,15 @@ namespace Outpost
         {
             //new thread to enable loading screen
 
-            MainGame.mainGame.lua.initializeLua();
+            GameShell.gameShell.lua.initializeLua();
 
-            MainGame.mainGame.lua.runLuaFile("vanilla.set");
+            GameShell.gameShell.lua.runLuaFile("vanilla.set");
             
             //TODO: make the filename be loaded from a config file
             //TODO: move this out of the immediate-on-opening and into a set-specific area
 
-            //Material.materials = new Dictionary<String, Material>();
-            //when you remove this also remove the using OutpostLibrary.Content;
-
-            //SetLoader.loadSet(OutpostLibrary.Misc.GAME_DIR + "vanilla.set");
-
-            //Logger.Log(Material.materials["dirt"].solidity.ToString());
-
-            MainGame.mainGame.newMap();
+            //TODO: only trigger this when actually making new map
+            GameManager.NewGame(LuaBridge.GAME_DIR_DEFAULT + "firstSavedWorld/");
 
             LoadingScreen.Close();
         }

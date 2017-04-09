@@ -42,9 +42,9 @@ namespace Outpost.Screens
             {
                 bool stop;
                 if (screen == screenStack.Peek())
-                    stop = !screen.Update(true);
+                    stop = !screen.update(true);
                 else
-                    stop = !screen.Update(false);
+                    stop = !screen.update(false);
                 if (stop)
                     break;
             }
@@ -69,7 +69,7 @@ namespace Outpost.Screens
 
             while(drawStack.Count != 0)
             {
-                drawStack.Pop().Draw(drawer);
+                drawStack.Pop().draw(drawer);
             }
         }
 

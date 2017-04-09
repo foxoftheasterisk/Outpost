@@ -65,7 +65,7 @@ namespace VoxtureEditor
         const int nameEditFlashTime = 10;
         TextInputHandler nameEditor;
 
-        public bool Update(bool useInput)
+        public bool update(bool useInput)
         {
             //TODO: create visible buttons for functions
             //Also, make this into safe, central input.  When that's a thing.
@@ -920,7 +920,7 @@ namespace VoxtureEditor
             }
         }
 
-        public void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer)
+        public void draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer)
         {
             //TODO: maybe something with the world matrix
             //probably

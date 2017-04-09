@@ -38,7 +38,7 @@ namespace Outpost.Items
 
         public bool actionStart(BlockAddress target)
         {
-            MainGame.mainGame.changeBlock(target, block);
+            GameShell.gameShell.changeBlock(target, block);
             return true;
         }
 
