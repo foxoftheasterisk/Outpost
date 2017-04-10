@@ -48,6 +48,7 @@
     <Compile Include="Navigation\BlockAddress.cs" />
     <Compile Include="Navigation\ChunkAddress.cs" />
     <Compile Include="Navigation\Navigation.cs" />
+    <Compile Include="Navigation\VoxelAddress.cs" />
     <Compile Include="Pattern.cs" />
   </ItemGroup>
   <ItemGroup>

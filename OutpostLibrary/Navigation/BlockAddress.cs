@@ -55,34 +55,34 @@ namespace OutpostLibrary.Navigation
             chunk = new IntVector3(chunkBase);
             block = new IntVector3(blockBase);
 
-            while (block.X >= 16)
+            while (block.X >= Sizes.ChunkSize)
             {
-                block.X -= 16;
+                block.X -= Sizes.ChunkSize;
                 chunk.X += 1;
             }
             while (block.X < 0)
             {
-                block.X += 16;
+                block.X += Sizes.ChunkSize;
                 chunk.X -= 1;
             }
-            while (block.Y >= 16)
+            while (block.Y >= Sizes.ChunkSize)
             {
-                block.Y -= 16;
+                block.Y -= Sizes.ChunkSize;
                 chunk.Y += 1;
             }
             while (block.Y < 0)
             {
-                block.Y += 16;
+                block.Y += Sizes.ChunkSize;
                 chunk.Y -= 1;
             }
-            while (block.Z >= 16)
+            while (block.Z >= Sizes.ChunkSize)
             {
-                block.Z -= 16;
+                block.Z -= Sizes.ChunkSize;
                 chunk.Z += 1;
             }
             while (block.Z < 0)
             {
-                block.Z += 16;
+                block.Z += Sizes.ChunkSize;
                 chunk.Z -= 1;
             }
 
