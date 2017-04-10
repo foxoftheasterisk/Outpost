@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace OutpostLibrary.Navigation
 {
-    class VoxelAddress
+    public class VoxelAddress
     {
         public string world;
         public IntVector3 chunk, block, voxel;

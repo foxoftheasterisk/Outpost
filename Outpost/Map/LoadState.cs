@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Outpost.Map
 {
-    public struct LoadState
+    public struct LoadState : IEquatable<LoadState>
     {
+        //careful when adding new; these enums are ordered
         public enum GraphicalLoadState { None, Low, Full }
         public enum DataLoadState { None, Full }
 
@@ -72,5 +73,41 @@ namespace Outpost.Map
                 return true;
             return false;
         }
+
+        #region iEquatable
+        public override bool Equals(Object compTo)
+        {
+            if (compTo is LoadState)
+                return Equals((LoadState)compTo);
+
+
+            return false;
+        }
+
+        public bool Equals(LoadState other)
+        {
+            if (this.data != other.data)
+                return false;
+            if (this.graphical != other.graphical)
+                return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return 3*((int)data) + 4*((int)graphical);
+        }
+
+        public static bool operator ==(LoadState a, LoadState b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(LoadState a, LoadState b)
+        {
+            return !(a.Equals(b));
+        }
+
+        #endregion iEquatable
     }
 }

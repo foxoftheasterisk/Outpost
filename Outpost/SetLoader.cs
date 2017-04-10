@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
+//This... no longer does anything, it should probably be removed
+//its only possible purpose is as reference code
+//TODO: remove it
+
 /*
 namespace Outpost
 {
@@ -19,7 +23,7 @@ namespace Outpost
 
         private static void loadSet(string filename, Set currentSet)
         {
-            Outpost.Screens.LoadingScreen.Display("Loading sets from " + filename);
+            Screens.LoadingScreen.Display("Loading sets from " + filename);
 
             Mode mode = Mode.none;
             StreamReader input = new StreamReader(filename);

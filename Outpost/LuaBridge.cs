@@ -79,14 +79,14 @@ namespace Outpost
             LuaType.RegisterTypeAlias("Vector3", typeof(Microsoft.Xna.Framework.Vector3));
             global["Vector3"] = LuaType.GetType(typeof(Microsoft.Xna.Framework.Vector3));
 
-            LuaType.RegisterTypeAlias("Chunk", typeof(Outpost.Map.Chunk));
-            global["Chunk"] = LuaType.GetType(typeof(Outpost.Map.Chunk));
+            LuaType.RegisterTypeAlias("Chunk", typeof(Map.Chunk));
+            global["Chunk"] = LuaType.GetType(typeof(Map.Chunk));
 
             LuaType.RegisterTypeAlias("SolidBlock", typeof(Blocks.SolidBlock));
             global["SolidBlock"] = LuaType.GetType(typeof(Blocks.SolidBlock));
 
-            LuaType.RegisterTypeAlias("Structure", typeof(Outpost.Map.MapStructure));
-            global["Structure"] = LuaType.GetType(typeof(Outpost.Map.MapStructure));
+            LuaType.RegisterTypeAlias("Structure", typeof(Map.MapStructure));
+            global["Structure"] = LuaType.GetType(typeof(Map.MapStructure));
 
             //global["Double"] = LuaType.GetType(typeof(Double));
             
@@ -136,7 +136,7 @@ namespace Outpost
 
         private LuaTable loadVoxtures(string filename)
         {
-            Outpost.Screens.LoadingScreen.Display("Loading voxtures from " + filename);
+            Screens.LoadingScreen.Display("Loading voxtures from " + filename);
 
             LuaTable table = new LuaTable();
             Dictionary<string, OutpostLibrary.Content.OutpostColor> colors = new Dictionary<string, OutpostLibrary.Content.OutpostColor>();
@@ -274,9 +274,11 @@ namespace Outpost
         //I... guess this makes sense?
         //sort of?
 
-        public void buildChunk(OutpostLibrary.Navigation.ChunkAddress location, Outpost.Map.Chunk chunk)
+        //i dunno maybe LuaBridge should be distributed?
+
+        public void buildChunk(OutpostLibrary.Navigation.ChunkAddress location, Map.Chunk chunk)
         {
-            Func<Outpost.Map.Chunk, OutpostLibrary.Navigation.ChunkAddress, LuaResult> doBuild = game["buildChunk"] as Func<Outpost.Map.Chunk, OutpostLibrary.Navigation.ChunkAddress, LuaResult>;
+            Func<Map.Chunk, OutpostLibrary.Navigation.ChunkAddress, LuaResult> doBuild = game["buildChunk"] as Func<Map.Chunk, OutpostLibrary.Navigation.ChunkAddress, LuaResult>;
 
             try
             {

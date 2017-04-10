@@ -37,8 +37,9 @@ namespace Outpost
         #endregion
 
 
-        //TODO: Player should have a MapSection following them about
-        //possibly two, for data and graphics
+        //TODO: probably make the following happen on the MapSection side
+        public Map.MapSection data;
+        public Map.MapSection graphics;
 
         public Player(ChunkAddress chunkIn, Vector3 posInChunk)
         {
@@ -74,6 +75,9 @@ namespace Outpost
         /// </summary>
         public void Move()
         {
+            //god this needs a refactor
+            //it's pretty terrible
+
             #region view rotation
             MouseState mouser = Mouse.GetState();
 
@@ -475,36 +479,41 @@ namespace Outpost
             if (posInChunk.X > 16)
             {
                 posInChunk.X -= 16;
-                chunk.X += 1;
+                chunk.position.X += 1;
             }
             if (posInChunk.X < 0)
             {
                 posInChunk.X += 16;
-                chunk.X -= 1;
+                chunk.position.X -= 1;
             }
             if (posInChunk.Y > 16)
             {
                 posInChunk.Y -= 16;
-                chunk.Y += 1;
+                chunk.position.Y += 1;
             }
             if (posInChunk.Y < 0)
             {
                 posInChunk.Y += 16;
-                chunk.Y -= 1;
+                chunk.position.Y -= 1;
             }
             if (posInChunk.Z > 16)
             {
                 posInChunk.Z -= 16;
-                chunk.Z += 1;
+                chunk.position.Z += 1;
             }
             if (posInChunk.Z < 0)
             {
                 posInChunk.Z += 16;
-                chunk.Z -= 1;
+                chunk.position.Z -= 1;
             }
 
 
             #endregion
+
+            //TODO: probably change this to MapSections that automatically follow the player
+            data.Move(chunk);
+            graphics.Move(chunk);
+
         }
         #endregion
 
@@ -589,6 +598,15 @@ namespace Outpost
         {
             Matrix rots = Matrix.CreateFromYawPitchRoll(yaw, pitch, 0);
             return Vector3.Transform(baseDirection, rots);
+        }
+
+        public string encodeForSave()
+        {
+            string encoding = (new OutpostLibrary.Navigation.VoxelAddress(chunk, posInChunk)).ToString();
+
+            //TODO: inventory
+
+            return encoding;
         }
     }
 }

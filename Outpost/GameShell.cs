@@ -60,7 +60,7 @@ namespace Outpost
         //is this a good idea? prevents another MainGame instance being around.  Is there any reason there should be another?
         //No, I don't think so - although I might have to make a child class for multiplayer.  Multiple maps (that might share chunks)? Sure.  But not multiple GAMES.
 
-        public static void makeGameShell(ContentManager c, GraphicsDevice g)
+        public static void MakeGameShell(ContentManager c, GraphicsDevice g)
         {
             _gameShell = new GameShell(c, g);
         }
@@ -119,7 +119,7 @@ namespace Outpost
             lua = new LuaBridge();
         }
 
-        
+        /*
 
         /// <summary>
         /// After having at least one loaded chunk, loads the rest of the map[,,].
@@ -345,6 +345,7 @@ namespace Outpost
             fillMapThreaded();
         }
 
+
         /// <summary>
         /// NOT FULLY IMPLEMENTED
         /// Loads a chunk specified by position in the world map.
@@ -377,6 +378,7 @@ namespace Outpost
             }
             return building;
         }
+
 
         /// <summary>
         /// NOT FULLY IMPLEMENTED
@@ -471,12 +473,15 @@ namespace Outpost
             return building;
         }
 
+
+        //TODO: this actually needs an equivalent in GameManager
         void loadEntities(mapV1 source)
         {
             //This code is complete temporary bullshit.
             string[] pos = source.layers[16].Split(' ');
             //playerPos = new Vector3(Int16.Parse(pos[0]), Int16.Parse(pos[1]), Int16.Parse(pos[2]));
         }
+        //*/
 
         #endregion Mapgen and Loading
 
@@ -736,12 +741,12 @@ namespace Outpost
                     zDist += unitZ.Length();
                     continue;
                 }
-                return null;
+                return new BlockAddress("none");
             }
             #endregion
         }
 
-        public BlockAddress findBlockBefore(IntVector3 chunk, Vector3 posInChunk, Vector3 directionToSeek, int lengthToStop, blockChecker isAcceptable)
+        public BlockAddress findBlockBefore(ChunkAddress chunk, Vector3 posInChunk, Vector3 directionToSeek, int lengthToStop, blockChecker isAcceptable)
         {
             Vector3 unitX, unitY, unitZ;
             Vector3 nextX, nextY, nextZ;
@@ -828,7 +833,7 @@ namespace Outpost
             {
                 fTemp = Math.Min(Math.Min(xDist, yDist), Math.Min(zDist, stopDist));
                 if (fTemp == stopDist)
-                    return null;
+                    return new BlockAddress("none");
                 if (fTemp == xDist)
                 {
                     vTemp = new Vector3(unitX.X / 10, 0, 0);
@@ -862,7 +867,7 @@ namespace Outpost
                     previous = bTemp;
                     continue;
                 }
-                return null;
+                return new BlockAddress("none");
             }
             #endregion
         }

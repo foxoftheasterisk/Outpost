@@ -45,8 +45,10 @@ namespace Outpost.Map
         }
         private static MapManager _Map;
 
-        private MapManager()
+        private MapManager(string folder)
         {
+            worldFolder = folder;
+
             chunkStore = new ConcurrentDictionary<ChunkAddress,Chunk>();
             loadQueue = new ConcurrentQueue<Chunk>();
             unloadQueue = new ConcurrentQueue<Chunk>();
@@ -59,13 +61,18 @@ namespace Outpost.Map
             unloadThread.Start();
         }
 
-        public static void CreateMap()
+        public static void CreateMap(string folder)
         {
             //hopefully, this shouldn't come up
             if (_Map != null)
                 DisposeMap();
 
-            _Map = new MapManager();
+            _Map = new MapManager(folder);
+        }
+
+        public void Dispose()
+        {
+            DisposeMap();
         }
 
         public static void DisposeMap()
@@ -179,15 +186,29 @@ namespace Outpost.Map
         }
 
 
-        public void newMap(string folder)
+        //wait, is there actually any difference between new and load map at the map manager level?
+        //i think it might just not care
+        //i mean it doesn't handle mapgen (?)
+        /*
+        public static void newMap(string folder)
         {
 
         }
 
         //TODO: this
-        public void loadMap(string folder)
+        public static void loadMap(string folder)
         {
 
         }
+
+        //*/
+
+        //TODO: also this
+        public void saveAndQuit()
+        {
+
+        }
+
+        
     }
 }

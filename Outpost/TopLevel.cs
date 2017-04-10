@@ -49,7 +49,7 @@ namespace Outpost
             Logger.newLog(LuaBridge.GAME_DIR_DEFAULT + "Outpost.log");
             //TODO: make this save to a dated log file, without filling the computer with a million log files.
 
-            GameShell.gameShell = new GameShell(this.Content, GraphicsDevice);
+            GameShell.gameShell = makeGameShell(this.Content, GraphicsDevice);
 
             ScreenManager.screenManager.push(new GameScreen());
 

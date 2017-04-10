@@ -24,6 +24,10 @@ namespace Outpost.Map
             targetState = _targetState;
 
             //something something register with mapManager and chunkManagers
+            //or this could be enough
+            //i guess it would probably be safer to have pointers to this rather than just trusting in having kept the load state requests correct
+            //probably saves on memory too though adds a bit extra cpu
+            //TODO: that i guess
             foreach(Chunk chunk in this)
             {
                 chunk.addLoadStateRequest(targetState);
@@ -120,10 +124,13 @@ namespace Outpost.Map
 
         /// <summary>
         /// I don't know why this would be needed, BUT HERE IT IS ANYWAY.
+        /// It even checks if it's that one already to save time!
         /// </summary>
         /// <param name="ls"></param>
         public void changeTargetLoadState(LoadState ls)
         {
+            if (targetState == ls)
+                return; //since changing it to itself requires no action
             foreach(Chunk chunk in this)
             {
                 chunk.removeLoadStateRequest(targetState);

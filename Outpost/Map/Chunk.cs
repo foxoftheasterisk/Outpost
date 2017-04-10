@@ -259,7 +259,11 @@ namespace Outpost.Map
             //is this a terrible idea
             //i think it might be
             //i need to re-figure out how i'm doing mapgen in this refactor
+
+            //but uh i guess it works for now
             GameShell.gameShell.lua.buildChunk(address, this);
+
+
             return true;
         }
 
