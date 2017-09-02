@@ -42,7 +42,10 @@ namespace Outpost.Screens
         }
 
         private string message;
-        private bool isActive = true; //what??? is this???? doing???
+        private bool isActive = true; 
+        //closes the screen if it doesn't get an update call
+        //...for some reason
+
         private bool hardClose = false;
 
         private LoadingScreen(string _message)
