@@ -14,6 +14,7 @@ using System.Threading;
 using Microsoft.Xna.Framework.Storage;
 using System.Xml.Serialization;
 using Outpost.Blocks;
+using Screens;
 
 namespace Outpost
 {
@@ -506,7 +507,7 @@ namespace Outpost
 
             if(keys.IsKeyDown(Keys.Enter))
             {
-                ScreenManager.screenManager.push(new PauseScreen());
+                ScreenManager.screenManager.push(new Screens.PauseScreen());
             }
             
             player.Move();

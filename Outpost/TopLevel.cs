@@ -7,7 +7,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using Outpost.Screens;
+
+using Screens;
 
 //this should be removable
 //using OutpostLibrary.Content;
@@ -142,7 +143,7 @@ namespace Outpost
             GraphicsDevice.RasterizerState = rs;
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, rs);
-            
+
             ScreenManager.screenManager.draw(spriteBatch);
 
             spriteBatch.End();
