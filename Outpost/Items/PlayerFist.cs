@@ -44,7 +44,7 @@ namespace Outpost.Items
 
         public bool onTest(BlockAddress testing)
         {
-            return standardBlockTests.isSolid(testing);
+            return StandardBlockTests.isSolid(testing);
         }
 
         public bool actionStart(BlockAddress target)

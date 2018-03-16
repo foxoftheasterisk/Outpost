@@ -11,7 +11,6 @@ using OutpostLibrary.Content;
 using OutpostLibrary.Navigation;
 using Microsoft.Xna.Framework.Input;
 using System.Threading;
-using Microsoft.Xna.Framework.Storage;
 using System.Xml.Serialization;
 using Outpost.Blocks;
 using Screens;
@@ -46,8 +45,6 @@ namespace Outpost
         public Texture2D blank;
 
         public static string WorldFolder = "";
-        public static StorageContainer cont;
-        //you know, for once I actually get saving a-workin'
 
 
         public static GameShell gameShell

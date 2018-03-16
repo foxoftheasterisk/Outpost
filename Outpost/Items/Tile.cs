@@ -28,7 +28,7 @@ namespace Outpost.Items
 
         public bool beforeTest(BlockAddress testing)
         {
-            return standardBlockTests.isSolid(testing);
+            return StandardBlockTests.isSolid(testing);
         }
 
         public bool onTest(BlockAddress testing)

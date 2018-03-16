@@ -31,13 +31,14 @@ namespace Outpost
         //make SUPER SURE that it is not possible to switch items between that pass and this function.
     }
 
-    public static class standardBlockTests
+    public static class StandardBlockTests
     {
         public static bool isSolid(BlockAddress testing)
         {
-            if (testing == null)
+            Blocks.Block block = GameShell.gameShell.getBlock(testing);
+            if (block == null)
                 return false;
-            if (GameShell.gameShell.getBlock(testing).solidity == Solidity.solid)
+            if (block.solidity == Solidity.solid)
                 return true;
             return false;
         }
