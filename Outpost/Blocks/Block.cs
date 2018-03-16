@@ -141,7 +141,7 @@ namespace OutpostCore.Blocks
         //for wearing and such
         //void neighborChanged(Block previous, Block current);
 
-        Item[] drops();
+        Items.Item[] drops();
 
     }
 

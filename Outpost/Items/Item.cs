@@ -5,7 +5,7 @@ using System.Text;
 using OutpostLibrary.Navigation;
 using OutpostLibrary.Content;
 
-namespace OutpostCore
+namespace OutpostCore.Items
 {
     public enum TestingOrder { noTest, onOnly, beforeOnly, onFirst, beforeFirst };
     
@@ -26,7 +26,7 @@ namespace OutpostCore
         //well, except on 'noTest' items, I guess.
         //i guess this is moot though cause the compiler requires them anyway.
 
-        void performActionsOnWielder(Player wielder); //will have to change that "Player" to, iono, "Entity" or summat
+        void performActionsOnWielder(Entities.Entity wielder); //will have to change that "Player" to, iono, "Entity" or summat
         //this assumes that 'true' has been passed from one of those three ^
         //make SUPER SURE that it is not possible to switch items between that pass and this function.
     }
@@ -35,7 +35,7 @@ namespace OutpostCore
     {
         public static bool isSolid(BlockAddress testing)
         {
-            Blocks.Block block = GameShell.gameShell.getBlock(testing);
+            Blocks.Block block = GameShell.gameShell.GetBlock(testing);
             if (block == null)
                 return false;
             if (block.solidity == Solidity.solid)

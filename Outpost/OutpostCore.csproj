@@ -7,8 +7,8 @@
     <ProjectGuid>{AD0A4123-E6B4-47DA-B4EB-4204E4EB49C1}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Outpost</RootNamespace>
-    <AssemblyName>Outpost</AssemblyName>
+    <RootNamespace>OutpostCore</RootNamespace>
+    <AssemblyName>OutpostCore</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>da896f5d</NuGetPackageImportStamp>
@@ -61,12 +61,16 @@
     <Compile Include="Blocks\Block.cs" />
     <Compile Include="Blocks\SolidBlock.cs" />
     <Compile Include="Blocks\WornBlock.cs" />
+    <Compile Include="CollisionManager.cs" />
+    <Compile Include="Entities\Entity.cs" />
     <Compile Include="GameManager.cs" />
+    <Compile Include="Input\KeyInput.cs" />
     <Compile Include="Map\Chunk.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\PlayerFist.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="LuaBridge.cs" />
+    <Compile Include="Map\FollowingMapSection.cs" />
     <Compile Include="Map\LoadState.cs" />
     <Compile Include="Map\MapManager.cs" />
     <Compile Include="Map\MapSection.cs" />
@@ -74,7 +78,7 @@
     <Compile Include="Items\Tile.cs" />
     <Compile Include="GameShell.cs" />
     <Compile Include="Mapgen.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="Entities\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SetLoader.cs" />
     <Compile Include="Map\MapStructure.cs" />
@@ -101,11 +105,14 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Screens\" />
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="..\ScreenManager\ScreenManager.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

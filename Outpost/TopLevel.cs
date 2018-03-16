@@ -50,9 +50,9 @@ namespace OutpostCore
             Logger.newLog(LuaBridge.GAME_DIR_DEFAULT + "Outpost.log");
             //TODO: make this save to a dated log file, without filling the computer with a million log files.
 
-            GameShell.gameShell = makeGameShell(this.Content, GraphicsDevice);
+            GameShell.MakeGameShell(this.Content, GraphicsDevice);
 
-            ScreenManager.screenManager.push(new GameScreen());
+            ScreenManager.screenManager.Push(new GameScreen());
 
             LoadingScreen.Display("Starting up");
 
@@ -72,14 +72,15 @@ namespace OutpostCore
             GameShell.gameShell.lua.initializeLua();
 
             GameShell.gameShell.lua.runLuaFile("vanilla.set");
-            
             //TODO: make the filename be loaded from a config file
             //TODO: move this out of the immediate-on-opening and into a set-specific area
 
+
             //TODO: only trigger this when actually making new map
+            //TODO: also implement a thing for multiple worlds within a set
             GameManager.NewGame(LuaBridge.GAME_DIR_DEFAULT + "firstSavedWorld/");
 
-            LoadingScreen.Close();
+            LoadingScreen.EndLoading();
         }
 
         /// <summary>
@@ -108,22 +109,28 @@ namespace OutpostCore
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+            //TODO: figure out how I'm now supposed to close the game, since Game.Exit() ain't it
+
+            List<InputItem> input = new List<InputItem>();
+
+            Keys[] keys;
             try
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                {
-                    this.Exit();
-                }
+                keys = Keyboard.GetState().GetPressedKeys();
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
-                Logger.Log(e.ToString());
+                keys = new Keys[0];
             }
 
-            ScreenManager.screenManager.update();
+            foreach(Keys key in keys)
+            {
+                input.Add(new Input.KeyInput(key));
+            }
+
+            //TODO: mouse input
+
+            ScreenManager.screenManager.Update(new InputSet(input));
 
             base.Update(gameTime);
         }
@@ -142,11 +149,7 @@ namespace OutpostCore
             rs.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rs;
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, rs);
-
-            ScreenManager.screenManager.draw(spriteBatch);
-
-            spriteBatch.End();
+            ScreenManager.screenManager.Draw(spriteBatch, SpriteSortMode.Immediate, SamplerState.PointClamp);
 
             base.Draw(gameTime);
         }

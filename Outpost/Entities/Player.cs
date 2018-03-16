@@ -7,10 +7,11 @@ using OutpostLibrary;
 using OutpostLibrary.Content;
 using OutpostLibrary.Navigation;
 using Microsoft.Xna.Framework.Input;
+using OutpostCore.Items;
 
-namespace OutpostCore
+namespace OutpostCore.Entities
 {
-    public class Player
+    public class Player : Entity
     {
         #region constants
         const int height = 5;
@@ -37,37 +38,24 @@ namespace OutpostCore
         #endregion
 
 
-        //TODO: probably make the following happen on the MapSection side
-        public Map.MapSection data;
-        public Map.MapSection graphics;
+        //TODO: probably have a registry of all FollowingMapSections that updates them automatically
+        public Map.FollowingMapSection data;
+        public Map.FollowingMapSection graphics;
 
-        public Player(ChunkAddress chunkIn, Vector3 posInChunk)
+        public Player(ChunkAddress chunkIn, Vector3 _posInChunk)
         {
             IntVector2 screenCenter = GameShell.gameShell.screenCenter;
             
             Mouse.SetPosition(screenCenter.x, screenCenter.y);
 
-            chunk = chunkIn;
-            this.posInChunk = posInChunk;
+            Chunk = chunkIn;
+            posInChunk = _posInChunk;
 
             emptyDefault = new Items.PlayerFist();
             activeItem = emptyDefault;
         }
 
         #region movement
-        public ChunkAddress chunk;
-        Vector3 posInChunk; 
-        float pitch; //i.e. vertical rotation
-        float yaw; //i.e. horizontal rotation
-
-        /// <summary>
-        /// TEMP METHOD FOR DEBUGGING
-        /// </summary>
-        /// <returns></returns>
-        public Vector3 Pos()
-        {
-            return posInChunk;
-        }
 
         Vector3 lastMove;
         /// <summary>
@@ -112,7 +100,7 @@ namespace OutpostCore
 
             #endregion
             #region movement
-            Solidity[][][] temp = parent.detectCollision(chunk, posInChunk, direction, new IntVector3(0, 1, 0));
+            Solidity[][][] temp = CollisionManager.detectCollision(Chunk, PosInChunk, direction, new IntVector3(0, 1, 0));
             Solidity standingOn = temp[0][0][0];
 
             Vector3 movement = new Vector3(0,0,0);
@@ -127,7 +115,7 @@ namespace OutpostCore
             }
 
 
-            if (posInChunk.Y == Math.Floor(posInChunk.Y) && standingOn != null && standingOn == Solidity.solid)
+            if (PosInChunk.Y == Math.Floor(PosInChunk.Y) && standingOn == Solidity.solid)
             {
                 #region ground movement
                 #region create hor. direction
@@ -168,7 +156,7 @@ namespace OutpostCore
                 if (movement != Vector3.Zero)
                 {
                     #region movementTypeCheck
-                    Solidity[][][] collisions = parent.detectCollision(chunk, posInChunk + movement, direction, new IntVector3(length, height + 1, width));
+                    Solidity[][][] collisions = CollisionManager.detectCollision(Chunk, PosInChunk + movement, direction, new IntVector3(length, height + 1, width));
 
                     int xSize = collisions.Length;
                     int zSize = collisions[0][0].Length;
@@ -223,29 +211,29 @@ namespace OutpostCore
                     }
                     #endregion
                     #region movement
-                    int xTo = (int)Math.Floor(posInChunk.X + movement.X);
-                    int zTo = (int)Math.Floor(posInChunk.Z + movement.Z);
+                    int xTo = (int)Math.Floor(PosInChunk.X + movement.X);
+                    int zTo = (int)Math.Floor(PosInChunk.Z + movement.Z);
                     //recalculate these because now we want the raw difference from the current position.
 
                     if (!walkable)
                     {
                         //these corrections could use work, when I go for actual bounding-box collision detection
                         //but for now they do I s'pose
-                        if (posInChunk.X < xTo)
+                        if (PosInChunk.X < xTo)
                         {
-                            movement.X = xTo - (posInChunk.X + .1f);
+                            movement.X = xTo - (PosInChunk.X + .1f);
                         }
-                        if (posInChunk.X > xTo + 1)
+                        if (PosInChunk.X > xTo + 1)
                         {
-                            movement.X = xTo + 1 - (posInChunk.X - .1f);
+                            movement.X = xTo + 1 - (PosInChunk.X - .1f);
                         }
-                        if (posInChunk.Z < zTo)
+                        if (PosInChunk.Z < zTo)
                         {
-                            movement.Z = zTo - (posInChunk.Z + .1f);
+                            movement.Z = zTo - (PosInChunk.Z + .1f);
                         }
-                        if (posInChunk.Z > zTo + 1)
+                        if (PosInChunk.Z > zTo + 1)
                         {
-                            movement.Z = zTo + 1 - (posInChunk.Z - .1f);
+                            movement.Z = zTo + 1 - (PosInChunk.Z - .1f);
                         }
 
                         if (climbable)
@@ -296,7 +284,7 @@ namespace OutpostCore
                     }
                     #endregion
                     #region movementTypeCheck
-                    Solidity[][][] collisions = parent.detectCollision(chunk, posInChunk + movement, direction, new IntVector3(length, height + 1, width));
+                    Solidity[][][] collisions = CollisionManager.detectCollision(Chunk, PosInChunk + movement, direction, new IntVector3(length, height + 1, width));
 
                     int xSize = collisions.Length;
                     int zSize = collisions[0][0].Length;
@@ -354,8 +342,8 @@ namespace OutpostCore
                     
                     if (surmountable)
                     {
-                        int y = (int)Math.Floor(posInChunk.Y);
-                        if (keys.IsKeyDown(Keys.Space) && y + 1 < posInChunk.Y + jumpStartVel)
+                        int y = (int)Math.Floor(PosInChunk.Y);
+                        if (keys.IsKeyDown(Keys.Space) && y + 1 < PosInChunk.Y + jumpStartVel)
                         {
                             if (keys.IsKeyDown(Keys.LeftShift))
                             {
@@ -364,10 +352,10 @@ namespace OutpostCore
                             }
                             movement.Y = jumpStartVel;
                         }
-                        else if (y + 1 <= posInChunk.Y + surmountRate)
+                        else if (y + 1 <= PosInChunk.Y + surmountRate)
                         {
                             //movement *= .5f;
-                            movement.Y = (y + 1) - posInChunk.Y;
+                            movement.Y = (y + 1) - PosInChunk.Y;
                         }
                         else
                         {
@@ -392,7 +380,7 @@ namespace OutpostCore
                     movement = lastMove;
                     movement -= new Vector3(0, GameShell.gravity, 0);
 
-                    Solidity[][][] flyingInto = parent.detectCollision(chunk, posInChunk + movement, direction, new IntVector3(length, height + 1, width));
+                    Solidity[][][] flyingInto = CollisionManager.detectCollision(Chunk, PosInChunk + movement, direction, new IntVector3(length, height + 1, width));
 
                     int xSize = flyingInto.Length;
                     int zSize = flyingInto[0][0].Length;
@@ -426,8 +414,8 @@ namespace OutpostCore
                         }
                     }
 
-                    int xTo = (int)Math.Floor(posInChunk.X + movement.X);
-                    int zTo = (int)Math.Floor(posInChunk.Z + movement.Z);
+                    int xTo = (int)Math.Floor(PosInChunk.X + movement.X);
+                    int zTo = (int)Math.Floor(PosInChunk.Z + movement.Z);
 
                     //I suppose what I should actually do is
                     //first check to see if there are collisions
@@ -435,35 +423,35 @@ namespace OutpostCore
                     //and THEN see if there's something to land on
                     if (landable)
                     {
-                        float yMovement = (float)Math.Ceiling(posInChunk.Y + movement.Y);
-                        yMovement -= posInChunk.Y;
+                        float yMovement = (float)Math.Ceiling(PosInChunk.Y + movement.Y);
+                        yMovement -= PosInChunk.Y;
                         movement.Y = yMovement;
                     }
                     if (colliding)
                     {
                         //these corrections could use work, when I go for actual bounding-box collision detection
                         //but for now they'll do I s'pose
-                        if (posInChunk.X < xTo)
+                        if (PosInChunk.X < xTo)
                         {
-                            movement.X = xTo - (posInChunk.X + .1f);
+                            movement.X = xTo - (PosInChunk.X + .1f);
                         }
-                        if (posInChunk.X > xTo + 1)
+                        if (PosInChunk.X > xTo + 1)
                         {
-                            movement.X = xTo + 1 - (posInChunk.X - .1f);
+                            movement.X = xTo + 1 - (PosInChunk.X - .1f);
                         }
-                        if (posInChunk.Z < zTo)
+                        if (PosInChunk.Z < zTo)
                         {
-                            movement.Z = zTo - (posInChunk.Z + .1f);
+                            movement.Z = zTo - (PosInChunk.Z + .1f);
                         }
-                        if (posInChunk.Z > zTo + 1)
+                        if (PosInChunk.Z > zTo + 1)
                         {
-                            movement.Z = zTo + 1 - (posInChunk.Z - .1f);
+                            movement.Z = zTo + 1 - (PosInChunk.Z - .1f);
                         }
                     }
                     #endregion
                 }
             }
-           
+
 
             posInChunk += movement;
             lastMove = movement;
@@ -479,41 +467,40 @@ namespace OutpostCore
             if (posInChunk.X > 16)
             {
                 posInChunk.X -= 16;
-                chunk.position.X += 1;
+                Chunk.position.X += 1;
             }
             if (posInChunk.X < 0)
             {
                 posInChunk.X += 16;
-                chunk.position.X -= 1;
+                Chunk.position.X -= 1;
             }
             if (posInChunk.Y > 16)
             {
                 posInChunk.Y -= 16;
-                chunk.position.Y += 1;
+                Chunk.position.Y += 1;
             }
             if (posInChunk.Y < 0)
             {
                 posInChunk.Y += 16;
-                chunk.position.Y -= 1;
+                Chunk.position.Y -= 1;
             }
             if (posInChunk.Z > 16)
             {
                 posInChunk.Z -= 16;
-                chunk.position.Z += 1;
+                Chunk.position.Z += 1;
             }
             if (posInChunk.Z < 0)
             {
                 posInChunk.Z += 16;
-                chunk.position.Z -= 1;
+                Chunk.position.Z -= 1;
             }
 
 
             #endregion
 
-            //TODO: probably change this to MapSections that automatically follow the player
-            data.Move(chunk);
-            graphics.Move(chunk);
-
+            //TODO: convert to a registry, somewhere else, so that Player doesn't need to worry about this.
+            data.Update();
+            graphics.Update();
         }
         #endregion
 
@@ -528,13 +515,13 @@ namespace OutpostCore
             
             MouseState currentMouseState = Mouse.GetState();
 
-            BlockAddress target = getTarget();
+            BlockAddress? target = getTarget();
             if (target != null)
             {
                 bool changesRequired = false;
                 if (currentMouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton != ButtonState.Pressed)
                 {
-                    changesRequired = activeItem.actionStart(target);
+                    changesRequired = activeItem.actionStart((BlockAddress)target);
                     if (changesRequired)
                         activeItem.performActionsOnWielder(this);
                 }
@@ -545,30 +532,30 @@ namespace OutpostCore
             //*/
         }
 
-        public BlockAddress getTarget()
+        public BlockAddress? getTarget()
         {
             Vector3 direction = getDirection();
 
-            Vector3 headPos = posInChunk + new Vector3(0, height, 0);
+            Vector3 headPos = PosInChunk + new Vector3(0, height, 0);
 
             BlockAddress? found = null;
             switch (activeItem.order())
             {
                 case TestingOrder.onOnly:
-                    found = GameShell.gameShell.findBlock(chunk, headPos, direction, activeItem.range(), activeItem.onTest);
+                    found = GameShell.gameShell.FindBlock(Chunk, headPos, direction, activeItem.range(), activeItem.onTest);
                     break;
                 case TestingOrder.beforeOnly:
-                    found = GameShell.gameShell.findBlockBefore(chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
+                    found = GameShell.gameShell.FindBlockBefore(Chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
                     break;
                 case TestingOrder.beforeFirst:
-                    found = GameShell.gameShell.findBlockBefore(chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
+                    found = GameShell.gameShell.FindBlockBefore(Chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
                     if (found == null)
-                        found = GameShell.gameShell.findBlock(chunk, headPos, direction, activeItem.range(), activeItem.onTest);
+                        found = GameShell.gameShell.FindBlock(Chunk, headPos, direction, activeItem.range(), activeItem.onTest);
                     break;
                 case TestingOrder.onFirst:
-                    found = GameShell.gameShell.findBlock(chunk, headPos, direction, activeItem.range(), activeItem.onTest);
+                    found = GameShell.gameShell.FindBlock(Chunk, headPos, direction, activeItem.range(), activeItem.onTest);
                     if (found == null)
-                        found = GameShell.gameShell.findBlockBefore(chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
+                        found = GameShell.gameShell.FindBlockBefore(Chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
                     break;
                 default:
                     break;
@@ -589,7 +576,7 @@ namespace OutpostCore
 
         public Matrix createViewMatrix()
         {
-            Vector3 headPos = posInChunk + new Vector3(0, height, 0) + new Vector3(chunk.X * 16, chunk.Y * 16, chunk.Z * 16);
+            Vector3 headPos = PosInChunk + new Vector3(0, height, 0) + Chunk.getWorldspacePosition();
             Vector3 lookingAt = getDirection() + headPos;
             return Matrix.CreateLookAt(headPos, lookingAt, Vector3.Up);
         }
@@ -602,7 +589,7 @@ namespace OutpostCore
 
         public string encodeForSave()
         {
-            string encoding = (new OutpostLibrary.Navigation.VoxelAddress(chunk, posInChunk)).ToString();
+            string encoding = (new OutpostLibrary.Navigation.VoxelAddress(Chunk, PosInChunk)).ToString();
 
             //TODO: inventory
 

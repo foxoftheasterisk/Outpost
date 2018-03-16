@@ -5,6 +5,7 @@ using System.Text;
 using OutpostLibrary.Navigation;
 using OutpostLibrary.Content;
 using OutpostCore.Blocks;
+using OutpostCore.Entities;
 
 using Neo.IronLua;
 
@@ -49,8 +50,8 @@ namespace OutpostCore.Items
 
         public bool actionStart(BlockAddress target)
         {
-            justMined = GameShell.gameShell.getBlock(target);
-            GameShell.gameShell.changeBlock(target, new SolidBlock(((GameShell.gameShell.lua.global["vanilla"] as LuaTable)["basics"] as LuaTable)["air"] as Material));
+            justMined = GameShell.gameShell.GetBlock(target);
+            GameShell.gameShell.ChangeBlock(target, new SolidBlock(((GameShell.gameShell.lua.global["vanilla"] as LuaTable)["basics"] as LuaTable)["air"] as Material));
             return true;
         }
 
@@ -64,9 +65,13 @@ namespace OutpostCore.Items
             throw new NotImplementedException();
         }
 
-        public void performActionsOnWielder(Player wielder)
+        public void performActionsOnWielder(Entity wielder)
         {
-            wielder.replaceActiveItem(justMined.drops()[0]);
+            if (!(wielder is Player))
+                Logger.Log("PlayerFist wielded by non-player??");
+
+            Player player = wielder as Player;
+            player.replaceActiveItem(justMined.drops()[0]);
             justMined = null;
         }
     }

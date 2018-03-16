@@ -43,6 +43,11 @@ namespace OutpostLibrary.Navigation
             position = new IntVector3((int)Math.Floor(_position.X), (int)Math.Floor(_position.Y), (int)Math.Floor(_position.Z));
         }
 
+        public Vector3 getWorldspacePosition()
+        {
+            return (Vector3)position * Sizes.ChunkSize;
+        }
+
         public static ChunkAddress operator +(ChunkAddress ca, IntVector3 iv)
         {
             return new ChunkAddress(ca.world, ca.position + iv);

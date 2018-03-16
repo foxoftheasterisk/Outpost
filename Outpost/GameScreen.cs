@@ -12,34 +12,40 @@ namespace OutpostCore
     /// </summary>
     class GameScreen : Screen
     {
-        
 
-        public bool update(bool useInput)
+
+        public (bool updateBelow, bool shouldClose) Update(InputSet input)
         {
             if (GameManager.Game == null)
                 throw new InvalidOperationException("No game yet!");
 
-            GameManager.Game.update(useInput);
+            GameManager.Game.Update(input);
 
-            return false;
+            return (false, false);
         }
 
-        public bool drawUnder()
+        public bool DrawUnder()
         {
             return false;
         }
 
-        public void draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer)
+        public void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer)
         {
             if (GameManager.Game == null)
                 throw new InvalidOperationException("No game yet!");
 
-            GameManager.Game.draw(drawer);
+            GameManager.Game.Draw(drawer);
         }
 
-        public bool shouldClose()
+        public void Close()
         {
             throw new NotImplementedException();
+        }
+
+        public bool ShouldClose()
+        {
+            return false;
+            //TODO: something something pause menu exit option
         }
     }
 }

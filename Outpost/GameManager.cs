@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 using OutpostLibrary.Navigation;
+using OutpostCore.Entities;
+using Microsoft.Xna.Framework.Input;
+using OutpostCore.Input;
+using Microsoft.Xna.Framework;
 
 namespace OutpostCore
 {
@@ -46,8 +50,8 @@ namespace OutpostCore
             //this works for now, if inelegantly, but will NOT when we start having two-stage mapgen
             //also,
             //TODO: make radii be set instead of magic numbers
-            Map.MapSection playerData = new Map.MapSection(worldCenter, 7, new Map.LoadState(Map.LoadState.GraphicalLoadState.None, Map.LoadState.DataLoadState.Full));
-            Map.MapSection playerGraphics = new Map.MapSection(worldCenter, 5, new Map.LoadState(Map.LoadState.GraphicalLoadState.Full, Map.LoadState.DataLoadState.Full));
+            Map.FollowingMapSection playerData = new Map.FollowingMapSection(worldCenter, 7, new Map.LoadState(Map.LoadState.GraphicalLoadState.None, Map.LoadState.DataLoadState.Full), _Game.player, 1);
+            Map.FollowingMapSection playerGraphics = new Map.FollowingMapSection(worldCenter, 5, new Map.LoadState(Map.LoadState.GraphicalLoadState.Full, Map.LoadState.DataLoadState.Full), _Game.player, 1);
 
             _Game.player.data = playerData;
             _Game.player.graphics = playerGraphics;
@@ -72,12 +76,21 @@ namespace OutpostCore
             Map.MapManager.Map.saveAndQuit();
         }
 
-        public void update(bool useInput)
+        public void Update(Screens.InputSet input)
         {
-            //TODO: this
+            Screens.InputItem item;
+
+            if (input.Consume(out item, new KeyInputIdentifier(Keys.Escape)))
+            {
+                Screens.ScreenManager.screenManager.Push(new Screens.PauseScreen(null, new Color(Color.Black, 0.5f), new KeyInputIdentifier(Keys.Enter)));
+            }
+
+            player.Move();
+
+            player.Action();
         }
 
-        public void draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer)
+        public void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch drawer)
         {
             //TODO: this
         }

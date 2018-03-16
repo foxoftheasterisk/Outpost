@@ -38,7 +38,7 @@ namespace OutpostCore.Items
 
         public bool actionStart(BlockAddress target)
         {
-            GameShell.gameShell.changeBlock(target, block);
+            GameShell.gameShell.ChangeBlock(target, block);
             return true;
         }
 
@@ -52,9 +52,10 @@ namespace OutpostCore.Items
             throw new NotImplementedException();
         }
 
-        public void performActionsOnWielder(Player wielder)
+        public void performActionsOnWielder(Entities.Entity wielder)
         {
-            wielder.discardActiveItem();
+            //TODO: make this work again
+            //wielder.discardActiveItem();
         }
     }
 }

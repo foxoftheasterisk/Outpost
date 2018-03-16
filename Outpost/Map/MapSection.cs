@@ -14,7 +14,7 @@ namespace OutpostCore.Map
         //TODO?: make this not always load cubes?
 
         LoadState targetState;
-        ChunkAddress center;
+        protected ChunkAddress center;
         int radius; //inclusive
 
         public MapSection(ChunkAddress _center, int _radius, LoadState _targetState)

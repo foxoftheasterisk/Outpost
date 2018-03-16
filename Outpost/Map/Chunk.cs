@@ -462,7 +462,7 @@ namespace OutpostCore.Map
             else
             {
                 IntVector3 chunkAddr = address + new IntVector3(1, 0, 0);
-                Block adj = GameShell.gameShell.getBlock(new BlockAddress(chunkAddr, new IntVector3(0, y, z)));
+                Block adj = GameShell.gameShell.GetBlock(new BlockAddress(chunkAddr, new IntVector3(0, y, z)));
                 if (adj != null)
                 {
                     adj.neighborS = block;
@@ -489,7 +489,7 @@ namespace OutpostCore.Map
             else
             {
                 IntVector3 chunkAddr = address + new IntVector3(-1, 0, 0);
-                Block adj = GameShell.gameShell.getBlock(new BlockAddress(chunkAddr, new IntVector3(Sizes.ChunkSize - 1, y, z)));
+                Block adj = GameShell.gameShell.GetBlock(new BlockAddress(chunkAddr, new IntVector3(Sizes.ChunkSize - 1, y, z)));
                 if (adj != null)
                 {
                     adj.neighborN = block;
@@ -516,7 +516,7 @@ namespace OutpostCore.Map
             else
             {
                 IntVector3 chunkAddr = address + new IntVector3(0, 1, 0);
-                Block adj = GameShell.gameShell.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, 0, z)));
+                Block adj = GameShell.gameShell.GetBlock(new BlockAddress(chunkAddr, new IntVector3(x, 0, z)));
                 if (adj != null)
                 {
                     adj.neighborD = block;
@@ -544,7 +544,7 @@ namespace OutpostCore.Map
             else
             {
                 IntVector3 chunkAddr = address + new IntVector3(0, -1, 0);
-                Block adj = GameShell.gameShell.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, Sizes.ChunkSize - 1, z)));
+                Block adj = GameShell.gameShell.GetBlock(new BlockAddress(chunkAddr, new IntVector3(x, Sizes.ChunkSize - 1, z)));
                 if (adj != null)
                 {
                     adj.neighborU = block;
@@ -571,7 +571,7 @@ namespace OutpostCore.Map
             else
             {
                 IntVector3 chunkAddr = address + new IntVector3(0, 0, 1);
-                Block adj = GameShell.gameShell.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, y, 0)));
+                Block adj = GameShell.gameShell.GetBlock(new BlockAddress(chunkAddr, new IntVector3(x, y, 0)));
                 if (adj != null)
                 {
                     adj.neighborW = block;
@@ -598,7 +598,7 @@ namespace OutpostCore.Map
             else
             {
                 IntVector3 chunkAddr = address + new IntVector3(0, 0, -1);
-                Block adj = GameShell.gameShell.getBlock(new BlockAddress(chunkAddr, new IntVector3(x, y, Sizes.ChunkSize - 1)));
+                Block adj = GameShell.gameShell.GetBlock(new BlockAddress(chunkAddr, new IntVector3(x, y, Sizes.ChunkSize - 1)));
                 if (adj != null)
                 {
                     adj.neighborE = block;

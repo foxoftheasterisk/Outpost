@@ -37,7 +37,7 @@ namespace OutpostCore
         //Is here to keep map-generation from loading quite so many files
         //since that's what's slowing it down so much
         //though it doesn't seem to have helped much...
-        Player player;
+
         public Random random;
         Thread mapFiller;
 
@@ -55,8 +55,6 @@ namespace OutpostCore
             }
         }
         private static GameShell _gameShell;
-        //is this a good idea? prevents another MainGame instance being around.  Is there any reason there should be another?
-        //No, I don't think so - although I might have to make a child class for multiplayer.  Multiple maps (that might share chunks)? Sure.  But not multiple GAMES.
 
         public static void MakeGameShell(ContentManager c, GraphicsDevice g)
         {
@@ -489,39 +487,10 @@ namespace OutpostCore
             return false;
         }
 
-//TODO: make it use input correctly
-        public bool Update(bool useInput)
-        {
-            KeyboardState keys;
-            try
-            {
-                keys = Keyboard.GetState();
-            }
-            catch (InvalidOperationException)
-            {
-                keys = new KeyboardState();//probably a very bad idea
-            }
-
-            if(keys.IsKeyDown(Keys.Enter))
-            {
-                ScreenManager.screenManager.push(new Screens.PauseScreen(null, new Color(Color.Black, 0.5f)));
-            }
-            
-            player.Move();
-
-            if (!(player.chunk >= mapOffset + new IntVector3(mapCenter) - new IntVector3(allowedStray)) || !(player.chunk <= mapOffset + new IntVector3(mapCenter) + new IntVector3(allowedStray)))
-            {
-                recenterMap();
-            }
-
-            player.Action();
-
-            return false;
-        }
 
         #region Collision & Selection Detection
 
-        public Block getBlock(BlockAddress address)
+        public Block GetBlock(BlockAddress address)
         {
             IntVector3 chunk = address.chunk;
             chunk -= mapOffset;
@@ -533,7 +502,7 @@ namespace OutpostCore
             return map.get(chunk).getBlock(address.block);
         }
 
-        public void changeBlock(BlockAddress address, Block changeTo)
+        public void ChangeBlock(BlockAddress address, Block changeTo)
         {
             IntVector3 chunk = address.chunk;
             chunk -= mapOffset;
@@ -543,86 +512,11 @@ namespace OutpostCore
         //possible efficiency increaser: create a combined get+change block function
         //probably not actually very helpful
 
-        /// <summary>
-        /// NOT FULLY IMPLEMENTED: Does not use the x/z size.  Or the direction, for that matter.
-        /// ALSO, does not wrap outside of the chunk.
-        /// </summary>
-        /// <param name="chunkBase">The chunk containing the entity</param>
-        /// <param name="posInChunk">The entity's position in the chunk</param>
-        /// <param name="direction">The direction the entity is facing, for bounding-box purposes</param>
-        /// <param name="size">The size of the entity</param>
-        /// <returns></returns>
-        public Solidity[][][] detectCollision(IntVector3 chunkBase, Vector3 posInChunk, Vector3 direction, IntVector3 size)
-        {
-            IntVector3 mappedChunk = chunkBase - mapOffset;
 
-            if (posInChunk.X < 0)
-            {
-                posInChunk.X += 16;
-                mappedChunk = mappedChunk + new IntVector3(-1, 0, 0);
-            }
-            if (posInChunk.X > 16)
-            {
-                posInChunk.X -= 16;
-                mappedChunk = mappedChunk + new IntVector3(1, 0, 0);
-            }
-            if (posInChunk.Y < 0)
-            {
-                posInChunk.Y += 16;
-                mappedChunk = mappedChunk + new IntVector3(0, -1, 0);
-            }
-            if (posInChunk.Y > 16)
-            {
-                posInChunk.Y -= 16;
-                mappedChunk = mappedChunk + new IntVector3( 0, 1,0);
-            }
-            if (posInChunk.Z < 0)
-            {
-                posInChunk.Z += 16;
-                mappedChunk = mappedChunk + new IntVector3(0, 0, -1);
-            }
-            if (posInChunk.Z < 0)
-            {
-                posInChunk.Z += 16;
-                mappedChunk = mappedChunk + new IntVector3(0, 0, 1);
-            }
-
-            Chunk chunk = map.get(mappedChunk);
-            Solidity[][][] collidingWith = new Solidity[1][][];
-            for (int i = 0; i < collidingWith.Length; i++)
-            {
-                collidingWith[i] = new Solidity[size.Y + 1][];
-                for (int j = 0; j < collidingWith[i].Length; j++)
-                {
-                    collidingWith[i][j] = new Solidity[1];
-                }
-            }
-            //well that is a mess, but I can't really think of a better way to actually pass the dimensions...
-
-            for (int y = 0; y < size.Y + 1; y++)
-            {
-                if (posInChunk.Y + y > 15)
-                {
-                    collidingWith[0][y][0] = Solidity.vacuum;
-                    //Chunk temp = map.get(mappedChunk + new IntVector3(0,1,0));
-                    //collidingWith[0][y][0] = temp.getBlock((int)Math.Floor(posInChunk.X), (int)Math.Floor(posInChunk.Y) + y - 16, (int)Math.Floor(posInChunk.Z));
-                }
-                else
-                {
-                    Block got = chunk.getBlock((int)Math.Floor(posInChunk.X), (int)Math.Floor(posInChunk.Y) + y, (int)Math.Floor(posInChunk.Z));
-                    if (got == null)
-                        collidingWith[0][y][0] = Solidity.vacuum;
-                    else
-                        collidingWith[0][y][0] = got.solidity;
-                }
-            }
-
-            return collidingWith;
-        }
 
         public delegate bool blockChecker(BlockAddress blockToCheck);
 
-        public BlockAddress findBlock(ChunkAddress chunk, Vector3 posInChunk, Vector3 directionToSeek, int lengthToStop, blockChecker isAcceptable)
+        public BlockAddress FindBlock(ChunkAddress chunk, Vector3 posInChunk, Vector3 directionToSeek, int lengthToStop, blockChecker isAcceptable)
         {
             Vector3 unitX, unitY, unitZ;
             Vector3 nextX, nextY, nextZ;
@@ -744,7 +638,7 @@ namespace OutpostCore
             #endregion
         }
 
-        public BlockAddress findBlockBefore(ChunkAddress chunk, Vector3 posInChunk, Vector3 directionToSeek, int lengthToStop, blockChecker isAcceptable)
+        public BlockAddress FindBlockBefore(ChunkAddress chunk, Vector3 posInChunk, Vector3 directionToSeek, int lengthToStop, blockChecker isAcceptable)
         {
             Vector3 unitX, unitY, unitZ;
             Vector3 nextX, nextY, nextZ;
