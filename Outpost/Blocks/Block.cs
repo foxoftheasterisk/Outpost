@@ -8,10 +8,10 @@ using OutpostLibrary.Content;
 using OutpostLibrary.Navigation;
 using Microsoft.Xna.Framework;
 
-using Outpost.Map;
+using OutpostCore.Map;
 //TODO: remove this once VertexPositionColorNormal is not defined in Chunk
 
-namespace Outpost.Blocks
+namespace OutpostCore.Blocks
 {
     public interface Block
     {

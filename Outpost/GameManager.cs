@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using OutpostLibrary.Navigation;
 
-namespace Outpost
+namespace OutpostCore
 {
     class GameManager
     {

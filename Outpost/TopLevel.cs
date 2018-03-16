@@ -13,7 +13,7 @@ using Screens;
 //this should be removable
 //using OutpostLibrary.Content;
 
-namespace Outpost
+namespace OutpostCore
 {
     /// <summary>
     /// This is the main type for your game

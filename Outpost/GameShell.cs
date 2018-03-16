@@ -12,10 +12,10 @@ using OutpostLibrary.Navigation;
 using Microsoft.Xna.Framework.Input;
 using System.Threading;
 using System.Xml.Serialization;
-using Outpost.Blocks;
+using OutpostCore.Blocks;
 using Screens;
 
-namespace Outpost
+namespace OutpostCore
 {
     //okay I'm very seriously thinking this should be split to two or more classes
     //like
@@ -504,7 +504,7 @@ namespace Outpost
 
             if(keys.IsKeyDown(Keys.Enter))
             {
-                ScreenManager.screenManager.push(new Screens.PauseScreen());
+                ScreenManager.screenManager.push(new Screens.PauseScreen(null, new Color(Color.Black, 0.5f)));
             }
             
             player.Move();
@@ -1088,7 +1088,7 @@ namespace Outpost
             
             drawer.DrawString(fontling, "Position: " + player.Pos().ToString(), new Vector2(10, 40), new Color(7, 7, 7));
 
-            if(selected != null)
+            if(selected != BlockAddress.noBlock)
                 drawer.DrawString(fontling, "Selected: " + selected.ToString(), new Vector2(10, 70), Color.CadetBlue);
             #endregion
 

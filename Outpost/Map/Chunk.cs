@@ -8,11 +8,11 @@ using Microsoft.Xna.Framework;
 using System.IO;
 using System.Xml.Serialization;
 
-using Outpost.Blocks;
+using OutpostCore.Blocks;
 using OutpostLibrary;
 using OutpostLibrary.Navigation;
 
-namespace Outpost.Map
+namespace OutpostCore.Map
 {
 
     //TODO: this probably shouldn't be in Chunk.

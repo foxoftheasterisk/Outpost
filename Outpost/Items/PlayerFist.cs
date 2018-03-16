@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using OutpostLibrary.Navigation;
 using OutpostLibrary.Content;
-using Outpost.Blocks;
+using OutpostCore.Blocks;
 
 using Neo.IronLua;
 
-namespace Outpost.Items
+namespace OutpostCore.Items
 {
     class PlayerFist : Item
     {
@@ -25,7 +25,7 @@ namespace Outpost.Items
             return 11;
         }
 
-        BlockAddress mining;
+        BlockAddress? mining;
         int timer;
 
         Block justMined;

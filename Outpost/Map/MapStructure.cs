@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Neo.IronLua;
 
-namespace Outpost.Map
+namespace OutpostCore.Map
 {
     /// <summary>
     /// Stores a mapgen structure, including its name, whether and how often to update it, and how to save it

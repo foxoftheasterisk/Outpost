@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 #endregion
 
-namespace Outpost
+namespace OutpostCore
 {
     /// <summary>
     /// The main class.

@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace OutpostLibrary.Navigation
 {
-    public struct BlockAddress
+    public struct BlockAddress : IEquatable<BlockAddress>
     {
         public string world;
         public IntVector3 chunk, block;
@@ -95,5 +95,29 @@ namespace OutpostLibrary.Navigation
         public BlockAddress(ChunkAddress chunk, Vector3 block)
             : this(chunk.world, chunk.position, new IntVector3((int)Math.Floor(block.X), (int)Math.Floor(block.Y), (int)Math.Floor(block.Z)))
         { }
+
+        public bool Equals(BlockAddress other)
+        {
+            if (world != other.world || chunk != other.chunk || block != other.block)
+                return false;
+            return true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is BlockAddress)
+                return Equals((BlockAddress)obj);
+            return false;
+        }
+
+        public static bool operator ==(BlockAddress a, BlockAddress b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(BlockAddress a, BlockAddress b)
+        {
+            return !(a == b);
+        }
     }
 }

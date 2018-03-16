@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OutpostLibrary.Navigation;
-using Outpost.Blocks;
+using OutpostCore.Blocks;
 
-namespace Outpost.Items
+namespace OutpostCore.Items
 {
     class Tile : Item
     {

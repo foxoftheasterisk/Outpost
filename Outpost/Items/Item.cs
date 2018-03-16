@@ -5,7 +5,7 @@ using System.Text;
 using OutpostLibrary.Navigation;
 using OutpostLibrary.Content;
 
-namespace Outpost
+namespace OutpostCore
 {
     public enum TestingOrder { noTest, onOnly, beforeOnly, onFirst, beforeFirst };
     

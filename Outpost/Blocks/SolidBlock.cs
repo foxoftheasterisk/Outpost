@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework.Graphics;
 using OutpostLibrary.Content;
 using OutpostLibrary;
 using Microsoft.Xna.Framework;
-using Outpost.Items;
+using OutpostCore.Items;
 
-namespace Outpost.Blocks
+namespace OutpostCore.Blocks
 {
     /// <summary>
     /// Defines a block that consists entirely of a single material.

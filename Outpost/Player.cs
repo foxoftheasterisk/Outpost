@@ -8,7 +8,7 @@ using OutpostLibrary.Content;
 using OutpostLibrary.Navigation;
 using Microsoft.Xna.Framework.Input;
 
-namespace Outpost
+namespace OutpostCore
 {
     public class Player
     {
@@ -551,7 +551,7 @@ namespace Outpost
 
             Vector3 headPos = posInChunk + new Vector3(0, height, 0);
 
-            BlockAddress found = null;
+            BlockAddress? found = null;
             switch (activeItem.order())
             {
                 case TestingOrder.onOnly:
