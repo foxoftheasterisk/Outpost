@@ -18,6 +18,9 @@ namespace OutpostCore.Blocks
         //Indexing starts at 0 in the south, west, bottom corner.
         //X is north-south, Y up-down, Z east-west.
 
+        //TODO: make blocks know their BlockAddress, and use that to derive neighbor information
+        //rather than this nonsense
+
         #region opacity
 
         bool opaqN

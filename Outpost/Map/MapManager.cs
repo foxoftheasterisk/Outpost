@@ -101,6 +101,9 @@ namespace OutpostCore.Map
                 //maybe with a pattern, but we'll worry about that later
                 //we could throw the empty shell in the dictionary but why the hell would we it has no information
 
+                //ofc, now Chunk (AssignNeighbors and GenerateVertices, possibly others) relies on it passing null
+                //so, we'll need to overhaul that before changing this
+
                 //okay, problem: we need the GraphicsDevice
                 //i think we should probably just make that thing public i mean really
                 //return new Chunk(ca, )
@@ -209,4 +212,5 @@ namespace OutpostCore.Map
 
         
     }
+
 }

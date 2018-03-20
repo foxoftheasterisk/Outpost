@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace OutpostCore
 {
-    class CollisionManager
+    static class CollisionManager
     {
 
 
@@ -92,6 +92,139 @@ namespace OutpostCore
             }
 
             return collidingWith;
+        }
+
+       
+
+        //possible efficiency increaser: create a combined get+change block function
+        //probably not actually very helpful
+
+        public delegate bool blockChecker(BlockAddress blockToCheck);
+
+        public static (BlockAddress? blockFound, BlockAddress? blockBefore) FindBlock(ChunkAddress chunk, Vector3 posInChunk, Vector3 directionToSeek, float stopDist, blockChecker isAcceptable)
+        {
+            Vector3 unitX, unitY, unitZ;
+            Vector3 nextX, nextY, nextZ;
+            float xDist, yDist, zDist;
+            float fTemp;
+            Vector3 vTemp;
+            BlockAddress bTemp;
+            BlockAddress previous = new BlockAddress(chunk, posInChunk);
+
+            #region initialization
+            fTemp = Math.Abs(directionToSeek.X);
+            if (fTemp != 0)
+            {
+                unitX = directionToSeek / fTemp;
+                if (unitX.X > 0)
+                {
+                    fTemp = (float)Math.Ceiling(posInChunk.X) - posInChunk.X;
+                }
+                else
+                {
+                    fTemp = (float)Math.Floor(posInChunk.X) - posInChunk.X;
+                }
+                vTemp = unitX * fTemp;
+                xDist = vTemp.Length();
+                nextX = vTemp + posInChunk;
+            }
+            else
+            {
+                xDist = stopDist + 1;
+                unitX = new Vector3();
+                nextX = new Vector3();
+            }
+
+            fTemp = Math.Abs(directionToSeek.Y);
+            if (fTemp != 0)
+            {
+                unitY = directionToSeek / fTemp;
+                if (unitY.Y > 0)
+                {
+                    fTemp = (float)Math.Ceiling(posInChunk.Y) - posInChunk.Y;
+                }
+                else
+                {
+                    fTemp = (float)Math.Floor(posInChunk.Y) - posInChunk.Y;
+                }
+                vTemp = unitY * fTemp;
+                yDist = vTemp.Length();
+                nextY = vTemp + posInChunk;
+            }
+            else
+            {
+                yDist = stopDist + 1;
+                unitY = new Vector3();
+                nextY = new Vector3();
+            }
+
+            fTemp = Math.Abs(directionToSeek.Z);
+            if (fTemp != 0)
+            {
+                unitZ = directionToSeek / fTemp;
+                if (unitZ.Z > 0)
+                {
+                    fTemp = (float)Math.Ceiling(posInChunk.Z) - posInChunk.Z;
+                }
+                else
+                {
+                    fTemp = (float)Math.Floor(posInChunk.Z) - posInChunk.Z;
+                }
+                vTemp = unitZ * fTemp;
+                zDist = vTemp.Length();
+                nextZ = vTemp + posInChunk;
+            }
+            else
+            {
+                zDist = stopDist + 1;
+                unitZ = new Vector3();
+                nextZ = new Vector3();
+            }
+            #endregion
+            #region seekLoop
+            while (true)
+            {
+                fTemp = Math.Min(Math.Min(xDist, yDist), Math.Min(zDist, stopDist));
+                if (fTemp == stopDist)
+                    return (null, null);
+                if (fTemp == xDist)
+                {
+                    vTemp = new Vector3(unitX.X / 10, 0, 0);
+                    bTemp = new BlockAddress(chunk, nextX + vTemp);
+                    if (isAcceptable(bTemp))
+                        return (bTemp, previous);
+                    nextX += unitX;
+                    xDist += unitX.Length();
+                    previous = bTemp;
+                    continue;
+                }
+                if (fTemp == yDist)
+                {
+                    vTemp = new Vector3(0, unitY.Y / 10, 0);
+                    bTemp = new BlockAddress(chunk, nextY + vTemp);
+                    if (isAcceptable(bTemp))
+                        return (bTemp, previous);
+                    nextY += unitY;
+                    yDist += unitY.Length();
+                    previous = bTemp;
+                    continue;
+                }
+                if (fTemp == zDist)
+                {
+                    vTemp = new Vector3(0, 0, unitZ.Z / 10);
+                    bTemp = new BlockAddress(chunk, nextZ + vTemp);
+                    if (isAcceptable(bTemp))
+                        return (bTemp, previous);
+                    nextZ += unitZ;
+                    zDist += unitZ.Length();
+                    previous = bTemp;
+                    continue;
+                }
+
+                Logger.Log("findBlock reached unreachable point?");
+                throw new Exception("findBlock reached unreachable point?");
+            }
+            #endregion
         }
     }
 }

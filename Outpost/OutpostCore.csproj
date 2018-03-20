@@ -64,6 +64,7 @@
     <Compile Include="CollisionManager.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="GameManager.cs" />
+    <Compile Include="GraphicsManager.cs" />
     <Compile Include="Input\KeyInput.cs" />
     <Compile Include="Map\Chunk.cs" />
     <Compile Include="Items\Item.cs" />
@@ -72,9 +73,11 @@
     <Compile Include="LuaBridge.cs" />
     <Compile Include="Map\FollowingMapSection.cs" />
     <Compile Include="Map\LoadState.cs" />
+    <Compile Include="Map\MapExtensions.cs" />
     <Compile Include="Map\MapManager.cs" />
     <Compile Include="Map\MapSection.cs" />
-    <Compile Include="GameScreen.cs" />
+    <Compile Include="Screens\DebugTextScreen.cs" />
+    <Compile Include="Screens\GameScreen.cs" />
     <Compile Include="Items\Tile.cs" />
     <Compile Include="GameShell.cs" />
     <Compile Include="Mapgen.cs" />
@@ -93,12 +96,10 @@
   <ItemGroup>
     <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Neo.Lua, Version=5.3.0.0, Culture=neutral, PublicKeyToken=fdb0cd4fe8a6e3b2, processorArchitecture=MSIL">
-      <HintPath>..\packages\NeoLua.1.0.3\lib\net45\Neo.Lua.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\NeoLua.1.2.24\lib\net45\Neo.Lua.dll</HintPath>
     </Reference>
     <Reference Include="Neo.Lua.Desktop, Version=5.3.0.0, Culture=neutral, PublicKeyToken=fdb0cd4fe8a6e3b2, processorArchitecture=MSIL">
-      <HintPath>..\packages\NeoLua.1.0.3\lib\net45\Neo.Lua.Desktop.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\NeoLua.1.2.24\lib\net45\Neo.Lua.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Framework.WindowsGL.3.4.0.459\lib\net40\OpenTK.dll</HintPath>

@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
-using Screens;
+using ScreenManagement;
 
 //this should be removable
 //using OutpostLibrary.Content;
@@ -50,9 +50,10 @@ namespace OutpostCore
             Logger.newLog(LuaBridge.GAME_DIR_DEFAULT + "Outpost.log");
             //TODO: make this save to a dated log file, without filling the computer with a million log files.
 
-            GameShell.MakeGameShell(this.Content, GraphicsDevice);
+            GameShell.MakeGameShell();
+            GraphicsManager.CreateGraphicsManager(GraphicsDevice, Content);
 
-            ScreenManager.screenManager.Push(new GameScreen());
+            ScreenManager.screenManager.Push(new Screens.GameScreen());
 
             LoadingScreen.Display("Starting up");
 

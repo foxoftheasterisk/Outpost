@@ -36,7 +36,7 @@ namespace OutpostCore
 
         public static void NewGame(string folderPath)
         {
-            Screens.LoadingScreen.Display("Setting up new game");
+            ScreenManagement.LoadingScreen.Display("Setting up new game");
 
             Map.MapManager.CreateMap(folderPath);
 
@@ -76,13 +76,13 @@ namespace OutpostCore
             Map.MapManager.Map.saveAndQuit();
         }
 
-        public void Update(Screens.InputSet input)
+        public void Update(ScreenManagement.InputSet input)
         {
-            Screens.InputItem item;
+            ScreenManagement.InputItem item;
 
             if (input.Consume(out item, new KeyInputIdentifier(Keys.Escape)))
             {
-                Screens.ScreenManager.screenManager.Push(new Screens.PauseScreen(null, new Color(Color.Black, 0.5f), new KeyInputIdentifier(Keys.Enter)));
+                ScreenManagement.ScreenManager.screenManager.Push(new ScreenManagement.PauseScreen(null, new Color(Color.Black, 0.5f), new KeyInputIdentifier(Keys.Enter)));
             }
 
             player.Move();

@@ -1,11 +1,11 @@
-﻿using Screens;
+﻿using ScreenManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OutpostCore
+namespace OutpostCore.Screens
 {
     /// <summary>
     /// simple bridge class to connect GameManager to ScreenManager

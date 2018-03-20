@@ -4,20 +4,16 @@ using System.Linq;
 using System.Text;
 using OutpostLibrary.Navigation;
 using OutpostCore.Blocks;
+using OutpostCore.Map;
 
 namespace OutpostCore.Items
 {
     class Tile : Item
     {
-        public TestingOrder order()
-        {
-            return TestingOrder.beforeOnly;
-        }
+        public TestingOrder Order => TestingOrder.beforeOnly;
 
-        public int range()
-        {
-            return 11;
-        }
+        public int Range => range;
+        public const int range = 11;
 
         Block block;
 
@@ -26,33 +22,28 @@ namespace OutpostCore.Items
             block = type;
         }
 
-        public bool beforeTest(BlockAddress testing)
+        public bool Test(BlockAddress testing)
         {
             return StandardBlockTests.isSolid(testing);
         }
 
-        public bool onTest(BlockAddress testing)
+        public bool ActionStart(BlockAddress target)
         {
-            throw new NotImplementedException();
-        }
-
-        public bool actionStart(BlockAddress target)
-        {
-            GameShell.gameShell.ChangeBlock(target, block);
+            target.ChangeBlock(block);
             return true;
         }
 
-        public bool actionHold(BlockAddress target)
+        public bool ActionHold(BlockAddress target)
         {
             throw new NotImplementedException();
         }
 
-        public bool actionEnd(BlockAddress target)
+        public bool ActionEnd(BlockAddress target)
         {
             throw new NotImplementedException();
         }
 
-        public void performActionsOnWielder(Entities.Entity wielder)
+        public void PerformActionsOnWielder(Entities.Entity wielder)
         {
             //TODO: make this work again
             //wielder.discardActiveItem();

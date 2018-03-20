@@ -96,6 +96,11 @@ namespace OutpostLibrary.Navigation
             : this(chunk.world, chunk.position, new IntVector3((int)Math.Floor(block.X), (int)Math.Floor(block.Y), (int)Math.Floor(block.Z)))
         { }
 
+        public ChunkAddress GetChunkAddress()
+        {
+            return new ChunkAddress(world, chunk);
+        }
+
         public bool Equals(BlockAddress other)
         {
             if (world != other.world || chunk != other.chunk || block != other.block)

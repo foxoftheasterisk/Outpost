@@ -47,8 +47,8 @@ namespace OutpostCore
 
             
             LuaTable loadingInterface = new LuaTable();
-            loadingInterface["display"] = new Action<string>(Screens.LoadingScreen.Display);
-            loadingInterface["change"] = new Action<string>(Screens.LoadingScreen.ChangeMessage);
+            loadingInterface["display"] = new Action<string>(ScreenManagement.LoadingScreen.Display);
+            loadingInterface["change"] = new Action<string>(ScreenManagement.LoadingScreen.ChangeMessage);
             game["LoadingScreen"] = loadingInterface;
 
             game["loadVoxtures"] = new Func<string, LuaTable>(loadVoxtures);
@@ -136,7 +136,7 @@ namespace OutpostCore
 
         private LuaTable loadVoxtures(string filename)
         {
-            Screens.LoadingScreen.Display("Loading voxtures from " + filename);
+            ScreenManagement.LoadingScreen.Display("Loading voxtures from " + filename);
 
             LuaTable table = new LuaTable();
             Dictionary<string, OutpostLibrary.Content.OutpostColor> colors = new Dictionary<string, OutpostLibrary.Content.OutpostColor>();

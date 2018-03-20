@@ -8,6 +8,7 @@ using OutpostCore.Blocks;
 using OutpostCore.Entities;
 
 using Neo.IronLua;
+using OutpostCore.Map;
 
 namespace OutpostCore.Items
 {
@@ -16,15 +17,10 @@ namespace OutpostCore.Items
         //remember that the same PlayerFist is used for ALL of the player's inventory slots!
         //well I suppose it doesn't have to be
         //but if it can be that would probably be good for space efficiency
-        public TestingOrder order()
-        {
-            return TestingOrder.onOnly;
-        }
+        public TestingOrder Order => TestingOrder.onOnly;
 
-        public int range()
-        {
-            return 11;
-        }
+        public int Range => range;
+        public const int range = 11;
 
         BlockAddress? mining;
         int timer;
@@ -38,34 +34,29 @@ namespace OutpostCore.Items
             justMined = null;
         }
 
-        public bool beforeTest(BlockAddress testing)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool onTest(BlockAddress testing)
+        public bool Test(BlockAddress testing)
         {
             return StandardBlockTests.isSolid(testing);
         }
 
-        public bool actionStart(BlockAddress target)
+        public bool ActionStart(BlockAddress target)
         {
-            justMined = GameShell.gameShell.GetBlock(target);
-            GameShell.gameShell.ChangeBlock(target, new SolidBlock(((GameShell.gameShell.lua.global["vanilla"] as LuaTable)["basics"] as LuaTable)["air"] as Material));
+            Block newBlock = new SolidBlock(((GameShell.gameShell.lua.global["vanilla"] as LuaTable)["basics"] as LuaTable)["air"] as Material);
+            (_, justMined) = target.SwapBlock(newBlock);  //probably should actually pay attention to that check...
             return true;
         }
 
-        public bool actionHold(BlockAddress target)
+        public bool ActionHold(BlockAddress target)
         {
             throw new NotImplementedException();
         }
 
-        public bool actionEnd(BlockAddress target)
+        public bool ActionEnd(BlockAddress target)
         {
             throw new NotImplementedException();
         }
 
-        public void performActionsOnWielder(Entity wielder)
+        public void PerformActionsOnWielder(Entity wielder)
         {
             if (!(wielder is Player))
                 Logger.Log("PlayerFist wielded by non-player??");

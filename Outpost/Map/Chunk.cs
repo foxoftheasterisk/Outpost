@@ -405,6 +405,7 @@ namespace OutpostCore.Map
             return true;
         }
 
+        //TODO: probably overhaul all of chunk drawing stuff tbqh
         public void assignNeighbors(bool isFilling)
         {
             for (int x = 0; x < size; x++)
@@ -420,29 +421,29 @@ namespace OutpostCore.Map
 
             if (!isFilling)
             {
-                patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(1, 0, 0));
-                if (adjChunk.chunk != null)
-                    adjChunk.chunk.generateVertices();
+                Chunk adjChunk = MapManager.Map[address + new IntVector3(1, 0, 0)];
+                if (adjChunk != null)
+                    adjChunk.generateVertices();
 
-                adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
-                if (adjChunk.chunk != null)
-                    adjChunk.chunk.generateVertices();
+                adjChunk = MapManager.Map[address + new IntVector3(-1, 0, 0)];
+                if (adjChunk != null)
+                    adjChunk.generateVertices();
 
-                adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 1, 0));
-                if (adjChunk.chunk != null)
-                    adjChunk.chunk.generateVertices();
+                adjChunk = MapManager.Map[address + new IntVector3(0, 1, 0)];
+                if (adjChunk != null)
+                    adjChunk.generateVertices();
 
-                adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, -1, 0));
-                if (adjChunk.chunk != null)
-                    adjChunk.chunk.generateVertices();
+                adjChunk = MapManager.Map[address + new IntVector3(0, -1, 0)];
+                if (adjChunk != null)
+                    adjChunk.generateVertices();
 
-                adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 0, 1));
-                if (adjChunk.chunk != null)
-                    adjChunk.chunk.generateVertices();
+                adjChunk = MapManager.Map[address + new IntVector3(0, 0, 1)];
+                if (adjChunk != null)
+                    adjChunk.generateVertices();
 
-                adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 0, -1));
-                if (adjChunk.chunk != null)
-                    adjChunk.chunk.generateVertices();
+                adjChunk = MapManager.Map[address + new IntVector3(0, 0, -1)];
+                if (adjChunk != null)
+                    adjChunk.generateVertices();
             }
         }
 
@@ -461,8 +462,8 @@ namespace OutpostCore.Map
             }
             else
             {
-                IntVector3 chunkAddr = address + new IntVector3(1, 0, 0);
-                Block adj = GameShell.gameShell.GetBlock(new BlockAddress(chunkAddr, new IntVector3(0, y, z)));
+                ChunkAddress chunkAddr = address + new IntVector3(1, 0, 0);
+                Block adj = (new BlockAddress(chunkAddr, new IntVector3(0, y, z))).GetBlock();
                 if (adj != null)
                 {
                     adj.neighborS = block;
@@ -470,9 +471,9 @@ namespace OutpostCore.Map
                 }
                 if (!isFilling)
                 {
-                    patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(chunkAddr);
-                    if (adjChunk.chunk != null)
-                        adjChunk.chunk.generateVertices();
+                    Chunk adjChunk = MapManager.Map[chunkAddr];
+                    if (adjChunk != null)
+                        adjChunk.generateVertices();
                 }
             }
             #endregion north
@@ -488,8 +489,8 @@ namespace OutpostCore.Map
             }
             else
             {
-                IntVector3 chunkAddr = address + new IntVector3(-1, 0, 0);
-                Block adj = GameShell.gameShell.GetBlock(new BlockAddress(chunkAddr, new IntVector3(Sizes.ChunkSize - 1, y, z)));
+                ChunkAddress chunkAddr = address + new IntVector3(-1, 0, 0);
+                Block adj = (new BlockAddress(chunkAddr, new IntVector3(Sizes.ChunkSize - 1, y, z))).GetBlock();
                 if (adj != null)
                 {
                     adj.neighborN = block;
@@ -497,9 +498,9 @@ namespace OutpostCore.Map
                 }
                 if (!isFilling)
                 {
-                    patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(chunkAddr);
-                    if (adjChunk.chunk != null)
-                        adjChunk.chunk.generateVertices();
+                    Chunk adjChunk = MapManager.Map[chunkAddr];
+                    if (adjChunk != null)
+                        adjChunk.generateVertices();
                 }
             }
             #endregion south
@@ -515,8 +516,8 @@ namespace OutpostCore.Map
             }
             else
             {
-                IntVector3 chunkAddr = address + new IntVector3(0, 1, 0);
-                Block adj = GameShell.gameShell.GetBlock(new BlockAddress(chunkAddr, new IntVector3(x, 0, z)));
+                ChunkAddress chunkAddr = address + new IntVector3(0, 1, 0);
+                Block adj = (new BlockAddress(chunkAddr, new IntVector3(x, 0, z))).GetBlock();
                 if (adj != null)
                 {
                     adj.neighborD = block;
@@ -524,9 +525,9 @@ namespace OutpostCore.Map
                 }
                 if (!isFilling)
                 {
-                    patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(chunkAddr);
-                    if (adjChunk.chunk != null)
-                        adjChunk.chunk.generateVertices();
+                    Chunk adjChunk = MapManager.Map[chunkAddr];
+                    if (adjChunk != null)
+                        adjChunk.generateVertices();
                 }
             }
             #endregion up
@@ -543,8 +544,8 @@ namespace OutpostCore.Map
             }
             else
             {
-                IntVector3 chunkAddr = address + new IntVector3(0, -1, 0);
-                Block adj = GameShell.gameShell.GetBlock(new BlockAddress(chunkAddr, new IntVector3(x, Sizes.ChunkSize - 1, z)));
+                ChunkAddress chunkAddr = address + new IntVector3(0, -1, 0);
+                Block adj = (new BlockAddress(chunkAddr, new IntVector3(x, Sizes.ChunkSize - 1, z))).GetBlock();
                 if (adj != null)
                 {
                     adj.neighborU = block;
@@ -552,9 +553,9 @@ namespace OutpostCore.Map
                 }
                 if (!isFilling)
                 {
-                    patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(chunkAddr);
-                    if (adjChunk.chunk != null)
-                        adjChunk.chunk.generateVertices();
+                    Chunk adjChunk = MapManager.Map[chunkAddr];
+                    if (adjChunk != null)
+                        adjChunk.generateVertices();
                 }
             }
             #endregion down
@@ -570,8 +571,8 @@ namespace OutpostCore.Map
             }
             else
             {
-                IntVector3 chunkAddr = address + new IntVector3(0, 0, 1);
-                Block adj = GameShell.gameShell.GetBlock(new BlockAddress(chunkAddr, new IntVector3(x, y, 0)));
+                ChunkAddress chunkAddr = address + new IntVector3(0, 0, 1);
+                Block adj = (new BlockAddress(chunkAddr, new IntVector3(x, y, 0))).GetBlock();
                 if (adj != null)
                 {
                     adj.neighborW = block;
@@ -579,9 +580,9 @@ namespace OutpostCore.Map
                 }
                 if (!isFilling)
                 {
-                    patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(chunkAddr);
-                    if (adjChunk.chunk != null)
-                        adjChunk.chunk.generateVertices();
+                    Chunk adjChunk = MapManager.Map[chunkAddr];
+                    if (adjChunk != null)
+                        adjChunk.generateVertices();
                 }
             }
             #endregion east
@@ -597,8 +598,8 @@ namespace OutpostCore.Map
             }
             else
             {
-                IntVector3 chunkAddr = address + new IntVector3(0, 0, -1);
-                Block adj = GameShell.gameShell.GetBlock(new BlockAddress(chunkAddr, new IntVector3(x, y, Sizes.ChunkSize - 1)));
+                ChunkAddress chunkAddr = address + new IntVector3(0, 0, -1);
+                Block adj = (new BlockAddress(chunkAddr, new IntVector3(x, y, Sizes.ChunkSize - 1))).GetBlock();
                 if (adj != null)
                 {
                     adj.neighborE = block;
@@ -606,9 +607,9 @@ namespace OutpostCore.Map
                 }
                 if (!isFilling)
                 {
-                    patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(chunkAddr);
-                    if (adjChunk.chunk != null)
-                        adjChunk.chunk.generateVertices();
+                    Chunk adjChunk = MapManager.Map[chunkAddr];
+                    if (adjChunk != null)
+                        adjChunk.generateVertices();
                 }
             }
             #endregion west
@@ -627,29 +628,29 @@ namespace OutpostCore.Map
                 }
             }
 
-            patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(1,0,0));
-            if (adjChunk.chunk != null)
-                adjChunk.chunk.generateVertices();
+            Chunk adjChunk = MapManager.Map[address + new IntVector3(1,0,0)];
+            if (adjChunk != null)
+                adjChunk.generateVertices();
 
-            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
-            if (adjChunk.chunk != null)
-                adjChunk.chunk.generateVertices();
+            adjChunk = MapManager.Map[address + new IntVector3(-1, 0, 0)];
+            if (adjChunk != null)
+                adjChunk.generateVertices();
 
-            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 1, 0));
-            if (adjChunk.chunk != null)
-                adjChunk.chunk.generateVertices();
+            adjChunk = MapManager.Map[address + new IntVector3(0, 1, 0)];
+            if (adjChunk != null)
+                adjChunk.generateVertices();
 
-            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, -1, 0));
-            if (adjChunk.chunk != null)
-                adjChunk.chunk.generateVertices();
+            adjChunk = MapManager.Map[address + new IntVector3(0, -1, 0)];
+            if (adjChunk != null)
+                adjChunk.generateVertices();
 
-            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 0, 1));
-            if (adjChunk.chunk != null)
-                adjChunk.chunk.generateVertices();
+            adjChunk = MapManager.Map[address + new IntVector3(0, 0, 1)];
+            if (adjChunk != null)
+                adjChunk.generateVertices();
 
-            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 0, -1));
-            if (adjChunk.chunk != null)
-                adjChunk.chunk.generateVertices();
+            adjChunk = MapManager.Map[address + new IntVector3(0, 0, -1)];
+            if (adjChunk != null)
+                adjChunk.generateVertices();
 
             generateVertices();
         }
@@ -691,43 +692,43 @@ namespace OutpostCore.Map
         public bool generateVertices()
         {
             #region neighborChecks
-            patternOrChunk adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(1, 0, 0));
-            if (adjChunk.chunk == null)
+            Chunk adjChunk = MapManager.Map[address + new IntVector3(1, 0, 0)];
+            if (adjChunk == null)
             {
                 //Logger.Log("Skipping " + position + ", north (" + (position + new IntVector3(1,0,0)) + ") unset");
                 return false;
             }
 
-            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(-1, 0, 0));
-            if (adjChunk.chunk == null)
+            adjChunk = MapManager.Map[address + new IntVector3(-1, 0, 0)];
+            if (adjChunk == null)
             {
                 //Logger.Log("Skipping " + position + ", south (" + (position + new IntVector3(-1, 0, 0)) + ") unset");
                 return false;
             }
 
-            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 1, 0));
-            if (adjChunk.chunk == null)
+            adjChunk = MapManager.Map[address + new IntVector3(0, 1, 0)];
+            if (adjChunk == null)
             {
                 //Logger.Log("Skipping " + position + ", top (" + (position + new IntVector3(0, 1, 0)) + ") unset");
                 return false;
             }
 
-            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, -1, 0));
-            if (adjChunk.chunk == null)
+            adjChunk = MapManager.Map[address + new IntVector3(0, -1, 0)];
+            if (adjChunk == null)
             {
                 //Logger.Log("Skipping " + position + ", bottom (" + (position + new IntVector3(0, -1, 0)) + ") unset");
                 return false;
             }
 
-            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 0, 1));
-            if (adjChunk.chunk == null)
+            adjChunk = MapManager.Map[address + new IntVector3(0, 0, 1)];
+            if (adjChunk == null)
             {
                 //Logger.Log("Skipping " + position + ", east (" + (position + new IntVector3(0, 0, 1)) + ") unset");
                 return false;
             }
 
-            adjChunk = GameShell.gameShell.getPatternOrChunk(address + new IntVector3(0, 0, -1));
-            if (adjChunk.chunk == null)
+            adjChunk = MapManager.Map[address + new IntVector3(0, 0, -1)];
+            if (adjChunk == null)
             {
                 //Logger.Log("Skipping " + position + ", west (" + (position + new IntVector3(0, 0, -1)) + ") unset");
                 return false;
@@ -735,7 +736,7 @@ namespace OutpostCore.Map
             #endregion neighborChecks
 
             Logger.Log("Drawing " + address);
-            Screens.LoadingScreen.ChangeMessage("Generating vertices for " + address);
+            ScreenManagement.LoadingScreen.ChangeMessage("Generating vertices for " + address);
             //there SHOULD be something set up so that it only needs to rebuild the vertices for changed sections
             //but i don't believe there currently is
 
@@ -798,7 +799,7 @@ namespace OutpostCore.Map
             }
 
 
-            Screens.LoadingScreen.ChangeMessage("Finished generating vertices for " + address);
+            ScreenManagement.LoadingScreen.ChangeMessage("Finished generating vertices for " + address);
             return true;
         }
 
@@ -816,11 +817,6 @@ namespace OutpostCore.Map
             return vBuff;
         }
 
-        public int getNumVertices()
-        {
-            return vertices.Length;
-        }
-
         void indicesLostHandler(object sender, EventArgs e)
         {
             iBuff.SetData<short>(indices);
@@ -831,9 +827,9 @@ namespace OutpostCore.Map
             return iBuff;
         }
 
-        public int getNumIndices()
+        public int getNumTriangles()
         {
-            return indices.Length;
+            return indices.Length / 3;
         }
 
         #endregion graphics

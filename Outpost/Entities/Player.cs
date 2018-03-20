@@ -44,7 +44,7 @@ namespace OutpostCore.Entities
 
         public Player(ChunkAddress chunkIn, Vector3 _posInChunk)
         {
-            IntVector2 screenCenter = GameShell.gameShell.screenCenter;
+            screenCenter = GraphicsManager.graphicsManager.ScreenCenter;
             
             Mouse.SetPosition(screenCenter.x, screenCenter.y);
 
@@ -521,9 +521,9 @@ namespace OutpostCore.Entities
                 bool changesRequired = false;
                 if (currentMouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton != ButtonState.Pressed)
                 {
-                    changesRequired = activeItem.actionStart((BlockAddress)target);
+                    changesRequired = activeItem.ActionStart((BlockAddress)target);
                     if (changesRequired)
-                        activeItem.performActionsOnWielder(this);
+                        activeItem.PerformActionsOnWielder(this);
                 }
             }
             
@@ -539,23 +539,24 @@ namespace OutpostCore.Entities
             Vector3 headPos = PosInChunk + new Vector3(0, height, 0);
 
             BlockAddress? found = null;
-            switch (activeItem.order())
+            switch (activeItem.Order)
             {
                 case TestingOrder.onOnly:
-                    found = GameShell.gameShell.FindBlock(Chunk, headPos, direction, activeItem.range(), activeItem.onTest);
+                    (_, found) = CollisionManager.FindBlock(Chunk, headPos, direction, activeItem.Range, activeItem.Test);
                     break;
                 case TestingOrder.beforeOnly:
-                    found = GameShell.gameShell.FindBlockBefore(Chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
+                    (found, _) = CollisionManager.FindBlock(Chunk, headPos, direction, activeItem.Range, activeItem.Test);
                     break;
                 case TestingOrder.beforeFirst:
-                    found = GameShell.gameShell.FindBlockBefore(Chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
+                    BlockAddress? backup;
+                    (backup, found) = CollisionManager.FindBlock(Chunk, headPos, direction, activeItem.Range, activeItem.Test);
                     if (found == null)
-                        found = GameShell.gameShell.FindBlock(Chunk, headPos, direction, activeItem.range(), activeItem.onTest);
+                        found = backup;
                     break;
                 case TestingOrder.onFirst:
-                    found = GameShell.gameShell.FindBlock(Chunk, headPos, direction, activeItem.range(), activeItem.onTest);
+                    (found, backup) = CollisionManager.FindBlock(Chunk, headPos, direction, activeItem.Range, activeItem.Test);
                     if (found == null)
-                        found = GameShell.gameShell.FindBlockBefore(Chunk, headPos, direction, activeItem.range(), activeItem.beforeTest);
+                        found = backup;
                     break;
                 default:
                     break;

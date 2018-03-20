@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Threading;
 using System.Xml.Serialization;
 using OutpostCore.Blocks;
-using Screens;
+using ScreenManagement;
 
 namespace OutpostCore
 {
@@ -41,9 +41,6 @@ namespace OutpostCore
         public Random random;
         Thread mapFiller;
 
-        Texture2D reticule;
-        public Texture2D blank;
-
         public static string WorldFolder = "";
 
 
@@ -56,18 +53,15 @@ namespace OutpostCore
         }
         private static GameShell _gameShell;
 
-        public static void MakeGameShell(ContentManager c, GraphicsDevice g)
+        public static void MakeGameShell()
         {
-            _gameShell = new GameShell(c, g);
+            _gameShell = new GameShell();
         }
 
         public LuaBridge lua;
 
         // i.e. messing with these will just screw up the workings
         #region technical constants
-        ContentManager content;
-        GraphicsDevice graphics;
-
         const int mapSize = 9;
         const int mapCenter = 4;
         const int allowedStray = 2;
@@ -78,42 +72,23 @@ namespace OutpostCore
         public const float gravity = .05f;
         #endregion
 
-        #region Mapgen and Loading
-
         /// <summary>
-        /// Creates a game with a new world.
+        /// 
         /// </summary>
         /// <param name="c">The content manager to use.</param>
         /// <param name="g">The graphics device to use.</param>
-        private GameShell(ContentManager c, GraphicsDevice g)
+        private GameShell()
         {
-            //what is this I don't even
-            /*
-            IAsyncResult result = StorageDevice.BeginShowSelector(null, null);
-            result.AsyncWaitHandle.WaitOne();
-            StorageDevice harddrive = StorageDevice.EndShowSelector(result);
-            result.AsyncWaitHandle.Close();
-
-            result = harddrive.BeginOpenContainer("StorageDemo", null, null);
-            result.AsyncWaitHandle.WaitOne();
-            cont = harddrive.EndOpenContainer(result);
-            result.AsyncWaitHandle.Close();
-
-            cont.CreateDirectory(WorldFolder);
-            //*/
-
-            content = c;
-            graphics = g;
             random = new Random();
 
-            fontling = content.Load<SpriteFont>("someFont");
-            reticule = content.Load<Texture2D>("reticule");
-            blank = content.Load<Texture2D>("blank");
-            
-            initializeGraphics();
+
 
             lua = new LuaBridge();
         }
+
+        #region Mapgen and Loading
+
+
 
         /*
 
@@ -481,514 +456,5 @@ namespace OutpostCore
 
         #endregion Mapgen and Loading
 
-        //TODO: i'm pretty sure there are times it should close
-        public bool shouldClose()
-        {
-            return false;
-        }
-
-
-        #region Collision & Selection Detection
-
-        public Block GetBlock(BlockAddress address)
-        {
-            IntVector3 chunk = address.chunk;
-            chunk -= mapOffset;
-            if (chunk.X < 0 || chunk.X >= map.GetLength(0) || chunk.Y < 0 || chunk.Y >= map.GetLength(1) || chunk.Z < 0 || chunk.Z >= map.GetLength(2))
-                return null;
-            if(map.get(chunk) == null)
-                return null;
-
-            return map.get(chunk).getBlock(address.block);
-        }
-
-        public void ChangeBlock(BlockAddress address, Block changeTo)
-        {
-            IntVector3 chunk = address.chunk;
-            chunk -= mapOffset;
-            map.get(chunk).assignBlock(address.block, changeTo);
-        }
-
-        //possible efficiency increaser: create a combined get+change block function
-        //probably not actually very helpful
-
-
-
-        public delegate bool blockChecker(BlockAddress blockToCheck);
-
-        public BlockAddress FindBlock(ChunkAddress chunk, Vector3 posInChunk, Vector3 directionToSeek, int lengthToStop, blockChecker isAcceptable)
-        {
-            Vector3 unitX, unitY, unitZ;
-            Vector3 nextX, nextY, nextZ;
-            float xDist, yDist, zDist, stopDist;
-            float fTemp;
-            Vector3 vTemp;
-            BlockAddress bTemp;
-
-            stopDist = lengthToStop;
-
-            #region initialization
-            fTemp = Math.Abs(directionToSeek.X);
-            if (fTemp != 0)
-            {
-                unitX = directionToSeek / fTemp;
-                if (unitX.X > 0)
-                {
-                    fTemp = (float)Math.Ceiling(posInChunk.X) - posInChunk.X;
-                }
-                else
-                {
-                    fTemp = (float)Math.Floor(posInChunk.X) - posInChunk.X;
-                }
-                vTemp = unitX * fTemp;
-                xDist = vTemp.Length();
-                nextX = vTemp + posInChunk;
-            }
-            else
-            {
-                xDist = stopDist + 1;
-                unitX = new Vector3();
-                nextX = new Vector3();
-            }
-
-            fTemp = Math.Abs(directionToSeek.Y);
-            if (fTemp != 0)
-            {
-                unitY = directionToSeek / fTemp;
-                if (unitY.Y > 0)
-                {
-                    fTemp = (float)Math.Ceiling(posInChunk.Y) - posInChunk.Y;
-                }
-                else
-                {
-                    fTemp = (float)Math.Floor(posInChunk.Y) - posInChunk.Y;
-                }
-                vTemp = unitY * fTemp;
-                yDist = vTemp.Length();
-                nextY = vTemp + posInChunk;
-            }
-            else
-            {
-                yDist = stopDist + 1;
-                unitY = new Vector3();
-                nextY = new Vector3();
-            }
-
-            fTemp = Math.Abs(directionToSeek.Z);
-            if (fTemp != 0)
-            {
-                unitZ = directionToSeek / fTemp;
-                if (unitZ.Z > 0)
-                {
-                    fTemp = (float)Math.Ceiling(posInChunk.Z) - posInChunk.Z;
-                }
-                else
-                {
-                    fTemp = (float)Math.Floor(posInChunk.Z) - posInChunk.Z;
-                }
-                vTemp = unitZ * fTemp;
-                zDist = vTemp.Length();
-                nextZ = vTemp + posInChunk;
-            }
-            else
-            {
-                zDist = stopDist + 1;
-                unitZ = new Vector3();
-                nextZ = new Vector3();
-            }
-            #endregion
-            #region seekLoop
-            while (true)
-            {
-                fTemp = Math.Min(Math.Min(xDist, yDist), Math.Min(zDist, stopDist));
-                if (fTemp == stopDist)
-                    return new BlockAddress("none");
-                if (fTemp == xDist)
-                {
-                    vTemp = new Vector3(unitX.X / 10, 0, 0);
-                    bTemp = new BlockAddress(chunk, nextX + vTemp);
-                    if (isAcceptable(bTemp))
-                        return bTemp;
-                    nextX += unitX;
-                    xDist += unitX.Length();
-                    continue;
-                }
-                if (fTemp == yDist)
-                {
-                    vTemp = new Vector3(0, unitY.Y / 10, 0);
-                    bTemp = new BlockAddress(chunk, nextY + vTemp);
-                    if (isAcceptable(bTemp))
-                        return bTemp;
-                    nextY += unitY;
-                    yDist += unitY.Length();
-                    continue;
-                }
-                if (fTemp == zDist)
-                {
-                    vTemp = new Vector3(0, 0, unitZ.Z / 10);
-                    bTemp = new BlockAddress(chunk, nextZ + vTemp);
-                    if (isAcceptable(bTemp))
-                        return bTemp;
-                    nextZ += unitZ;
-                    zDist += unitZ.Length();
-                    continue;
-                }
-                return new BlockAddress("none");
-            }
-            #endregion
-        }
-
-        public BlockAddress FindBlockBefore(ChunkAddress chunk, Vector3 posInChunk, Vector3 directionToSeek, int lengthToStop, blockChecker isAcceptable)
-        {
-            Vector3 unitX, unitY, unitZ;
-            Vector3 nextX, nextY, nextZ;
-            float xDist, yDist, zDist, stopDist;
-            float fTemp;
-            Vector3 vTemp;
-            BlockAddress bTemp;
-            BlockAddress previous = new BlockAddress(chunk, posInChunk);
-
-            stopDist = lengthToStop;
-
-            #region initialization
-            fTemp = Math.Abs(directionToSeek.X);
-            if (fTemp != 0)
-            {
-                unitX = directionToSeek / fTemp;
-                if (unitX.X > 0)
-                {
-                    fTemp = (float)Math.Ceiling(posInChunk.X) - posInChunk.X;
-                }
-                else
-                {
-                    fTemp = (float)Math.Floor(posInChunk.X) - posInChunk.X;
-                }
-                vTemp = unitX * fTemp;
-                xDist = vTemp.Length();
-                nextX = vTemp + posInChunk;
-            }
-            else
-            {
-                xDist = stopDist + 1;
-                unitX = new Vector3();
-                nextX = new Vector3();
-            }
-
-            fTemp = Math.Abs(directionToSeek.Y);
-            if (fTemp != 0)
-            {
-                unitY = directionToSeek / fTemp;
-                if (unitY.Y > 0)
-                {
-                    fTemp = (float)Math.Ceiling(posInChunk.Y) - posInChunk.Y;
-                }
-                else
-                {
-                    fTemp = (float)Math.Floor(posInChunk.Y) - posInChunk.Y;
-                }
-                vTemp = unitY * fTemp;
-                yDist = vTemp.Length();
-                nextY = vTemp + posInChunk;
-            }
-            else
-            {
-                yDist = stopDist + 1;
-                unitY = new Vector3();
-                nextY = new Vector3();
-            }
-
-            fTemp = Math.Abs(directionToSeek.Z);
-            if (fTemp != 0)
-            {
-                unitZ = directionToSeek / fTemp;
-                if (unitZ.Z > 0)
-                {
-                    fTemp = (float)Math.Ceiling(posInChunk.Z) - posInChunk.Z;
-                }
-                else
-                {
-                    fTemp = (float)Math.Floor(posInChunk.Z) - posInChunk.Z;
-                }
-                vTemp = unitZ * fTemp;
-                zDist = vTemp.Length();
-                nextZ = vTemp + posInChunk;
-            }
-            else
-            {
-                zDist = stopDist + 1;
-                unitZ = new Vector3();
-                nextZ = new Vector3();
-            }
-            #endregion
-            #region seekLoop
-            while (true)
-            {
-                fTemp = Math.Min(Math.Min(xDist, yDist), Math.Min(zDist, stopDist));
-                if (fTemp == stopDist)
-                    return new BlockAddress("none");
-                if (fTemp == xDist)
-                {
-                    vTemp = new Vector3(unitX.X / 10, 0, 0);
-                    bTemp = new BlockAddress(chunk, nextX + vTemp);
-                    if (isAcceptable(bTemp))
-                        return previous;
-                    nextX += unitX;
-                    xDist += unitX.Length();
-                    previous = bTemp;
-                    continue;
-                }
-                if (fTemp == yDist)
-                {
-                    vTemp = new Vector3(0, unitY.Y / 10, 0);
-                    bTemp = new BlockAddress(chunk, nextY + vTemp);
-                    if (isAcceptable(bTemp))
-                        return previous;
-                    nextY += unitY;
-                    yDist += unitY.Length();
-                    previous = bTemp;
-                    continue;
-                }
-                if (fTemp == zDist)
-                {
-                    vTemp = new Vector3(0, 0, unitZ.Z / 10);
-                    bTemp = new BlockAddress(chunk, nextZ + vTemp);
-                    if (isAcceptable(bTemp))
-                        return previous;
-                    nextZ += unitZ;
-                    zDist += unitZ.Length();
-                    previous = bTemp;
-                    continue;
-                }
-                return new BlockAddress("none");
-            }
-            #endregion
-        }
-
-        #endregion Collision & Selection Detection
-
-        #region Graphics
-
-        public SpriteFont fontling;
-        Matrix world; //totally not just the identity matrix
-        //as long as this is actually always the identity matrix,
-        //we can be lazy with the shader code.
-        //and I see no real reason for it to not be.
-        //(well, it could be we want to translate things, so we're not way off in like +1000, but as long as no rotates are going on we're still good.)
-        //(I think.)
-
-        //ehh I should probably not be lazy there
-        //but
-        //not yet
-        //make that a TODO:
-        Matrix projection;
-        
-        const int numTriangles = 4;
-
-        public IntVector2 screenCenter
-        {
-            get
-            {
-                return _screenCenter;
-            }
-        }
-        private IntVector2 _screenCenter;
-
-        short[] selectionIndices;
-        DynamicIndexBuffer sIBuff;
-        VertexPositionColor[] selectionVertices;
-        DynamicVertexBuffer sVBuff;
-        //this assumes that any selected area will be a cube (or at least a rectangular prism)
-        //which uh
-        //not necessarily true
-        //say we want to select a tile in a wall and four around it?  yeah.  rectangular prism isn't gonna work there.
-
-        BasicEffect drawingEngine;
-        Effect voxelEffect;
-
-        public void initializeGraphics()
-        {
-            _screenCenter = new IntVector2(graphics.Viewport.Width / 2, graphics.Viewport.Height / 2);
-
-            world = Matrix.Identity;
-            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), (float)graphics.Viewport.Width / (float)graphics.Viewport.Height, .01f, 50.0f);
-
-            drawingEngine = new BasicEffect(graphics);
-
-            drawingEngine.World = world;
-            drawingEngine.Projection = projection;
-
-
-            drawingEngine.TextureEnabled = false;
-            drawingEngine.VertexColorEnabled = true;
-
-            drawingEngine.EnableDefaultLighting();
-            drawingEngine.SpecularColor= new Vector3(0, 0, 0);
-
-            #region selected
-
-            sIBuff = new DynamicIndexBuffer(graphics, IndexElementSize.SixteenBits, 24, BufferUsage.WriteOnly);
-            //iBuff.ContentLost += new EventHandler<EventArgs>(indicesLostHandler);
-
-            selectionIndices = new short[24]{0, 1,
-                                    0, 2,
-                                    1, 3,
-                                    2, 3,
-                                    0, 4,
-                                    1, 5,
-                                    2, 6,
-                                    3, 7,
-                                    4, 5,
-                                    4, 6,
-                                    5, 7,
-                                    6, 7};
-
-            sIBuff.SetData(selectionIndices);
-
-            sVBuff = new DynamicVertexBuffer(graphics, typeof(VertexPositionColor), 8, BufferUsage.WriteOnly);
-            //vBuff.ContentLost += new EventHandler<EventArgs>(verticesLostHandler);
-
-            #endregion selected
-
-            voxelEffect = content.Load<Effect>("CubeShader");
-
-            voxelEffect.Parameters["World"].SetValue(world);
-            voxelEffect.Parameters["Projection"].SetValue(projection);
-
-
-        }
-
-        void indicesLostHandler(object sender, EventArgs e)
-        {
-            sIBuff.SetData(selectionIndices);
-        }
-
-        void verticesLostHandler(object sender, EventArgs e)
-        {
-            sVBuff.SetData(selectionVertices);
-        }
-
-        public bool drawUnder()
-        {
-            return false;
-        }
-
-        public void Draw(SpriteBatch drawer)
-        {
-            drawingEngine.View = player.createViewMatrix();
-            voxelEffect.Parameters["View"].SetValue(player.createViewMatrix());
-
-            voxelEffect.Parameters["ambientColor"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 0.3f));
-            voxelEffect.Parameters["sunColor"].SetValue(new Vector4(1.0f, 1.0f, 0.8f, 0.9f));
-            voxelEffect.Parameters["sunDir"].SetValue(new Vector3(-0.1f, -1.0f, -0.5f));
-
-            for (int x = 0; x < mapSize; x++)
-            {
-                for (int y = 0; y < mapSize; y++)
-                {
-                    for (int z = 0; z < mapSize; z++)
-                    {
-                        Chunk drawee = map.get(new IntVector3(x, y, z));
-                        if (drawee == null)
-                            continue;
-                        if (drawee.isTransparent())
-                            continue;
-                        if (drawee.isDisposed)
-                            continue;
-                        #region chunkdrawer
-
-                        DynamicVertexBuffer vertexBuffer = drawee.getVertexBuffer();
-                        int numVertices = drawee.getNumVertices();
-                        DynamicIndexBuffer indexBuffer = drawee.getIndexBuffer();
-                        int numIndices = drawee.getNumIndices();
-
-                        graphics.SetVertexBuffer(vertexBuffer);
-                        graphics.Indices = indexBuffer;
-
-                        foreach (EffectPass p in voxelEffect.CurrentTechnique.Passes)  //Not sure I entirely understand this
-                        {
-                            //mmm... so... let's see
-                            p.Apply();
-                            graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, numVertices, 0, numIndices / 3);
-                            
-                        }
-                        #endregion chunkdrawer
-                    }
-                }
-            }
-            
-
-            drawer.End();
-            drawer.Begin();
-            //for whatever reason if I don't reboot the SpriteBatch it does weird things with transparency and whatnot.
-
-            #region GUI
-
-            drawer.Draw(reticule, new Vector2(screenCenter.x - reticule.Width, screenCenter.y - reticule.Height), Color.White);
-
-            #region selectedBlock
-
-            BlockAddress selected = player.getTarget();
-            if (selected != null)
-            {
-                RasterizerState standard = graphics.RasterizerState;
-                
-                RasterizerState depthBiased = new RasterizerState();
-                depthBiased.DepthBias = 1;
-                graphics.RasterizerState = depthBiased;
-
-                selectionVertices = new VertexPositionColor[8];
-
-                selectionVertices[0] = new VertexPositionColor(new Vector3(selected.x, selected.y, selected.z), Color.Black);
-                selectionVertices[1] = new VertexPositionColor(new Vector3(selected.x + 1, selected.y, selected.z), Color.Black);
-                selectionVertices[2] = new VertexPositionColor(new Vector3(selected.x, selected.y, selected.z + 1), Color.Black);
-                selectionVertices[3] = new VertexPositionColor(new Vector3(selected.x + 1, selected.y, selected.z + 1), Color.Black);
-                selectionVertices[4] = new VertexPositionColor(new Vector3(selected.x, selected.y + 1, selected.z), Color.Black);
-                selectionVertices[5] = new VertexPositionColor(new Vector3(selected.x + 1, selected.y + 1, selected.z), Color.Black);
-                selectionVertices[6] = new VertexPositionColor(new Vector3(selected.x, selected.y + 1, selected.z + 1), Color.Black);
-                selectionVertices[7] = new VertexPositionColor(new Vector3(selected.x + 1, selected.y + 1, selected.z + 1), Color.Black);
-
-                sVBuff.SetData(selectionVertices);
-
-                drawingEngine.LightingEnabled = false;
-
-                graphics.SetVertexBuffer(sVBuff);
-                graphics.Indices = sIBuff;
-
-                foreach (EffectPass p in drawingEngine.CurrentTechnique.Passes)
-                {
-                    p.Apply();
-                    graphics.DrawIndexedPrimitives(PrimitiveType.LineList, 0, 0, 8, 0, 12);
-                }
-
-                graphics.RasterizerState = standard;
-            }
-            else
-            {
-                graphics.SetVertexBuffer(null);
-                graphics.Indices = null;
-            }
-            #endregion selectedBlock
-
-
-            #endregion GUI
-
-            #region randomtext
-
-            drawer.DrawString(fontling, "I THINK THEREFORE I ARRRRR", new Vector2(10, 10), new Color(10, 20, 30));
-            //drawer.DrawString(fontling, player.Pos().ToString(), new Vector2(10, 40), Color.AntiqueWhite);
-            //no more creepiest glitch ever
-            //instead we have working things
-            //...I don't know WHY it's working, but it is.  Not going to question this further.
-            
-            drawer.DrawString(fontling, "Position: " + player.Pos().ToString(), new Vector2(10, 40), new Color(7, 7, 7));
-
-            if(selected != BlockAddress.noBlock)
-                drawer.DrawString(fontling, "Selected: " + selected.ToString(), new Vector2(10, 70), Color.CadetBlue);
-            #endregion
-
-            //drawer.Draw(reticule, new Vector2(centerX, centerY), Color.White);
-        }
-
-        #endregion
     }
 }

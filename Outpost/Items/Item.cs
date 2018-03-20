@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using OutpostLibrary.Navigation;
 using OutpostLibrary.Content;
+using OutpostCore.Map;
 
 namespace OutpostCore.Items
 {
@@ -11,22 +12,20 @@ namespace OutpostCore.Items
     
     public interface Item
     {
-        TestingOrder order();
-        int range();
-        //I guess it makes sense to have these not necessarily constant anyway
+        TestingOrder Order { get; }
+        int Range { get; }
 
-        bool beforeTest(BlockAddress testing);
-        bool onTest(BlockAddress testing);
+        bool Test(BlockAddress testing);
 
-        bool actionStart(BlockAddress target);
-        bool actionHold(BlockAddress target);
-        bool actionEnd(BlockAddress target);
+        bool ActionStart(BlockAddress target);
+        bool ActionHold(BlockAddress target);
+        bool ActionEnd(BlockAddress target);
         //these three all assume that the block passed in is one that fulfills the tests ^
         //note, once items are fully implemented, all three of these will be required.
         //well, except on 'noTest' items, I guess.
         //i guess this is moot though cause the compiler requires them anyway.
 
-        void performActionsOnWielder(Entities.Entity wielder); //will have to change that "Player" to, iono, "Entity" or summat
+        void PerformActionsOnWielder(Entities.Entity wielder);
         //this assumes that 'true' has been passed from one of those three ^
         //make SUPER SURE that it is not possible to switch items between that pass and this function.
     }
@@ -35,7 +34,7 @@ namespace OutpostCore.Items
     {
         public static bool isSolid(BlockAddress testing)
         {
-            Blocks.Block block = GameShell.gameShell.GetBlock(testing);
+            Blocks.Block block = testing.GetBlock();
             if (block == null)
                 return false;
             if (block.solidity == Solidity.solid)

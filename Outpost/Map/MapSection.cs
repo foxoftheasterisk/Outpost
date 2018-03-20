@@ -17,6 +17,8 @@ namespace OutpostCore.Map
         protected ChunkAddress center;
         int radius; //inclusive
 
+        #region constructors
+
         public MapSection(ChunkAddress _center, int _radius, LoadState _targetState)
         {
             center = _center;
@@ -50,6 +52,9 @@ namespace OutpostCore.Map
             : this(new ChunkAddress(world, _center), _radius, _targetState)
         { }
 
+        #endregion constructors
+
+        #region movement
 
         /// <summary>
         /// Moves the MapSection to a new location.
@@ -121,6 +126,8 @@ namespace OutpostCore.Map
 
             center.position = newCenter;
         }
+
+        #endregion movement
 
         /// <summary>
         /// I don't know why this would be needed, BUT HERE IT IS ANYWAY.

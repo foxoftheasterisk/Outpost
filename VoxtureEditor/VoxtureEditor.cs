@@ -13,7 +13,7 @@ using System.IO;
 
 namespace VoxtureEditor
 {
-    class VoxtureEditor : Screens.Screen
+    class VoxtureEditor : ScreenManagement.Screen
     {
 
         string filename;

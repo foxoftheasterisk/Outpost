@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoxtureSpewer", "Editor\Vox
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoxtureEditor", "VoxtureEditor\VoxtureEditor.csproj", "{C7F74F4D-983F-41CA-9F65-0734DA6F15AA}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ScreenManager", "ScreenManager\ScreenManager.shproj", "{DC6D9569-2DD3-4737-9D6C-E8DB9C77E328}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ScreenManagement", "ScreenManager\ScreenManagement.shproj", "{DC6D9569-2DD3-4737-9D6C-E8DB9C77E328}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
