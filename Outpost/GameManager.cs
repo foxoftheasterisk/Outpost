@@ -17,7 +17,6 @@ namespace OutpostCore
         //manages a single game
         //where GameShell will hold the rules and such that will carry over if you quit one game and load another
 
-
         public static GameManager Game
         {
             get

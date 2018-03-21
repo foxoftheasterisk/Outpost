@@ -31,8 +31,7 @@ namespace OutpostCore.Map
 
         //probably in MapManager
 
-        //...should all the map management be in Lua?
-        //......nah.
+        
 
         public static MapManager Map
         {
@@ -50,6 +49,9 @@ namespace OutpostCore.Map
             chunkStore = new ConcurrentDictionary<ChunkAddress,Chunk>();
             loadQueue = new ConcurrentQueue<Chunk>();
             unloadQueue = new ConcurrentQueue<Chunk>();
+
+            loadAdded = new AutoResetEvent(false);
+            unloadAdded = new AutoResetEvent(false);
 
             loadThread = new Thread(loadLoop);
             loadThread.Priority = ThreadPriority.BelowNormal;
@@ -93,13 +95,25 @@ namespace OutpostCore.Map
         {
             get
             {
-                Chunk chunk = chunkStore[ca];
-                if(chunk != null)
-                    return chunkStore[ca];
+                try
+                {
+                    Chunk chunk = chunkStore[ca];
+                    if(chunk != null)
+                        return chunkStore[ca];
 
+                    return null;
+                }
+                catch (KeyNotFoundException e)
+                {
+                    //that just means that chunk isn't loaded, certainly nothing to crash over
+                    return null;
+                }
+                
                 //TODO: if it doesn't exist, create shell and return that
                 //maybe with a pattern, but we'll worry about that later
                 //we could throw the empty shell in the dictionary but why the hell would we it has no information
+
+                //no. this is a get. don't make it do things, even just loading. we'll have to check for null at the other end.
 
                 //ofc, now Chunk (AssignNeighbors and GenerateVertices, possibly others) relies on it passing null
                 //so, we'll need to overhaul that before changing this
@@ -107,8 +121,12 @@ namespace OutpostCore.Map
                 //okay, problem: we need the GraphicsDevice
                 //i think we should probably just make that thing public i mean really
                 //return new Chunk(ca, )
-                return null;
             }
+        }
+
+        public Chunk GetOrAdd(Chunk c)
+        {
+            return chunkStore.GetOrAdd(c.address, c);
         }
 
         public string worldFolder;
@@ -140,8 +158,7 @@ namespace OutpostCore.Map
 
             while(!disposing)
             {
-                Chunk c;
-                bool succeeded = loadQueue.TryDequeue(out c);
+                bool succeeded = loadQueue.TryDequeue(out Chunk c);
 
                 if (!succeeded)
                 {

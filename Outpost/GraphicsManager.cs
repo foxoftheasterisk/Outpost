@@ -93,7 +93,8 @@ namespace OutpostCore
 
         #endregion singleton and constructor
 
-        GraphicsDevice graphics;
+        public GraphicsDevice GraphicsDevice => graphics;
+        private GraphicsDevice graphics;
 
         public SpriteFont font;
         Texture2D reticule;

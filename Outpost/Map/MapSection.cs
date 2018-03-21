@@ -32,6 +32,12 @@ namespace OutpostCore.Map
             //TODO: that i guess
             foreach(Chunk chunk in this)
             {
+                if(chunk == null)
+                {
+                    //wait, but... how does it know what chunkaddress it is that this null is supposed to be??
+                    //...
+                }
+
                 chunk.addLoadStateRequest(targetState);
             }
         }
@@ -179,7 +185,17 @@ namespace OutpostCore.Map
                 {
                     if (currentChunk.position.Z > center.position.Z + radius)
                         throw new InvalidOperationException("Overiterated a MapSectionIterator.");
-                    return MapManager.Map[currentChunk];
+
+                    //this... is also a get
+                    //but... i think this is the best place to put chunk creation regardless
+                    Chunk c = MapManager.Map[currentChunk];
+                    if (c == null)
+                    {
+                        c = new Chunk(currentChunk, GraphicsManager.graphicsManager.GraphicsDevice);
+                        c = MapManager.Map.GetOrAdd(c);
+                    }
+
+                    return c;
                 }
             }
 

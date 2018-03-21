@@ -29,7 +29,7 @@ namespace OutpostCore
         /// <summary>
         /// Creates a new Lua environment and registers various classes and functions from the game to it.
         /// </summary>
-        public void initializeLua()
+        public void InitializeLua()
         {
             //well, this is messy
             //is there not a better way to do this?
@@ -279,6 +279,24 @@ namespace OutpostCore
         public void buildChunk(OutpostLibrary.Navigation.ChunkAddress location, Map.Chunk chunk)
         {
             Func<Map.Chunk, OutpostLibrary.Navigation.ChunkAddress, LuaResult> doBuild = game["buildChunk"] as Func<Map.Chunk, OutpostLibrary.Navigation.ChunkAddress, LuaResult>;
+
+            if(doBuild == null)
+            {
+                OutpostLibrary.Content.Material errormat = new OutpostLibrary.Content.Material("error");
+
+                //do what???
+                for(int x = 0; x < OutpostLibrary.Navigation.Sizes.ChunkSize; x++)
+                {
+                    for (int y = 0; y < OutpostLibrary.Navigation.Sizes.ChunkSize; y++)
+                    {
+                        for (int z = 0; z < OutpostLibrary.Navigation.Sizes.ChunkSize; z++)
+                        {
+                            chunk.fillAssign(x, y, z, new Blocks.SolidBlock(errormat));
+                        }
+                    }
+                }
+                return;
+            }
 
             try
             {

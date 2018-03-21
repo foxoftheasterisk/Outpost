@@ -32,10 +32,25 @@ namespace OutpostCore.Map
         public static LoadState max(IEnumerable<LoadState> collection)
         {
             LoadState result = new LoadState(0, 0);
-            foreach (LoadState state in collection)
+            do
             {
-                result = max(result, state);
+                try
+                {
+                    foreach (LoadState state in collection)
+                    {
+                        result = max(result, state);
+                    }
+                }
+                catch(System.InvalidOperationException e)
+                {
+                    //TODO: this seems like a bad idea... investigate better solutions
+                    if (e.Message == "Collection was modified; enumeration operation may not execute.")
+                        continue;
+                    else
+                        throw e;
+                }
             }
+            while (false);
             return result;
         }
 

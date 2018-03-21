@@ -93,7 +93,7 @@ namespace OutpostCore.Map
             blocks = new Block[Sizes.ChunkSize, Sizes.ChunkSize, Sizes.ChunkSize];
             structures = new List<MapStructure>();
             address = addr;
-            filename = GameShell.WorldFolder + address.position.X + "," + address.position.Y + "," + address.position.Z;
+            filename = MapManager.Map.worldFolder + address.position.X + "," + address.position.Y + "," + address.position.Z;
 
             requestedLoadStates = new List<LoadState>();
             currentLoadState = new LoadState(LoadState.GraphicalLoadState.None, LoadState.DataLoadState.None);
@@ -106,7 +106,7 @@ namespace OutpostCore.Map
                 //iBuff.ContentLost += new EventHandler<EventArgs>(indicesLostHandler);
                 //so do I need to add a custom test for content lost before drawing?
             }
-            catch(OpenTK.Graphics.GraphicsContextException e)
+            catch(Exception e)
             {
                 Logger.Log(e.ToString());
             }
@@ -126,7 +126,7 @@ namespace OutpostCore.Map
         {
             this.size = size;
             blocks = new Block[size, size, size];
-            this.filename = GameShell.WorldFolder + filename;
+            this.filename = MapManager.Map.worldFolder + filename;
 
             vBuff = new DynamicVertexBuffer(graphics, typeof(VertexPositionColorNormal), maxVerts, BufferUsage.WriteOnly);
             //vBuff.ContentLost += new EventHandler<EventArgs>(verticesLostHandler);

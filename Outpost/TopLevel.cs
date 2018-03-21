@@ -70,7 +70,7 @@ namespace OutpostCore
         {
             //new thread to enable loading screen
 
-            GameShell.gameShell.lua.initializeLua();
+            GameShell.gameShell.lua.InitializeLua();
 
             GameShell.gameShell.lua.runLuaFile("vanilla.set");
             //TODO: make the filename be loaded from a config file

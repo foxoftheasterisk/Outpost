@@ -31,18 +31,7 @@ namespace OutpostCore
     //something to aim for
     public class GameShell
     {
-        IntVector3 mapOffset;
-
-        Dictionary<IntVector3, patternOrChunk> mapGenHelper;
-        //Is here to keep map-generation from loading quite so many files
-        //since that's what's slowing it down so much
-        //though it doesn't seem to have helped much...
-
         public Random random;
-        Thread mapFiller;
-
-        public static string WorldFolder = "";
-
 
         public static GameShell gameShell
         {

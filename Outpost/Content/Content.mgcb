@@ -26,6 +26,12 @@
 /processorParam:TextureFormat=Color
 /build:blank.png
 
+#begin CubeShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:CubeShader.fx
+
 #begin reticule.png
 /importer:TextureImporter
 /processor:TextureProcessor
