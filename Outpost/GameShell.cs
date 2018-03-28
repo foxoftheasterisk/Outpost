@@ -17,14 +17,6 @@ using ScreenManagement;
 
 namespace OutpostCore
 {
-    //okay I'm very seriously thinking this should be split to two or more classes
-    //like
-    // -map management
-    // -player and screen drawing
-    // -basic graphics stuff that can be used by multiple screens that want to draw in 3D
-    // -lua and game rules
-    //--possibly other things too
-
     //okay okay so
     //GameShell should hold only game rule things that can keep when you unload one game and load another in the same modset
     //...not 100% sure this will work correctly but
@@ -49,35 +41,20 @@ namespace OutpostCore
 
         public LuaBridge lua;
 
-        // i.e. messing with these will just screw up the workings
-        #region technical constants
-        const int mapSize = 9;
-        const int mapCenter = 4;
-        const int allowedStray = 2;
-        #endregion
-
-        //but messing with these will change the game 'balance'.
-        #region game constants
+        //TODO: this should be a per-world thing, instead
         public const float gravity = .05f;
-        #endregion
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="c">The content manager to use.</param>
-        /// <param name="g">The graphics device to use.</param>
         private GameShell()
         {
             random = new Random();
 
-
-
             lua = new LuaBridge();
         }
 
-        #region Mapgen and Loading
-
-
+        #region Mapgen and Loading (all commented)
 
         /*
 
@@ -443,7 +420,7 @@ namespace OutpostCore
         }
         //*/
 
-        #endregion Mapgen and Loading
+        #endregion Mapgen and Loading (all commented)
 
     }
 }

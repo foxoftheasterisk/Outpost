@@ -146,6 +146,7 @@ namespace OutpostCore
         }
         //*/
 
+        //this should maybe be in a different class?
         public void DrawStandardProjection(SpriteBatch drawer, Matrix view, MapSection areaToDraw, BlockAddress? selectedBlock)
         {
             drawingEngine.View = view;

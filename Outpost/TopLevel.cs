@@ -10,9 +10,6 @@ using Microsoft.Xna.Framework.Media;
 
 using ScreenManagement;
 
-//this should be removable
-//using OutpostLibrary.Content;
-
 namespace OutpostCore
 {
     /// <summary>
