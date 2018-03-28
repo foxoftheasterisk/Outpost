@@ -7,9 +7,9 @@ using OutpostLibrary;
 using OutpostLibrary.Content;
 using OutpostLibrary.Navigation;
 using Microsoft.Xna.Framework.Input;
-using OutpostCore.Items;
+using OutpostEngine.Items;
 
-namespace OutpostCore.Entities
+namespace OutpostEngine.Entities
 {
     public class Player : Entity
     {

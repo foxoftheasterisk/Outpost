@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using OutpostLibrary.Navigation;
 using OutpostLibrary.Content;
-using OutpostCore.Map;
+using OutpostEngine.Map;
 
-namespace OutpostCore.Items
+namespace OutpostEngine.Items
 {
     public enum TestingOrder { noTest, onOnly, beforeOnly, onFirst, beforeFirst };
     

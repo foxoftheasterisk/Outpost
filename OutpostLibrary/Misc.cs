@@ -261,19 +261,8 @@ namespace OutpostLibrary
         }
     }
 
-    /*
-    struct Direction
-    {
-        public bool north;
-        public bool down;
-        public bool west;
-    }
-    //*/
-
     public static class Misc
     {
-        //public 
-
         #region IntVector extensions
 
         /// <summary>

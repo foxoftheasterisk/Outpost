@@ -8,7 +8,7 @@ using OutpostLibrary.Navigation;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-using OutpostCore;
+using OutpostEngine;
 
 namespace VoxtureEditor
 {

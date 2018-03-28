@@ -5,12 +5,12 @@ using System.Text;
 using OutpostLibrary.Navigation;
 using OutpostLibrary.Content;
 using OutpostLibrary;
-using OutpostCore.Blocks;
-using OutpostCore.Map;
+using OutpostEngine.Blocks;
+using OutpostEngine.Map;
 
 //TODO: abolish the rest of this
 
-namespace OutpostCore
+namespace OutpostEngine
 {
     public struct patternOrChunk
     {

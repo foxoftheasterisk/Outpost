@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OutpostLibrary.Navigation;
-using OutpostCore.Blocks;
-using OutpostCore.Map;
+using OutpostEngine.Blocks;
+using OutpostEngine.Map;
 
-namespace OutpostCore.Items
+namespace OutpostEngine.Items
 {
     class Tile : Item
     {

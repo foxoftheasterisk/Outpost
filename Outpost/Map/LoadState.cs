@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OutpostCore.Map
+namespace OutpostEngine.Map
 {
     public struct LoadState : IEquatable<LoadState>
     {

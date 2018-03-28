@@ -1,21 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using System.IO;
-using OutpostLibrary;
-using OutpostLibrary.Content;
-using OutpostLibrary.Navigation;
-using Microsoft.Xna.Framework.Input;
-using System.Threading;
-using System.Xml.Serialization;
-using OutpostCore.Blocks;
-using ScreenManagement;
+using OutpostEngine.SetLoading;
 
-namespace OutpostCore
+namespace OutpostEngine
 {
     //okay okay so
     //GameShell should hold only game rule things that can keep when you unload one game and load another in the same modset
@@ -39,7 +25,7 @@ namespace OutpostCore
             _gameShell = new GameShell();
         }
 
-        public LuaBridge lua;
+        public RegistryManager registry;
 
         //TODO: this should be a per-world thing, instead
         public const float gravity = .05f;
@@ -51,7 +37,7 @@ namespace OutpostCore
         {
             random = new Random();
 
-            lua = new LuaBridge();
+            registry = new RegistryManager();
         }
 
         #region Mapgen and Loading (all commented)

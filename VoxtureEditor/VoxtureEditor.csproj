@@ -90,9 +90,9 @@
       <Project>{701049c9-da5c-4e4a-bf69-ff642731d58b}</Project>
       <Name>OutpostLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Outpost\OutpostCore.csproj">
+    <ProjectReference Include="..\Outpost\OutpostEngine.csproj">
       <Project>{ad0a4123-e6b4-47da-b4eb-4204e4eb49c1}</Project>
-      <Name>OutpostCore</Name>
+      <Name>OutpostEngine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

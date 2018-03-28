@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using OutpostLibrary.Navigation;
 using OutpostLibrary.Content;
-using OutpostCore.Blocks;
-using OutpostCore.Entities;
+using OutpostEngine.Blocks;
+using OutpostEngine.Entities;
 
 using Neo.IronLua;
-using OutpostCore.Map;
+using OutpostEngine.Map;
 
-namespace OutpostCore.Items
+namespace OutpostEngine.Items
 {
     class PlayerFist : Item
     {

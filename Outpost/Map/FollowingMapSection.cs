@@ -1,4 +1,4 @@
-﻿using OutpostCore.Entities;
+﻿using OutpostEngine.Entities;
 using OutpostLibrary.Navigation;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OutpostCore.Map
+namespace OutpostEngine.Map
 {
     public class FollowingMapSection : MapSection
     {

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ScreenManagement;
 
-namespace OutpostCore.Input
+namespace OutpostEngine.Input
 {
     class KeyInput : InputItem
     {

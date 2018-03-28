@@ -8,7 +8,7 @@ using System.IO;
 
 using Neo.IronLua;
 
-namespace OutpostCore
+namespace OutpostEngine
 {
     public class LuaBridge
     {

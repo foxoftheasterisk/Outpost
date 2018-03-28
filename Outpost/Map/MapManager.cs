@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 
 using OutpostLibrary.Navigation;
 
-namespace OutpostCore.Map
+namespace OutpostEngine.Map
 {
     public class MapManager : IDisposable
     {

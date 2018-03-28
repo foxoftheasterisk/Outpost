@@ -5,10 +5,10 @@ using System.Text;
 using OutpostLibrary;
 using OutpostLibrary.Navigation;
 using OutpostLibrary.Content;
-using OutpostCore.Items;
+using OutpostEngine.Items;
 using Microsoft.Xna.Framework;
 
-namespace OutpostCore.Blocks
+namespace OutpostEngine.Blocks
 {
     class WornBlock : Block
     {

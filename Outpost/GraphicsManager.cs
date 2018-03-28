@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using OutpostCore.Map;
+using OutpostEngine.Map;
 using OutpostLibrary;
 using OutpostLibrary.Navigation;
 using System;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OutpostCore
+namespace OutpostEngine
 {
     class GraphicsManager
     {

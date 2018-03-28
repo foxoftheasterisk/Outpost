@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 using OutpostLibrary.Navigation;
-using OutpostCore.Entities;
+using OutpostEngine.Entities;
 using Microsoft.Xna.Framework.Input;
-using OutpostCore.Input;
+using OutpostEngine.Input;
 using Microsoft.Xna.Framework;
 
-namespace OutpostCore
+namespace OutpostEngine
 {
     class GameManager
     {

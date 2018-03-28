@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace OutpostCore.Screens
+namespace OutpostEngine.Screens
 {
     class DebugTextScreen : Screen
     {

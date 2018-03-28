@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OutpostCore.Entities
+namespace OutpostEngine.Entities
 {
     public class Entity
     {

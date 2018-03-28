@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using OutpostCore.Blocks;
+using OutpostEngine.Blocks;
 using OutpostLibrary.Navigation;
 
-namespace OutpostCore.Map
+namespace OutpostEngine.Map
 {
     public static class MapExtensions
     {

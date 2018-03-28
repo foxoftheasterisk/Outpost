@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Media;
 
 using ScreenManagement;
 
-namespace OutpostCore
+namespace OutpostEngine
 {
     /// <summary>
     /// This is the main type for your game
@@ -19,13 +19,12 @@ namespace OutpostCore
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
         //Not included due to singleton:
         //ScreenManager
         //GameShell
         //GameManager
         //...possibly others
-
-
 
         public TopLevel()
         {

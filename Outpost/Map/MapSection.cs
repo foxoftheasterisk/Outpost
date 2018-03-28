@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using OutpostLibrary;
 using OutpostLibrary.Navigation;
 
-namespace OutpostCore.Map
+namespace OutpostEngine.Map
 {
     public class MapSection : IEnumerable<Chunk>
     {

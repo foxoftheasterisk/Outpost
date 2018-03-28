@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using OutpostCore.Blocks;
-using OutpostCore.Map;
+using OutpostEngine.Blocks;
+using OutpostEngine.Map;
 using OutpostLibrary;
 using OutpostLibrary.Content;
 using OutpostLibrary.Navigation;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OutpostCore
+namespace OutpostEngine
 {
     static class CollisionManager
     {
